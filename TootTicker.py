@@ -75,7 +75,7 @@ def get_account_infos():
                 account_info_list.append(account_info)
 
                 # Rate limiting
-                time.sleep(5)
+                #time.sleep(5)
 
         except Exception as e:
             print(f"Error processing {url}: {e}")
