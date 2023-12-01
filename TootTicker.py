@@ -88,6 +88,15 @@ def getAccountInfos(mastodon):
             print(f"Error processing {url}: {e}")
 
 def generateHTMLOverview():
+
+    # Create the 'public/' directory if it doesn't exist
+    public_directory = 'public/'
+    if not os.path.exists(public_directory):
+        os.makedirs(public_directory)
+    
+    # Create CSS file
+    generateCSSFile()
+
     # Define the output HTML file
     output_file = 'public/account_overview.html'
 
@@ -97,8 +106,12 @@ def generateHTMLOverview():
     # Open the HTML file for writing
     with open(output_file, 'w') as html_file:
         # Write the HTML header
-        html_file.write('<html>\n<head>\n<title>Account Overview</title>\n</head>\n<body>\n')
-
+        # Add the CSS file
+        html_file.write('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n')
+        html_file.write('<meta name="viewport" content="width=device-width, initial-scale=1">\n')
+        html_file.write(f'<link rel="stylesheet" href="account_overview.css">\n')
+        html_file.write('<title>TootTicker - boost your media and journalists</title>\n</head>\n<body>\n')
+        
         # Iterate through each JSON file
         for json_file in json_files:
             # Read the contents of the JSON file
@@ -112,7 +125,7 @@ def generateHTMLOverview():
                     continue
 
             # Write a div for each JSON file
-            html_file.write('<div style="border: 1px solid #ddd; padding: 10px; margin: 10px;">\n')
+            html_file.write('<div class="accountInfo">\n')
             
             # Write the account name as a header
             html_file.write(f'<h2>{account_info["Account Name"]}</h2>\n')
@@ -133,6 +146,21 @@ def generateHTMLOverview():
         html_file.write('</body>\n</html>')
 
     print(f'HTML overview generated in {output_file}')
+
+def generateCSSFile():
+    # Define the output CSS file
+    output_file = 'public/account_overview.css'
+
+    # Open the CSS file for writing
+    with open(output_file, 'w') as css_file:
+        # Write the CSS header
+        css_file.write('body { font-family: sans-serif; }\n')
+        css_file.write('h2 { color: #1d2129; }\n')
+        css_file.write('p { color: #657786; }\n')
+        css_file.write('.accountInfo { border: 1px solid #e1e8ed; padding: 10px; margin-bottom: 10px; }\n')
+
+    print(f'CSS file generated in {output_file}')   
+
 
 # Load the list of account IDs from the 'accounts/' folder
 def getAccountIds():
