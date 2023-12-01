@@ -2,10 +2,12 @@ from mastodon import Mastodon
 import json
 import time
 
+
 # TootTicker - boost your media and journalists
 # This script will fetch the account information from the provided Mastodon URLs
 # and save the information to a JSON file
 
+# Create Mastodon app and get user credentials
 def create_secrets():
     # Replace the following placeholders with your actual values
     app_name = 'TootTicker - boost your media and journalists'  # Replace with your desired app name
