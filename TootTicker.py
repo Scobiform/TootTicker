@@ -59,7 +59,7 @@ def getAccountInfos(mastodon):
                     os.makedirs(accounts_directory)
 
                 # Get recent toots from the user's timeline
-                toots = mastodon.account_statuses(user_id, limit=5)
+                toots = mastodon.account_statuses(user_id, limit=1)
 
                 # Create a dictionary with account information
                 account_info = {
@@ -79,7 +79,8 @@ def getAccountInfos(mastodon):
 
                 # Print account information from the mastodon user
                 for key, value in account_info.items():
-                    print(f"{key}: {value}")
+                    if key not in ["Account Name", "Avatar", "Header", "Toots"]:
+                        print(f"{key}: {value}")
 
                 # Save the JSON file to the folder
                 with open(os.path.join(accounts_directory, str(user_id) + '.json'), 'w') as file:
@@ -154,8 +155,12 @@ def generateHTMLOverview():
 
             # Write the rest of the account information
             for key, value in account_info.items():
-                if key not in ["Account Name", "Avatar", "Header"]:
+                if key not in ["Account Name", "Avatar", "Header", "Toots"]:
                     html_file.write(f'<p><strong>{key}:</strong> {value}</p>\n')
+
+            # Write the toots
+            for toot in account_info['Toots']:
+                html_file.write('<iframe src="'+str(toot["url"])+'//embed"class="mastodon-embed" style="max-width: 100%; border: 0" width="400" allowfullscreen="allowfullscreen"></iframe><script src="https://mastodon.social/embed.js" async="async"></script>')
 
             # Close the div
             html_file.write('</div>\n')
