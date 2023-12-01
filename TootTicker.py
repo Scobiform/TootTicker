@@ -49,6 +49,8 @@ def get_account_infos():
             # Resolve the profile URL to get the account details
             account = mastodon.account_search(url)
 
+            
+
             if account:
                 user_id = account[0]['id']
 
