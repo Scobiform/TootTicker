@@ -48,9 +48,7 @@ def get_account_infos():
         try:
             # Resolve the profile URL to get the account details
             account = mastodon.account_search(url)
-
             
-
             if account:
                 user_id = account[0]['id']
 
@@ -76,7 +74,6 @@ def get_account_infos():
                 }
 
                 # Print account information from the mastodon user
-                # Do not print if already in the list
                 for key, value in account_info.items():
                     print(f"{key}: {value}")
 
@@ -89,7 +86,6 @@ def get_account_infos():
 
         except Exception as e:
             print(f"Error processing {url}: {e}")
-
 
 def main():
     # Who Am I
