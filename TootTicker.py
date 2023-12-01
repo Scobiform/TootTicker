@@ -8,8 +8,30 @@ from threading import Thread
 # TootTicker - boost your media and journalists
 # Gathering account informations from Mastodon and make them available as pure json files
 
-# Add global variable for toot ids
+# Global variable for toot ids
 toot_ids = []
+
+# Function to load existing toot_ids from a JSON file
+def loadExistingTootIds():
+    global toot_ids
+    toot_ids_file = 'toot_ids.json'
+    if os.path.exists(toot_ids_file):
+        with open(toot_ids_file, 'r') as file:
+            try:
+                toot_ids = json.load(file)
+            except json.decoder.JSONDecodeError as e:
+                print(f"Error decoding existing toot_ids: {e}")
+                toot_ids = []
+
+# Function to save toot_ids to a JSON file
+def saveTootIds():
+    global toot_ids
+    toot_ids_file = 'toot_ids.json'
+    with open(toot_ids_file, 'w') as file:
+        json.dump(toot_ids, file)
+
+# Load existing toot_ids
+loadExistingTootIds()
 
 # Create Mastodon app and get user credentials
 def create_secrets():
@@ -92,6 +114,8 @@ def getAccountInfos(mastodon):
                     print(f"Boosted toot: {toots[0]['id']}")
                     # Add the toot id to the list
                     toot_ids.append(toots[0]['id'])
+                    # Save updated toot_ids to the JSON file
+                    saveTootIds()
 
                 # Save the JSON file to the folder
                 with open(os.path.join(accounts_directory, str(user_id) + '.json'), 'w') as file:
