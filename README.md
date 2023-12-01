@@ -34,6 +34,19 @@ cd TootTicker
 pip install Mastodon.py
 ```
 
+## Usage
+1. Uncomment
+```
+#create_secrets()
+```
+
+2. Run
+```
+python3 TootTicker.py
+```
+
+The account informations arwill be saved to accounts/ folder
+
 ## Contributing
 
 Contributions are welcome! Please follow the contribution guidelines.
