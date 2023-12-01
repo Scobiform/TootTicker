@@ -69,11 +69,15 @@ def get_account_infos():
                 }
 
                 # Print account information from the mastodon user
+                # Do not print if already in the list
                 for key, value in account_info.items():
-                    print(f"{key}: {value}")
+                    if account_info not in account_info_list:
+                        print(f"{key}: {value}")
 
                 # Append the account_info dictionary to the list
-                account_info_list.append(account_info)
+                # Do not add if already in the list
+                if account_info not in account_info_list:
+                    account_info_list.append(account_info)
 
                 # Rate limiting
                 time.sleep(2)
@@ -81,9 +85,18 @@ def get_account_infos():
         except Exception as e:
             print(f"Error processing {url}: {e}")
 
-    # Overwrite the account information JSON file
-    with open('account_info.json', 'w') as json_file:
-        json.dump(account_info_list, json_file, indent=2)
+    # Save the account information to a JSON file
+    for account_info in account_info_list:
+        # Open the file in append mode and truncate
+        with open('account_info.json', 'a+') as json_file:
+            # Move the cursor to the beginning of the file (truncate)
+            json_file.seek(0)
+            # Load existing data or initialize as empty list
+            existing_data = json.load(json_file) if json_file.read(1) else []
+            # Move the cursor back to the beginning for writing
+            json_file.seek(0)
+            # Write updated data (previous + new)
+            json.dump(existing_data + [account_info], json_file, indent=2)
 
 def main():
     # Who Am I
