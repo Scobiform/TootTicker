@@ -135,6 +135,34 @@ def generate_html_overview():
 
     print(f'HTML overview generated in {output_file}')
 
+# Load the list of account IDs from the 'accounts/' folder
+def getAccountIds():
+    account_ids = []
+    json_files = [f for f in os.listdir('accounts/') if f.endswith('.json')]
+    for json_file in json_files:
+        account_ids.append(json_file.replace('.json', ''))
+    return account_ids
+
+def stream_toots(mastodon):
+    print("Starting stream...")
+    # Load the list of account IDs
+    account_ids = getAccountIds()
+
+    # Print the list of account IDs
+    #for account_id in account_ids:
+    #    print(f"{account_id}")
+
+# Callback function for handling incoming toots
+def handle_toot(mastodon, toot, account_ids):
+    try:
+        if toot['account']['id'] in account_ids:
+            # Retoot the toot if the account ID matches
+            print(f"Retooting {toot['id']} from {toot['account']['username']}")
+            mastodon.status_reblog(toot['id'])
+
+    except Exception as e:
+        print(f"Error processing toot: {e}")
+
 def worker(mastodon):
     try:
         # Create the UI thread
@@ -143,6 +171,9 @@ def worker(mastodon):
         # Create account gathering thread
         accountInfos = Thread(target=get_account_infos, args=(mastodon,))
 
+        # Create the stream thread
+        streamToots = Thread(target=stream_toots, args=(mastodon,))
+
         # Create a list of threads
         threads = []
 
@@ -150,6 +181,8 @@ def worker(mastodon):
         threads.append(generateUI)
         # Start the account gathering thread
         threads.append(accountInfos)
+        # Start the stream thread
+        threads.append(streamToots)
 
         # Start all threads
         for j in threads:
