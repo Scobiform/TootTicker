@@ -88,12 +88,17 @@ def getAccountInfos(mastodon):
             print(f"Error processing {url}: {e}")
 
 def generateHTMLOverview():
+    # Function to generate HTML overview
+
+    def sort_accounts(accounts, key):
+        # Helper function to sort accounts based on a given key
+        return sorted(accounts, key=lambda x: x[key], reverse=True)
 
     # Create the 'public/' directory if it doesn't exist
     public_directory = 'public/'
     if not os.path.exists(public_directory):
         os.makedirs(public_directory)
-    
+
     # Create CSS file
     generateCSSFile()
 
@@ -103,6 +108,26 @@ def generateHTMLOverview():
     # Get the list of JSON files in the 'accounts/' folder
     json_files = [f for f in os.listdir('accounts/') if f.endswith('.json')]
 
+    # List to store account information
+    accounts = []
+
+    # Iterate through each JSON file
+    for json_file in json_files:
+        # Read the contents of the JSON file
+        with open(f'accounts/{json_file}', 'r') as file:
+            try:
+                # Attempt to load JSON content
+                account_info = json.load(file)
+                # Append the account information to the list
+                accounts.append(account_info)
+            except json.decoder.JSONDecodeError as e:
+                # Handle JSON decoding error (e.g., empty file or invalid JSON)
+                print(f"Error decoding {json_file}: {e}")
+                continue
+
+    # Sort the list of accounts based on followers (you can replace this with other keys)
+    accounts = sort_accounts(accounts, 'Followers')
+
     # Open the HTML file for writing
     with open(output_file, 'w') as html_file:
         # Write the HTML header
@@ -111,22 +136,12 @@ def generateHTMLOverview():
         html_file.write('<meta name="viewport" content="width=device-width, initial-scale=1">\n')
         html_file.write(f'<link rel="stylesheet" href="account_overview.css">\n')
         html_file.write('<title>TootTicker - boost your media and journalists</title>\n</head>\n<body>\n')
-        
-        # Iterate through each JSON file
-        for json_file in json_files:
-            # Read the contents of the JSON file
-            with open(f'accounts/{json_file}', 'r') as file:
-                try:
-                    # Attempt to load JSON content
-                    account_info = json.load(file)
-                except json.decoder.JSONDecodeError as e:
-                    # Handle JSON decoding error (e.g., empty file or invalid JSON)
-                    print(f"Error decoding {json_file}: {e}")
-                    continue
 
-            # Write a div for each JSON file
+        # Iterate through each account in the sorted list
+        for account_info in accounts:
+            # Write a div for each account
             html_file.write('<div class="accountInfo">\n')
-            
+
             # Write the account name as a header
             html_file.write(f'<h2>{account_info["Account Name"]}</h2>\n')
 
