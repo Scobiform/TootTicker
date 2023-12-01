@@ -50,7 +50,7 @@ def retweet_from_all_accounts():
                 toots = mastodon.account_statuses(user_id, limit=5)
 
                 # Print account information from the mastodon user
-                print(f"Retweeting from {account[0]['username']}")
+                print(f"Account Name: {account[0]['username']}")
                 print(f"Account URL: {account[0]['url']}")
                 print(f"Account ID: {user_id}")
                 # Print Followers and Following
@@ -60,24 +60,7 @@ def retweet_from_all_accounts():
                 print(f"Toots: {account[0]['statuses_count']}")
                 print(f"Created: {account[0]['created_at']}")
                 print(f"Last Active: {account[0]['last_status_at']}")
-                print(f"Last Status: {account[0]['last_status']}")
                 print(f"Bot: {account[0]['bot']}")
-                print(f"Avatar: {account[0]['avatar']}")
-                print(f"Header: {account[0]['header']}")
-                print(f"Emoji: {account[0]['emojis']}")
-                print(f"Fields: {account[0]['fields']}")
-                print(f"Moved: {account[0]['moved']}")
-                print(f"Move: {account[0]['move']}")
-                print(f"Moved To: {account[0]['moved_to']}")
-                print(f"Follow Requests: {account[0]['follow_requests_count']}")
-                print(f"Notifications: {account[0]['notifications']}")
-                print(f"Username: {account[0]['username']}")
-                print(f"Display Name: {account[0]['display_name']}")
-                print(f"Header Static: {account[0]['header_static']}")
-                print(f"Avatar Static: {account[0]['avatar_static']}")
-                print(f"Acct: {account[0]['acct']}")
-                print(f"URLs: {account[0]['urls']}")
-                print(f"Stats: {account[0]['stats']}")
 
         except Exception as e:
             print(f"Error processing {url}: {e}")
