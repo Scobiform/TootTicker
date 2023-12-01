@@ -43,8 +43,6 @@ with open('mastodon_urls.json', 'r') as file:
 # Create Mastodon API instance
 mastodon = Mastodon(access_token='usercred.secret')
 
-import os
-
 def getAccountInfos(mastodon):
     print("Starting account gathering...")
     for url in mastodon_urls:
