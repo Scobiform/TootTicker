@@ -45,7 +45,7 @@ pip install Mastodon.py
 python3 TootTicker.py
 ```
 
-The account informations arwill be saved to accounts/ folder
+The account informations will be saved to accounts/ folder
 
 ## Contributing
 
