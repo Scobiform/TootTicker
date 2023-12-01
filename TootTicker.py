@@ -69,7 +69,9 @@ def get_account_infos():
                     "Toots": account[0]['statuses_count'],
                     "Created": account[0]['created_at'],
                     "Last Active": account[0]['last_status_at'],
-                    "Bot": account[0]['bot']
+                    "Bot": account[0]['bot'],
+                    "Avatar": account[0]['avatar'],
+                    "Header": account[0]['header']
                 }
 
                 # Print account information from the mastodon user
