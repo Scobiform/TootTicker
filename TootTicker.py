@@ -76,12 +76,12 @@ def get_account_infos():
                 account_info_list.append(account_info)
 
                 # Rate limiting
-                #time.sleep(5)
+                time.sleep(2)
 
         except Exception as e:
             print(f"Error processing {url}: {e}")
 
-    # Save the account information to a JSON file
+    # Overwrite the account information JSON file
     with open('account_info.json', 'w') as json_file:
         json.dump(account_info_list, json_file, indent=2)
 
