@@ -3,8 +3,7 @@ import json
 import time
 
 # TootTicker - boost your media and journalists
-# This script will fetch the account information from the provided Mastodon URLs
-# and save the information to a JSON file
+# Gathering account informations from Mastodon and make them available as pure json files
 
 # Create Mastodon app and get user credentials
 def create_secrets():
