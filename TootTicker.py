@@ -41,9 +41,9 @@ with open('mastodon_urls.json', 'r') as file:
 # Create Mastodon API instance
 mastodon = Mastodon(access_token='usercred.secret')
 
-def get_account_infos():
-    account_info_list = []  # List to store account information
+import os
 
+def get_account_infos():
     for url in mastodon_urls:
         try:
             # Resolve the profile URL to get the account details
@@ -51,6 +51,11 @@ def get_account_infos():
 
             if account:
                 user_id = account[0]['id']
+
+                # Create the 'accounts/' directory if it doesn't exist
+                accounts_directory = 'accounts/'
+                if not os.path.exists(accounts_directory):
+                    os.makedirs(accounts_directory)
 
                 # Get recent toots from the user's timeline
                 toots = mastodon.account_statuses(user_id, limit=5)
@@ -63,21 +68,19 @@ def get_account_infos():
                     "Followers": account[0]['followers_count'],
                     "Following": account[0]['following_count'],
                     "Toots": account[0]['statuses_count'],
-                    "Created": account[0]['created_at'].strftime("%Y-%m-%d %H:%M:%S"),
-                    "Last Active": account[0]['last_status_at'].strftime("%Y-%m-%d %H:%M:%S"),
+                    "Created": account[0]['created_at'],
+                    "Last Active": account[0]['last_status_at'],
                     "Bot": account[0]['bot']
                 }
 
                 # Print account information from the mastodon user
                 # Do not print if already in the list
                 for key, value in account_info.items():
-                    if account_info not in account_info_list:
-                        print(f"{key}: {value}")
+                    print(f"{key}: {value}")
 
-                # Append the account_info dictionary to the list
-                # Do not add if already in the list
-                if account_info not in account_info_list:
-                    account_info_list.append(account_info)
+                # Save the JSON file to the folder
+                with open(os.path.join(accounts_directory, str(user_id) + '.json'), 'w') as file:
+                    json.dump(account_info, file, indent=4, default=str)
 
                 # Rate limiting
                 time.sleep(2)
@@ -85,18 +88,6 @@ def get_account_infos():
         except Exception as e:
             print(f"Error processing {url}: {e}")
 
-    # Save the account information to a JSON file
-    for account_info in account_info_list:
-        # Open the file in append mode and truncate
-        with open('account_info.json', 'a+') as json_file:
-            # Move the cursor to the beginning of the file (truncate)
-            json_file.seek(0)
-            # Load existing data or initialize as empty list
-            existing_data = json.load(json_file) if json_file.read(1) else []
-            # Move the cursor back to the beginning for writing
-            json_file.seek(0)
-            # Write updated data (previous + new)
-            json.dump(existing_data + [account_info], json_file, indent=2)
 
 def main():
     # Who Am I
