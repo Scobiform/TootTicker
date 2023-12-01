@@ -8,6 +8,9 @@ from threading import Thread
 # TootTicker - boost your media and journalists
 # Gathering account informations from Mastodon and make them available as pure json files
 
+# Add global variable for toot ids
+toot_ids = []
+
 # Create Mastodon app and get user credentials
 def create_secrets():
     # Replace the following placeholders with your actual values
@@ -81,6 +84,14 @@ def getAccountInfos(mastodon):
                 for key, value in account_info.items():
                     if key not in ["Account Name", "Avatar", "Header", "Toots"]:
                         print(f"{key}: {value}")
+                
+                # Check if the toot is already boosted
+                if toots[0]['id'] not in toot_ids:
+                    # Boost the toot
+                    mastodon.status_reblog(toots[0]['id'])
+                    print(f"Boosted toot: {toots[0]['id']}")
+                    # Add the toot id to the list
+                    toot_ids.append(toots[0]['id'])
 
                 # Save the JSON file to the folder
                 with open(os.path.join(accounts_directory, str(user_id) + '.json'), 'w') as file:
@@ -161,6 +172,8 @@ def generateHTMLOverview():
             # Write the toots
             for toot in account_info['Toots']:
                 html_file.write('<iframe src="'+str(toot["url"])+'//embed"class="mastodon-embed" style="max-width: 100%; border: 0"></iframe><script src="https://mastodon.social/embed.js" async="async"></script>')
+
+            mastodon.status_reblog(toot['id'])
 
             # Close the div
             html_file.write('</div>\n')
