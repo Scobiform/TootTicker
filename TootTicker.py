@@ -45,7 +45,8 @@ mastodon = Mastodon(access_token='usercred.secret')
 
 import os
 
-def get_account_infos(mastodon):
+def getAccountInfos(mastodon):
+    print("Starting account gathering...")
     for url in mastodon_urls:
         try:
             # Resolve the profile URL to get the account details
@@ -88,7 +89,7 @@ def get_account_infos(mastodon):
         except Exception as e:
             print(f"Error processing {url}: {e}")
 
-def generate_html_overview():
+def generateHTMLOverview():
     # Define the output HTML file
     output_file = 'public/account_overview.html'
 
@@ -143,7 +144,7 @@ def getAccountIds():
         account_ids.append(json_file.replace('.json', ''))
     return account_ids
 
-def stream_toots(mastodon):
+def streamAccounts(mastodon):
     print("Starting stream...")
     # Load the list of account IDs
     account_ids = getAccountIds()
@@ -152,27 +153,16 @@ def stream_toots(mastodon):
     #for account_id in account_ids:
     #    print(f"{account_id}")
 
-# Callback function for handling incoming toots
-def handle_toot(mastodon, toot, account_ids):
-    try:
-        if toot['account']['id'] in account_ids:
-            # Retoot the toot if the account ID matches
-            print(f"Retooting {toot['id']} from {toot['account']['username']}")
-            mastodon.status_reblog(toot['id'])
-
-    except Exception as e:
-        print(f"Error processing toot: {e}")
-
 def worker(mastodon):
     try:
         # Create the UI thread
-        generateUI = Thread(target=generate_html_overview)
+        generateUI = Thread(target=generateHTMLOverview)
 
         # Create account gathering thread
-        accountInfos = Thread(target=get_account_infos, args=(mastodon,))
+        accountInfos = Thread(target=getAccountInfos, args=(mastodon,))
 
         # Create the stream thread
-        streamToots = Thread(target=stream_toots, args=(mastodon,))
+        streamToots = Thread(target=streamAccounts, args=(mastodon,))
 
         # Create a list of threads
         threads = []
@@ -205,7 +195,10 @@ def main():
     mastodon = Mastodon(access_token = 'usercred.secret')
 
     # Who Am I
+    print("\nWho Am I?")
     print(mastodon.me().username)
+    print(mastodon.me().id)
+    print(mastodon.me().url+'\n')
 
     # Start Worker
     worker(mastodon)
