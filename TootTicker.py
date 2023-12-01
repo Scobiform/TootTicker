@@ -90,7 +90,7 @@ def get_account_infos(mastodon):
 
 def generate_html_overview():
     # Define the output HTML file
-    output_file = 'account_overview.html'
+    output_file = 'public/account_overview.html'
 
     # Get the list of JSON files in the 'accounts/' folder
     json_files = [f for f in os.listdir('accounts/') if f.endswith('.json')]
@@ -100,26 +100,38 @@ def generate_html_overview():
         # Write the HTML header
         html_file.write('<html>\n<head>\n<title>Account Overview</title>\n</head>\n<body>\n')
 
-        # Write the table header
-        html_file.write('<table border="1">\n<tr>\n<th>File Name</th>\n<th>Contents</th>\n</tr>\n')
-
         # Iterate through each JSON file
         for json_file in json_files:
             # Read the contents of the JSON file
             with open(f'accounts/{json_file}', 'r') as file:
                 try:
                     # Attempt to load JSON content
-                    json_content = json.load(file)
+                    account_info = json.load(file)
                 except json.decoder.JSONDecodeError as e:
                     # Handle JSON decoding error (e.g., empty file or invalid JSON)
                     print(f"Error decoding {json_file}: {e}")
                     continue
 
-            # Write a table row with the file name and contents
-            html_file.write(f'<tr>\n<td>{json_file}</td>\n<td><pre>{json.dumps(json_content, indent=2)}</pre></td>\n</tr>\n')
+            # Write a div for each JSON file
+            html_file.write('<div style="border: 1px solid #ddd; padding: 10px; margin: 10px;">\n')
+            
+            # Write the account name as a header
+            html_file.write(f'<h2>{account_info["Account Name"]}</h2>\n')
+
+            # Display the avatar and header using img tags
+            html_file.write(f'<img src="{account_info["Avatar"]}" alt="Avatar" style="max-width: 100px; max-height: 100px;">\n')
+            html_file.write(f'<img src="{account_info["Header"]}" alt="Header" style="max-width: 300px; max-height: 150px;">\n')
+
+            # Write the rest of the account information
+            for key, value in account_info.items():
+                if key not in ["Account Name", "Avatar", "Header"]:
+                    html_file.write(f'<p><strong>{key}:</strong> {value}</p>\n')
+
+            # Close the div
+            html_file.write('</div>\n')
 
         # Write the HTML footer
-        html_file.write('</table>\n</body>\n</html>')
+        html_file.write('</body>\n</html>')
 
     print(f'HTML overview generated in {output_file}')
 

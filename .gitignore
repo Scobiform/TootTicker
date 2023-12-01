@@ -1,3 +1,5 @@
 *.secret
 account_info.json
 accounts/*
+public/*
+account_overview.html
