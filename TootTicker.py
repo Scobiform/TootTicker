@@ -2,7 +2,6 @@ from mastodon import Mastodon
 import json
 import time
 
-
 # TootTicker - boost your media and journalists
 # This script will fetch the account information from the provided Mastodon URLs
 # and save the information to a JSON file
@@ -64,8 +63,8 @@ def get_account_infos():
                     "Followers": account[0]['followers_count'],
                     "Following": account[0]['following_count'],
                     "Toots": account[0]['statuses_count'],
-                    "Created": account[0]['created_at'],
-                    "Last Active": account[0]['last_status_at'],
+                    "Created": account[0]['created_at'].strftime("%Y-%m-%d %H:%M:%S"),
+                    "Last Active": account[0]['last_status_at'].strftime("%Y-%m-%d %H:%M:%S"),
                     "Bot": account[0]['bot']
                 }
 
