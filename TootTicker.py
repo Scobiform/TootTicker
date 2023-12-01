@@ -137,6 +137,9 @@ def generateHTMLOverview():
         html_file.write(f'<link rel="stylesheet" href="account_overview.css">\n')
         html_file.write('<title>TootTicker - boost your media and journalists</title>\n</head>\n<body>\n')
 
+        # Write a grid wrapper
+        html_file.write('<div class="grid">\n')
+
         # Iterate through each account in the sorted list
         for account_info in accounts:
             # Write a div for each account
@@ -156,6 +159,9 @@ def generateHTMLOverview():
             # Close the div
             html_file.write('</div>\n')
 
+        # Close the grid wrapper
+        html_file.write('</div>\n')
+
         # Write the HTML footer
         html_file.write('</body>\n</html>')
 
@@ -172,6 +178,7 @@ def generateCSSFile():
         css_file.write('h2 { color: #1d2129; }\n')
         css_file.write('p { color: #657786; }\n')
         css_file.write('.accountInfo { border: 1px solid #e1e8ed; padding: 10px; margin-bottom: 10px; }\n')
+        css_file.write('.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); grid-gap: 10px; }\n')
 
     print(f'CSS file generated in {output_file}')   
 
