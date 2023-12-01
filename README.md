@@ -21,3 +21,6 @@ TootTicker is a Python script that fetches account information from provided Mas
 ## Contributing
 
 Contributions are welcome! Please follow the contribution guidelines.
+
+## License
+TootTicker is licensed under the GNU General Public License v3.0.
