@@ -132,7 +132,6 @@ def generateHTMLOverview():
 
             # Display the avatar and header using img tags
             html_file.write(f'<img src="{account_info["Avatar"]}" alt="Avatar" style="max-width: 100px; max-height: 100px;">\n')
-            html_file.write(f'<img src="{account_info["Header"]}" alt="Header" style="max-width: 300px; max-height: 150px;">\n')
 
             # Write the rest of the account information
             for key, value in account_info.items():
