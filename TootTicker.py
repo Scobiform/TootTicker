@@ -160,7 +160,7 @@ def generateHTMLOverview():
 
             # Write the toots
             for toot in account_info['Toots']:
-                html_file.write('<iframe src="'+str(toot["url"])+'//embed"class="mastodon-embed" style="max-width: 100%; border: 0" width="300px" height="150px" allowfullscreen="allowfullscreen"></iframe><script src="https://mastodon.social/embed.js" async="async"></script>')
+                html_file.write('<iframe src="'+str(toot["url"])+'//embed"class="mastodon-embed" style="max-width: 100%; border: 0"></iframe><script src="https://mastodon.social/embed.js" async="async"></script>')
 
             # Close the div
             html_file.write('</div>\n')
@@ -228,32 +228,38 @@ def streamAccounts(mastodon):
 
 def worker(mastodon):
     try:
-        # Create the UI thread
-        generateUI = Thread(target=generateHTMLOverview)
+        while True:
+            # Create the UI thread
+            generateUI = Thread(target=generateHTMLOverview)
 
-        # Create account gathering thread
-        accountInfos = Thread(target=getAccountInfos, args=(mastodon,))
+            # Create account gathering thread
+            accountInfos = Thread(target=getAccountInfos, args=(mastodon,))
 
-        # Create the stream thread
-        streamToots = Thread(target=streamAccounts, args=(mastodon,))
+            # Create the stream thread
+            streamToots = Thread(target=streamAccounts, args=(mastodon,))
 
-        # Create a list of threads
-        threads = []
+            # Create a list of threads
+            threads = []
 
-        # Start the UI thread
-        threads.append(generateUI)
-        # Start the account gathering thread
-        threads.append(accountInfos)
-        # Start the stream thread
-        threads.append(streamToots)
+            # Start the UI thread
+            threads.append(generateUI)
+            # Start the account gathering thread
+            threads.append(accountInfos)
+            # Start the stream thread
+            threads.append(streamToots)
 
-        # Start all threads
-        for j in threads:
-            j.start()
+            # Start all threads
+            for j in threads:
+                j.start()
 
-        # Wait for all threads to complete
-        for j in threads:
-            j.join()
+            # Wait for all threads to complete
+            for j in threads:
+                j.join()
+
+            # Sleep for a period before restarting the process
+            print("Sleeping for 60 seconds...")
+            time.sleep(60)  # Sleep for 10 minutes (adjust as needed)
+            print("Restarting...")
 
     except Exception as errorcode:
         print("ERROR: " + str(errorcode))
