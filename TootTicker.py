@@ -160,7 +160,7 @@ def generateHTMLOverview():
 
             # Write the toots
             for toot in account_info['Toots']:
-                html_file.write('<iframe src="'+str(toot["url"])+'//embed"class="mastodon-embed" style="max-width: 100%; border: 0" width="400" allowfullscreen="allowfullscreen"></iframe><script src="https://mastodon.social/embed.js" async="async"></script>')
+                html_file.write('<iframe src="'+str(toot["url"])+'//embed"class="mastodon-embed" style="max-width: 100%; border: 0" width="300px" height="150px" allowfullscreen="allowfullscreen"></iframe><script src="https://mastodon.social/embed.js" async="async"></script>')
 
             # Close the div
             html_file.write('</div>\n')
@@ -180,13 +180,33 @@ def generateCSSFile():
     # Open the CSS file for writing
     with open(output_file, 'w') as css_file:
         # Write the CSS header
-        css_file.write('body { font-family: sans-serif; }\n')
-        css_file.write('h2 { color: #1d2129; }\n')
-        css_file.write('p { color: #657786; }\n')
-        css_file.write('.accountInfo { border: 1px solid #e1e8ed; padding: 10px; margin-bottom: 10px; }\n')
+        css_file.write('body { font-family: sans-serif; background-color: #191b22; }\n')
+        css_file.write('h2 { color: #d9e1e8; }\n')
+        css_file.write('p { color: #d9e1e8; }\n')
+        css_file.write('.accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }\n')
         css_file.write('.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); grid-gap: 10px; }\n')
 
-    print(f'CSS file generated in {output_file}')   
+        # Add styles for the dark violet scrollbar
+        css_file.write('/* Dark Violet Scrollbar Styles */\n')
+        css_file.write('::-webkit-scrollbar {\n')
+        css_file.write('  width: 12px;\n')
+        css_file.write('}\n')
+        css_file.write('::-webkit-scrollbar-thumb {\n')
+        css_file.write('  background-color: #4B0082; /* Dark violet color */\n')
+        css_file.write('  border-radius: 6px;\n')
+        css_file.write('}\n')
+        css_file.write('::-webkit-scrollbar-track {\n')
+        css_file.write('  background-color: #1E1E1E; /* Dark background color */\n')
+        css_file.write('}\n')
+        css_file.write('::-webkit-scrollbar-corner {\n')
+        css_file.write('  background-color: #1E1E1E; /* Dark background color */\n')
+        css_file.write('}\n')
+        css_file.write('::-webkit-scrollbar-thumb:hover {\n')
+        css_file.write('  background-color: #6A5ACD; /* A lighter violet color on hover */\n')
+        css_file.write('}\n')
+
+    print(f'CSS file generated in {output_file}')
+ 
 
 
 # Load the list of account IDs from the 'accounts/' folder
