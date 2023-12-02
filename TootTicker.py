@@ -49,7 +49,7 @@ with open('mastodon_urls.json', 'r') as file:
 mastodon = Mastodon(access_token='usercred.secret')
 
 # Function to get account information from Mastodon and save to JSON file
-def saveAccountInfosToJSON(mastodon, category, urls):
+def saveAccountInfoToJSON(mastodon, category, urls):
     print(f"Starting account gathering for {category}...")
 
     # Create the 'accounts/' directory if it doesn't exist
@@ -101,6 +101,7 @@ def saveAccountInfosToJSON(mastodon, category, urls):
             print(f"Error processing {url}: {e}")
 
 # Generate HTML overview
+# Function to generate HTML overview
 def generateHTMLOverview():
     # Function to generate HTML overview
 
@@ -119,71 +120,72 @@ def generateHTMLOverview():
     # Define the output HTML file
     output_file = 'public/account_overview.html'
 
-    # Get the list of JSON files in the 'accounts/' folder
-    json_files = [f for f in os.listdir('accounts/') if f.endswith('.json')]
+    # Categories to iterate through
+    categories = ['Media', 'Creators', 'Government', 'NGO']
 
-    # List to store account information
-    accounts = []
+    # Iterate through each category
+    for category in categories:
+        # Get the list of JSON files in the 'accounts/' folder for the current category
+        json_files = [f for f in os.listdir(f'accounts/{category}/') if f.endswith('.json')]
 
-    # Iterate through each JSON file
-    for json_file in json_files:
-        # Read the contents of the JSON file
-        with open(f'accounts/{json_file}', 'r') as file:
-            try:
-                # Attempt to load JSON content
-                account_info = json.load(file)
-                # Append the account information to the list
-                accounts.append(account_info)
-            except json.decoder.JSONDecodeError as e:
-                # Handle JSON decoding error (e.g., empty file or invalid JSON)
-                print(f"Error decoding {json_file}: {e}")
-                continue
+        # List to store account information
+        accounts = []
 
-    # Sort the list of accounts based on followers (you can replace this with other keys)
-    accounts = sort_accounts(accounts, 'Followers')
+        # Iterate through each JSON file
+        for json_file in json_files:
+            # Read the contents of the JSON file
+            with open(f'accounts/{category}/{json_file}', 'r') as file:
+                try:
+                    # Attempt to load JSON content
+                    account_info = json.load(file)
+                    # Append the account information to the list
+                    accounts.append(account_info)
+                except json.decoder.JSONDecodeError as e:
+                    # Handle JSON decoding error (e.g., empty file or invalid JSON)
+                    print(f"Error decoding {json_file}: {e}")
+                    continue
 
-    # Open the HTML file for writing
-    with open(output_file, 'w') as html_file:
-        # Write the HTML header
-        # Add the CSS file
-        html_file.write('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n')
-        html_file.write('<meta name="viewport" content="width=device-width, initial-scale=1">\n')
-        html_file.write(f'<link rel="stylesheet" href="account_overview.css">\n')
-        html_file.write('<title>TootTicker - boost your media and journalists</title>\n</head>\n<body>\n')
+        # Sort the list of accounts based on followers (you can replace this with other keys)
+        accounts = sort_accounts(accounts, 'Followers')
 
-        # Write a grid wrapper
-        html_file.write('<div class="grid">\n')
+        # Open the HTML file for writing
+        with open(output_file, 'a') as html_file:  # Use 'a' to append for each category
+            # Write the HTML header for each category
+            html_file.write(f'<h1>{category} Accounts</h1>\n')
+            html_file.write('<div class="grid">\n')
 
-        # Iterate through each account in the sorted list
-        for account_info in accounts:
-            # Write a div for each account
-            html_file.write('<div class="accountInfo">\n')
+            # Iterate through each account in the sorted list
+            for account_info in accounts:
+                # Write a div for each account
+                html_file.write('<div class="accountInfo">\n')
 
-            # Write the account name as a header
-            html_file.write(f'<h2>{account_info["Account Name"]}</h2>\n')
+                # Write the account name as a header
+                html_file.write(f'<h2>{account_info["Account Name"]}</h2>\n')
 
-            # Display the avatar and header using img tags
-            html_file.write(f'<img src="{account_info["Avatar"]}" alt="Avatar" style="max-width: 100px; max-height: 100px;">\n')
+                # Display the avatar and header using img tags
+                html_file.write(f'<img src="{account_info["Avatar"]}" alt="Avatar" style="max-width: 100px; max-height: 100px;">\n')
 
-            # Write the rest of the account information
-            for key, value in account_info.items():
-                if key not in ["Account Name", "Avatar", "Header", "Toots"]:
-                    html_file.write(f'<p><strong>{key}:</strong> {value}</p>\n')
+                # Write the rest of the account information
+                for key, value in account_info.items():
+                    if key not in ["Account Name", "Avatar", "Header", "Toots"]:
+                        html_file.write(f'<p><strong>{key}:</strong> {value}</p>\n')
 
-            # Write the toots
-            for toot in account_info['Toots']:
-                html_file.write('<iframe src="'+str(toot["url"])+'//embed"class="mastodon-embed" style="max-width: 100%; border: 0"></iframe><script src="https://mastodon.social/embed.js" async="async"></script>')
+                # Write the toots
+                for toot in account_info['Toots']:
+                    html_file.write('<iframe src="'+str(toot["url"])+'//embed"class="mastodon-embed" style="max-width: 100%; border: 0"></iframe><script src="https://mastodon.social/embed.js" async="async"></script>')
 
-            # Close the div
+                # Close the div
+                html_file.write('</div>\n')
+
+            # Close the grid wrapper
             html_file.write('</div>\n')
 
-        # Close the grid wrapper
-        html_file.write('</div>\n')
-
-        # Write the HTML footer
+    # Write the HTML footer
+    with open(output_file, 'a') as html_file:  # Use 'a' to append for each category
         html_file.write('</body>\n</html>')
 
     print(f'HTML overview generated in {output_file}')
+
 
 # Generate CSS file
 def generateCSSFile():
@@ -230,8 +232,12 @@ def worker(mastodon):
             # Iterate through each category and start a thread for each
             for category, urls in data.items():
                 # Create account gathering thread for each category
-                accountInfos = Thread(target=saveAccountInfosToJSON, args=(mastodon, category, urls))
+                accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
                 threads.append(accountInfos)
+            
+            # Create HTML overview thread
+            htmlOverview = Thread(target=generateHTMLOverview)
+            threads.append(htmlOverview)
 
             # Start all threads
             for thread in threads:
