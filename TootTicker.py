@@ -30,9 +30,6 @@ def saveTootIds():
     with open(toot_ids_file, 'w') as file:
         json.dump(toot_ids, file)
 
-# Load existing toot_ids
-loadExistingTootIds()
-
 # Create Mastodon app and get user credentials
 def create_secrets():
     # Replace the following placeholders with your actual values
@@ -68,10 +65,11 @@ with open('mastodon_urls.json', 'r') as file:
 # Create Mastodon API instance
 mastodon = Mastodon(access_token='usercred.secret')
 
+# Function to get account information from Mastodon and save to JSON file
 def getAccountInfos(mastodon):
     print("Starting account gathering...")
-
     # Load existing toot_ids
+    print("Loading existing toot_ids...")
     global toot_ids
     loadExistingTootIds()
 
@@ -111,41 +109,18 @@ def getAccountInfos(mastodon):
                 "Toots": toots
             }
 
-            #Print last toot in reply
-            print(toots[0]['mentions'])
-
             # Save the JSON file to the folder
             with open(os.path.join(accounts_directory, f"{user_id}.json"), 'w') as file:
                 json.dump(account_info, file, indent=4, default=str)
             print(f"Saved account info for {account[0]['username']}")
 
-            # Check if the toot is already boosted
-            if toots[0]['id'] in toot_ids:
-                print(f"Toot already in list: {toots[0]['id']}")
-                continue
-
-            # Add the toot id to the list
-            toot_ids.append(toots[0]['id'])
-            # Save updated toot_ids to the JSON file
-            saveTootIds()
-
-            # Check if the toot mentions another account
-            if toots[0]['mentions'] and toots[0]['mentions'][0] is not None:
-                print(f"Toot mentions another account: {toots[0]['mentions'][0]['acct']}")
-                continue
-
-            # Boost the toot
-            print(f"Boosting toot: {toots[0]['id']}")
-            mastodon.status_reblog(toots[0]['id'])
-
-            # Print account information from the Mastodon user
-            for key, value in account_info.items():
-                if key not in ["Account Name", "Avatar", "Header", "Toots"]:
-                    print(f"{key}: {value}")
+            # Sleep for 5 seconds to avoid rate limiting
+            time.sleep(7)  
 
         except Exception as e:
             print(f"Error processing {url}: {e}")
 
+# Generate HTML overview
 def generateHTMLOverview():
     # Function to generate HTML overview
 
@@ -232,6 +207,7 @@ def generateHTMLOverview():
 
     print(f'HTML overview generated in {output_file}')
 
+# Generate CSS file
 def generateCSSFile():
     # Define the output CSS file
     output_file = 'public/account_overview.css'
@@ -266,8 +242,6 @@ def generateCSSFile():
 
     print(f'CSS file generated in {output_file}')
  
-
-
 # Load the list of account IDs from the 'accounts/' folder
 def getAccountIds():
     account_ids = []
@@ -276,6 +250,7 @@ def getAccountIds():
         account_ids.append(json_file.replace('.json', ''))
     return account_ids
 
+# Function to start the worker
 def worker(mastodon):
     try:
         while True:
@@ -309,6 +284,7 @@ def worker(mastodon):
     except Exception as errorcode:
         print("ERROR: " + str(errorcode))
 
+# Main function
 def main():
 
     # Enable tracemalloc
