@@ -277,15 +277,6 @@ def getAccountIds():
         account_ids.append(json_file.replace('.json', ''))
     return account_ids
 
-def streamAccounts(mastodon):
-    print("Starting stream...")
-    # Load the list of account IDs
-    account_ids = getAccountIds()
-
-    # Print the list of account IDs
-    #for account_id in account_ids:
-    #    print(f"{account_id}")
-
 def worker(mastodon):
     try:
         while True:
@@ -295,9 +286,6 @@ def worker(mastodon):
             # Create account gathering thread
             accountInfos = Thread(target=getAccountInfos, args=(mastodon,))
 
-            # Create the stream thread
-            streamToots = Thread(target=streamAccounts, args=(mastodon,))
-
             # Create a list of threads
             threads = []
 
@@ -305,8 +293,6 @@ def worker(mastodon):
             threads.append(generateUI)
             # Start the account gathering thread
             threads.append(accountInfos)
-            # Start the stream thread
-            threads.append(streamToots)
 
             # Start all threads
             for j in threads:
