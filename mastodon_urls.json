@@ -1,5 +1,5 @@
 {
-  "germanMedia": [
+  "Media": [
     "@Volksverpetzer@digitalcourage.social",
     "@heiseonline@social.heise.de",
     "@tazgetroete@mastodon.social",
@@ -113,33 +113,23 @@
     "@Sicherheitspod@mastodontech.de",
     "@derStandard@derstandard.at",
     "@lalonsander@chaos.social",
-    "@bundesedit@botsin.space"
-  ],
-  "germanCreators": [
+    "@bundesedit@botsin.space",
+    "@Bellingcat@mstdn.social",
+    "@BleepingComputer@infosec.exchange"
+    ],
+  "Creators": [
     "@rikefranke@bagarrosphere.fr",
     "@looreen@mastodon.social",
     "@m5finger@mastodon.world",
     "@afelia@chaos.social",
-    "@janboehm@edi.social"
-  ],
-  "germanGovernment": [
-    "@bsi@social.bund.de"
-  ],
-  "germanNGO": [
-    "@DJV@federated.press"
-  ],
-  "englishMedia": [
-    "@Bellingcat@mstdn.social",
-    "@BleepingComputer@infosec.exchange"
-  ],
-  "englishCreators": [
+    "@janboehm@edi.social",
     "@kevinrothrock@infosec.exchange",
     "@w7voa@journa.host"
   ],
-  "englishGovernment": [
-    ""
+  "Government": [
+    "@bsi@social.bund.de"
   ],
-  "englishNGO": [
-    ""
+  "NGO": [
+    "@DJV@federated.press"
   ]
 }

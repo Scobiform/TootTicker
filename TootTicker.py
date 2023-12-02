@@ -32,33 +32,31 @@ def create_secrets():
         to_file='usercred.secret'
     )
 
-# Load Mastodon URLs from the provided JSON
-with open('mastodon_urls.json', 'r') as file:
-    data = json.load(file)
-    germanMedia = data['germanMedia']
-    germanCreators = data['germanCreators']
-    germanGovernment = data['germanGovernment']
-    germanNGO = data['germanNGO']
-    englishMedia = data['englishMedia']
-    englishJournalists = data['englishCreators']
-
 # Call the create_secrets function to generate credentials
 # --- Uncomment the following line to generate credentials ---
 #create_secrets()
+
+# Load Mastodon URLs from the provided JSON
+with open('mastodon_urls.json', 'r') as file:
+    data = json.load(file)
+    media = data['Media']
+    creators = data['Creators']
+    government = data['Government']
+    NGO = data['NGO']
 
 # Create Mastodon API instance
 mastodon = Mastodon(access_token='usercred.secret')
 
 # Function to get account information from Mastodon and save to JSON file
-def saveAccountInfosToJSON(mastodon):
-    print("Starting account gathering...")
+def saveAccountInfosToJSON(mastodon, category, urls):
+    print(f"Starting account gathering for {category}...")
 
     # Create the 'accounts/' directory if it doesn't exist
-    accounts_directory = 'accounts/'
+    accounts_directory = f'accounts/{category}/'
     os.makedirs(accounts_directory, exist_ok=True)
     print(f"Saving account infos to {accounts_directory}")
 
-    for url in germanMedia:
+    for url in urls:
         try:
             # Resolve the profile URL to get the account details
             account = mastodon.account_search(url)
@@ -94,7 +92,7 @@ def saveAccountInfosToJSON(mastodon):
             print(f"Saved account info for {account[0]['username']}")
 
             # Sleep for 2.1 seconds to avoid rate limiting
-            time.sleep(2.1)  
+            time.sleep(2.1)
 
         except Exception as e:
             print(f"Error processing {url}: {e}")
@@ -173,8 +171,6 @@ def generateHTMLOverview():
             for toot in account_info['Toots']:
                 html_file.write('<iframe src="'+str(toot["url"])+'//embed"class="mastodon-embed" style="max-width: 100%; border: 0"></iframe><script src="https://mastodon.social/embed.js" async="async"></script>')
 
-            mastodon.status_reblog(toot['id'])
-
             # Close the div
             html_file.write('</div>\n')
 
@@ -225,27 +221,22 @@ def generateCSSFile():
 def worker(mastodon):
     try:
         while True:
-            # Create the UI thread
-            generateUI = Thread(target=generateHTMLOverview)
-
-            # Create account gathering thread
-            accountInfos = Thread(target=saveAccountInfosToJSON, args=(mastodon,))
-
             # Create a list of threads
             threads = []
 
-            # Start the UI thread
-            threads.append(generateUI)
-            # Start the account gathering thread
-            threads.append(accountInfos)
+            # Iterate through each category and start a thread for each
+            for category, urls in data.items():
+                # Create account gathering thread for each category
+                accountInfos = Thread(target=saveAccountInfosToJSON, args=(mastodon, category, urls))
+                threads.append(accountInfos)
 
             # Start all threads
-            for j in threads:
-                j.start()
+            for thread in threads:
+                thread.start()
 
             # Wait for all threads to complete
-            for j in threads:
-                j.join()
+            for thread in threads:
+                thread.join()
 
             # Sleep for a period before restarting the process
             print("Sleeping for 60 seconds...")
@@ -264,6 +255,9 @@ def main():
     # Authenticate the app
     global mastodon
     mastodon = Mastodon(access_token = 'usercred.secret')
+
+    # Define the global data variable
+    global data
 
     # Who Am I
     print("\nWho Am I?")
