@@ -111,6 +111,9 @@ def getAccountInfos(mastodon):
                 "Toots": toots
             }
 
+            #Print last toot in reply
+            print(toots[0]['mentions'])
+
             # Save the JSON file to the folder
             with open(os.path.join(accounts_directory, f"{user_id}.json"), 'w') as file:
                 json.dump(account_info, file, indent=4, default=str)
@@ -126,13 +129,9 @@ def getAccountInfos(mastodon):
             # Save updated toot_ids to the JSON file
             saveTootIds()
 
-            # if reply, skip
-            if toots[0]['in_reply_to_id'] is not None:
-                print(f"Skipping reply: {toots[0]['id']}")
-                continue
-
-            if toots[0]['mentions']:
-                print(f"Skipping mention: {toots[0]['id']}")
+            # Check if the toot mentions another account
+            if toots[0]['mentions'] and toots[0]['mentions'][0] is not None:
+                print(f"Toot mentions another account: {toots[0]['mentions'][0]['acct']}")
                 continue
 
             # Boost the toot
