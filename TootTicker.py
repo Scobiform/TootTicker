@@ -69,12 +69,13 @@ with open('mastodon_urls.json', 'r') as file:
 # Create Mastodon API instance
 mastodon = Mastodon(access_token='usercred.secret')
 
+# Function to get account information from Mastodon
 def getAccountInfos(mastodon):
     print("Starting account gathering...")
-
     # Create the 'accounts/' directory if it doesn't exist
     accounts_directory = 'accounts/'
     os.makedirs(accounts_directory, exist_ok=True)
+    print(f"Saving account infos to {accounts_directory}")
 
     for url in mastodon_urls:
         try:
@@ -107,6 +108,11 @@ def getAccountInfos(mastodon):
                 "Toots": toots
             }
 
+            # Save the JSON file to the folder
+            with open(os.path.join(accounts_directory, str(user_id) + '.json'), 'w') as file:
+                json.dump(account_info, file, indent=4, default=str)
+            print(f"Saved account info for {account[0]['username']}")
+
             # Check if the toot is already boosted
             if toots[0]['id'] in toot_ids:
                 print(f"Toot already in list: {toots[0]['id']}")
@@ -120,6 +126,11 @@ def getAccountInfos(mastodon):
             # Print the in_reply_to_account_id and in_reply_to_id
             print(toots[0]['in_reply_to_account_id'])
             print(toots[0]['in_reply_to_id'])
+
+            # If it's a reply, skip
+            if toots[0]['in_reply_to_id'] > 0:
+                print(f"Skip toot: {toots[0]['id']}")
+                continue
 
             # If it's a reply, skip
             if toots[0]['in_reply_to_account_id'] is not None and toots[0]['in_reply_to_id'] is not None:
@@ -140,9 +151,8 @@ def getAccountInfos(mastodon):
                 if key not in ["Account Name", "Avatar", "Header", "Toots"]:
                     print(f"{key}: {value}")
 
-            # Save the JSON file to the folder
-            with open(os.path.join(accounts_directory, str(user_id) + '.json'), 'w') as file:
-                json.dump(account_info, file, indent=4, default=str)
+            # Reset toots
+            toots = None
 
         except Exception as e:
             print(f"Error processing {url}: {e}")
