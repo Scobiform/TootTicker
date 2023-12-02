@@ -149,7 +149,16 @@ def generateHTMLOverview():
         accounts = sort_accounts(accounts, 'Followers')
 
         # Open the HTML file for writing
-        with open(output_file, 'a') as html_file:  # Use 'a' to append for each category
+        with open(output_file, 'a') as html_file:
+            # Write the HTML header
+            html_file.write('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n')
+            html_file.write('<meta name="viewport" content="width=device-width, initial-scale=1">\n')
+            html_file.write(f'<link rel="stylesheet" href="account_overview.css">\n')
+            html_file.write('<title>TootTicker - boost your media and journalists</title>\n</head>\n<body>\n')
+
+            # Write a grid wrapper
+            html_file.write('<div class="grid">\n')
+
             # Write the HTML header for each category
             html_file.write(f'<h1>{category} Accounts</h1>\n')
             html_file.write('<div class="grid">\n')
@@ -172,7 +181,7 @@ def generateHTMLOverview():
 
                 # Write the toots
                 for toot in account_info['Toots']:
-                    html_file.write('<iframe src="'+str(toot["url"])+'//embed"class="mastodon-embed" style="max-width: 100%; border: 0"></iframe><script src="https://mastodon.social/embed.js" async="async"></script>')
+                    html_file.write('<a href"'+str(toot["url"])+'" target="_blank"></a>')
 
                 # Close the div
                 html_file.write('</div>\n')
@@ -185,7 +194,6 @@ def generateHTMLOverview():
         html_file.write('</body>\n</html>')
 
     print(f'HTML overview generated in {output_file}')
-
 
 # Generate CSS file
 def generateCSSFile():
