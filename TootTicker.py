@@ -8,6 +8,7 @@ from threading import Thread
 # TootTicker - boost your media and journalists
 # Gathering account informations from Mastodon and make them available as pure json files
 # GPLv3 - 2023 - by scobiform.com
+# github.com/Scobiform/TootTicker
 
 # Create Mastodon app and get user credentials
 def create_secrets():
@@ -56,6 +57,7 @@ def saveAccountInfosToJSON(mastodon, category, urls):
     os.makedirs(accounts_directory, exist_ok=True)
     print(f"Saving account infos to {accounts_directory}")
 
+    # Iterate through each URL in the list
     for url in urls:
         try:
             # Resolve the profile URL to get the account details
@@ -69,7 +71,7 @@ def saveAccountInfosToJSON(mastodon, category, urls):
             user_id = account[0]['id']
 
             # Get recent toots from the user's timeline
-            toots = mastodon.account_statuses(user_id, limit=1)
+            toots = mastodon.account_statuses(user_id, limit=7)
 
             # Create a dictionary with account information
             account_info = {
@@ -84,6 +86,7 @@ def saveAccountInfosToJSON(mastodon, category, urls):
                 "Bot": account[0]['bot'],
                 "Avatar": account[0]['avatar'],
                 "Header": account[0]['header'],
+                "Toots": toots
             }
 
             # Save the JSON file to the folder
