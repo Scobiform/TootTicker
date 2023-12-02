@@ -1,5 +1,5 @@
 {
-  "urls": [
+  "germanMedia": [
     "@Volksverpetzer@digitalcourage.social",
     "@heiseonline@social.heise.de",
     "@tazgetroete@mastodon.social",
@@ -106,23 +106,40 @@
     "@georgrestle@mastodon.social",
     "@Welchering@chaos.social",
     "@zerforschung@chaos.social",
-    "@janboehm@edi.social",
     "@correctiv_org@correctiv.social",
     "@br_data@ard.social",
     "@br_ailab@ard.social",
-    "@DJV@federated.press",
-    "@bsi@social.bund.de",
+    "@robsh@mastodon.social",
+    "@Sicherheitspod@mastodontech.de",
+    "@derStandard@derstandard.at",
+    "@lalonsander@chaos.social",
+    "@bundesedit@botsin.space"
+  ],
+  "germanCreators": [
+    "@rikefranke@bagarrosphere.fr",
     "@looreen@mastodon.social",
     "@m5finger@mastodon.world",
-    "@robsh@mastodon.social",
+    "@afelia@chaos.social",
+    "@janboehm@edi.social"
+  ],
+  "germanGovernment": [
+    "@bsi@social.bund.de"
+  ],
+  "germanNGO": [
+    "@DJV@federated.press"
+  ],
+  "englishMedia": [
     "@Bellingcat@mstdn.social",
-    "@BleepingComputer@infosec.exchange",
-    "@Sicherheitspod@mastodontech.de",
+    "@BleepingComputer@infosec.exchange"
+  ],
+  "englishCreators": [
     "@kevinrothrock@infosec.exchange",
-    "@derStandard@derstandard.at",
-    "@w7voa@journa.host",
-    "@lalonsander@chaos.social",
-    "@rikefranke@bagarrosphere.fr",
-    "@bundesedit@botsin.space"
+    "@w7voa@journa.host"
+  ],
+  "englishGovernment": [
+    ""
+  ],
+  "englishNGO": [
+    ""
   ]
 }

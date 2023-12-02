@@ -7,28 +7,7 @@ from threading import Thread
 
 # TootTicker - boost your media and journalists
 # Gathering account informations from Mastodon and make them available as pure json files
-
-# Global variable for toot ids
-toot_ids = []
-
-# Function to load existing toot_ids from a JSON file
-def loadExistingTootIds():
-    global toot_ids
-    toot_ids_file = 'toot_ids.json'
-    if os.path.exists(toot_ids_file):
-        with open(toot_ids_file, 'r') as file:
-            try:
-                toot_ids = json.load(file)
-            except json.decoder.JSONDecodeError as e:
-                print(f"Error decoding existing toot_ids: {e}")
-                toot_ids = []
-
-# Function to save toot_ids to a JSON file
-def saveTootIds():
-    global toot_ids
-    toot_ids_file = 'toot_ids.json'
-    with open(toot_ids_file, 'w') as file:
-        json.dump(toot_ids, file)
+# GPLv3 - 2023 - by scobiform.com
 
 # Create Mastodon app and get user credentials
 def create_secrets():
@@ -56,7 +35,12 @@ def create_secrets():
 # Load Mastodon URLs from the provided JSON
 with open('mastodon_urls.json', 'r') as file:
     data = json.load(file)
-    mastodon_urls = data['urls']
+    germanMedia = data['germanMedia']
+    germanCreators = data['germanCreators']
+    germanGovernment = data['germanGovernment']
+    germanNGO = data['germanNGO']
+    englishMedia = data['englishMedia']
+    englishJournalists = data['englishCreators']
 
 # Call the create_secrets function to generate credentials
 # --- Uncomment the following line to generate credentials ---
@@ -66,19 +50,15 @@ with open('mastodon_urls.json', 'r') as file:
 mastodon = Mastodon(access_token='usercred.secret')
 
 # Function to get account information from Mastodon and save to JSON file
-def getAccountInfos(mastodon):
+def saveAccountInfosToJSON(mastodon):
     print("Starting account gathering...")
-    # Load existing toot_ids
-    print("Loading existing toot_ids...")
-    global toot_ids
-    loadExistingTootIds()
 
     # Create the 'accounts/' directory if it doesn't exist
     accounts_directory = 'accounts/'
     os.makedirs(accounts_directory, exist_ok=True)
     print(f"Saving account infos to {accounts_directory}")
 
-    for url in mastodon_urls:
+    for url in germanMedia:
         try:
             # Resolve the profile URL to get the account details
             account = mastodon.account_search(url)
@@ -106,7 +86,6 @@ def getAccountInfos(mastodon):
                 "Bot": account[0]['bot'],
                 "Avatar": account[0]['avatar'],
                 "Header": account[0]['header'],
-                "Toots": toots
             }
 
             # Save the JSON file to the folder
@@ -114,8 +93,8 @@ def getAccountInfos(mastodon):
                 json.dump(account_info, file, indent=4, default=str)
             print(f"Saved account info for {account[0]['username']}")
 
-            # Sleep for 5 seconds to avoid rate limiting
-            time.sleep(7)  
+            # Sleep for 2.1 seconds to avoid rate limiting
+            time.sleep(2.1)  
 
         except Exception as e:
             print(f"Error processing {url}: {e}")
@@ -242,14 +221,6 @@ def generateCSSFile():
 
     print(f'CSS file generated in {output_file}')
  
-# Load the list of account IDs from the 'accounts/' folder
-def getAccountIds():
-    account_ids = []
-    json_files = [f for f in os.listdir('accounts/') if f.endswith('.json')]
-    for json_file in json_files:
-        account_ids.append(json_file.replace('.json', ''))
-    return account_ids
-
 # Function to start the worker
 def worker(mastodon):
     try:
@@ -258,7 +229,7 @@ def worker(mastodon):
             generateUI = Thread(target=generateHTMLOverview)
 
             # Create account gathering thread
-            accountInfos = Thread(target=getAccountInfos, args=(mastodon,))
+            accountInfos = Thread(target=saveAccountInfosToJSON, args=(mastodon,))
 
             # Create a list of threads
             threads = []
