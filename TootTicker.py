@@ -29,7 +29,6 @@ def saveTootIds():
     toot_ids_file = 'toot_ids.json'
     with open(toot_ids_file, 'w') as file:
         json.dump(toot_ids, file)
-    loadExistingTootIds()
 
 # Load existing toot_ids
 loadExistingTootIds()
@@ -69,9 +68,13 @@ with open('mastodon_urls.json', 'r') as file:
 # Create Mastodon API instance
 mastodon = Mastodon(access_token='usercred.secret')
 
-# Function to get account information from Mastodon
 def getAccountInfos(mastodon):
     print("Starting account gathering...")
+
+    # Load existing toot_ids
+    global toot_ids
+    loadExistingTootIds()
+
     # Create the 'accounts/' directory if it doesn't exist
     accounts_directory = 'accounts/'
     os.makedirs(accounts_directory, exist_ok=True)
@@ -108,51 +111,38 @@ def getAccountInfos(mastodon):
                 "Toots": toots
             }
 
-            # Save the JSON file to the folder
-            with open(os.path.join(accounts_directory, str(user_id) + '.json'), 'w') as file:
-                json.dump(account_info, file, indent=4, default=str)
-            print(f"Saved account info for {account[0]['username']}")
-
             # Check if the toot is already boosted
             if toots[0]['id'] in toot_ids:
                 print(f"Toot already in list: {toots[0]['id']}")
                 continue
+
+            # Save the JSON file to the folder
+            with open(os.path.join(accounts_directory, f"{user_id}.json"), 'w') as file:
+                json.dump(account_info, file, indent=4, default=str)
+            print(f"Saved account info for {account[0]['username']}")
 
             # Add the toot id to the list
             toot_ids.append(toots[0]['id'])
             # Save updated toot_ids to the JSON file
             saveTootIds()
 
-            # Print the in_reply_to_account_id and in_reply_to_id
-            print(toots[0]['in_reply_to_account_id'])
-            print(toots[0]['in_reply_to_id'])
-
-            # If it's a reply, skip
-            if toots[0]['in_reply_to_id'] > 0:
-                print(f"Skip toot: {toots[0]['id']}")
+            # if reply, skip
+            if toots[0]['in_reply_to_id'] is not None:
+                print(f"Skipping reply: {toots[0]['id']}")
                 continue
 
-            # If it's a reply, skip
-            if toots[0]['in_reply_to_account_id'] is not None and toots[0]['in_reply_to_id'] is not None:
-                print(f"Skip toot: {toots[0]['id']}")
-                continue
-
-            # If it contains "mention", skip
-            if "mention" in toots[0]['content']:
-                print(f"Skipping toot with mention: {toots[0]['id']}")
+            if toots[0]['mentions']:
+                print(f"Skipping mention: {toots[0]['id']}")
                 continue
 
             # Boost the toot
             print(f"Boosting toot: {toots[0]['id']}")
             mastodon.status_reblog(toots[0]['id'])
 
-            # Print account information from the mastodon user
+            # Print account information from the Mastodon user
             for key, value in account_info.items():
                 if key not in ["Account Name", "Avatar", "Header", "Toots"]:
                     print(f"{key}: {value}")
-
-            # Reset toots
-            toots = None
 
         except Exception as e:
             print(f"Error processing {url}: {e}")
