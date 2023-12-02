@@ -101,21 +101,24 @@ def getAccountInfos(mastodon):
                     "Header": account[0]['header'],
                     "Toots": toots
                 }
-
-                # Print account information from the mastodon user
-                for key, value in account_info.items():
-                    if key not in ["Account Name", "Avatar", "Header", "Toots"]:
-                        print(f"{key}: {value}")
                 
                 # Check if the toot is already boosted
                 if toots[0]['id'] not in toot_ids:
-                    # Boost the toot
-                    mastodon.status_reblog(toots[0]['id'])
-                    print(f"Boosted toot: {toots[0]['id']}")
-                    # Add the toot id to the list
-                    toot_ids.append(toots[0]['id'])
-                    # Save updated toot_ids to the JSON file
-                    saveTootIds()
+                    # If reply skip
+                    print(toots[0]['in_reply_to_account_id'])
+                    if toots[0]['in_reply_to_account_id'] is None:
+                        # Boost the toot
+                        mastodon.status_reblog(toots[0]['id'])
+                        print(f"Boosted toot: {toots[0]['id']}")
+                        # Add the toot id to the list
+                        toot_ids.append(toots[0]['id'])
+                        # Save updated toot_ids to the JSON file
+                        saveTootIds()
+                        # Print account information from the mastodon user
+                        for key, value in account_info.items():
+                            if key not in ["Account Name", "Avatar", "Header", "Toots"]:
+                                print(f"{key}: {value}")
+                                time.sleep(7)
 
                 # Save the JSON file to the folder
                 with open(os.path.join(accounts_directory, str(user_id) + '.json'), 'w') as file:
