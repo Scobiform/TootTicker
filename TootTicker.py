@@ -111,6 +111,11 @@ def getAccountInfos(mastodon):
                 "Toots": toots
             }
 
+            # Print account information from the Mastodon user
+            for key, value in account_info.items():
+                if key not in ["Account Name", "Avatar", "Header", "Toots"]:
+                    print(f"{key}: {value}")
+
             # Check if the toot is already boosted
             if toots[0]['id'] in toot_ids:
                 print(f"Toot already in list: {toots[0]['id']}")
@@ -138,11 +143,6 @@ def getAccountInfos(mastodon):
             # Boost the toot
             print(f"Boosting toot: {toots[0]['id']}")
             mastodon.status_reblog(toots[0]['id'])
-
-            # Print account information from the Mastodon user
-            for key, value in account_info.items():
-                if key not in ["Account Name", "Avatar", "Header", "Toots"]:
-                    print(f"{key}: {value}")
 
         except Exception as e:
             print(f"Error processing {url}: {e}")
