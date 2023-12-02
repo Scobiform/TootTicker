@@ -101,7 +101,6 @@
     "@piradio@chaos.social",
     "@campusradioka@sueden.social",
     "@nintendoconnect@mastodon.social",
-    "@markus_netzpolitik@chaos.social",
     "@evawolfangel@chaos.social",
     "@georgrestle@mastodon.social",
     "@Welchering@chaos.social",
@@ -124,7 +123,8 @@
     "@afelia@chaos.social",
     "@janboehm@edi.social",
     "@kevinrothrock@infosec.exchange",
-    "@w7voa@journa.host"
+    "@w7voa@journa.host",
+    "@markus_netzpolitik@chaos.social"
   ],
   "Government": [
     "@bsi@social.bund.de"

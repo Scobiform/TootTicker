@@ -33,6 +33,7 @@ def create_secrets():
         to_file='usercred.secret'
     )
 
+#ToDo: Check for first run and create secrets
 # Call the create_secrets function to generate credentials
 # --- Uncomment the following line to generate credentials ---
 #create_secrets()
@@ -161,7 +162,6 @@ def generateHTMLOverview():
 
             # Write the HTML header for each category
             html_file.write(f'<h1>{category} Accounts</h1>\n')
-            html_file.write('<div class="grid">\n')
 
             # Iterate through each account in the sorted list
             for account_info in accounts:
