@@ -29,6 +29,7 @@ def saveTootIds():
     toot_ids_file = 'toot_ids.json'
     with open(toot_ids_file, 'w') as file:
         json.dump(toot_ids, file)
+    loadExistingTootIds()
 
 # Load existing toot_ids
 loadExistingTootIds()
@@ -73,70 +74,75 @@ def getAccountInfos(mastodon):
 
     # Create the 'accounts/' directory if it doesn't exist
     accounts_directory = 'accounts/'
-    if not os.path.exists(accounts_directory):
-        os.makedirs(accounts_directory)
+    os.makedirs(accounts_directory, exist_ok=True)
 
     for url in mastodon_urls:
         try:
             # Resolve the profile URL to get the account details
             account = mastodon.account_search(url)
-            
+
             # Check if the account exists
-            if account:
-                # Get the user ID
-                user_id = account[0]['id']
+            if not account:
+                continue
 
-                # Get recent toots from the user's timeline
-                toots = mastodon.account_statuses(user_id, limit=1)
+            # Get the user ID
+            user_id = account[0]['id']
 
-                # Create a dictionary with account information
-                account_info = {
-                    "Account Name": account[0]['username'],
-                    "Account URL": account[0]['url'],
-                    "Account ID": user_id,
-                    "Followers": account[0]['followers_count'],
-                    "Following": account[0]['following_count'],
-                    "Toots": account[0]['statuses_count'],
-                    "Created": account[0]['created_at'],
-                    "Last Active": account[0]['last_status_at'],
-                    "Bot": account[0]['bot'],
-                    "Avatar": account[0]['avatar'],
-                    "Header": account[0]['header'],
-                    "Toots": toots
-                }
-                
-                # Check if the toot is already boosted
-                if toots[0]['id'] not in toot_ids:
-                    # Add the toot id to the list
-                    toot_ids.append(toots[0]['id'])
-                    # Save updated toot_ids to the JSON file
-                    saveTootIds()
-                    # Sleep for 2.1 seconds to avoid rate limiting
-                    time.sleep(2.1)
-                    # Print the in_reply_to_account_id
-                    print(toots[0]['in_reply_to_account_id'])
-                    # Print the in_reply_to_id
-                    print(toots[0]['in_reply_to_id'])
+            # Get recent toots from the user's timeline
+            toots = mastodon.account_statuses(user_id, limit=1)
 
-                    # If reply skip
-                    if toots[0]['in_reply_to_account_id'] is not None and toots[0]['in_reply_to_id'] is not None:
-                        print(f"Skip toot: {toots[0]['id']}")
-                    else:
-                        # Boost the toot
-                        if toots[0]['content'].contains("mention") is not True:
-                            print(f"Boosting toot: {toots[0]['id']}")
-                            mastodon.status_reblog(toots[0]['id'])
-                        # Print account information from the mastodon user
-                        for key, value in account_info.items():
-                            if key not in ["Account Name", "Avatar", "Header", "Toots"]:
-                                print(f"{key}: {value}")
-                else:
-                    print(f"Toot already in list: {toots[0]['id']}")
+            # Create a dictionary with account information
+            account_info = {
+                "Account Name": account[0]['username'],
+                "Account URL": account[0]['url'],
+                "Account ID": user_id,
+                "Followers": account[0]['followers_count'],
+                "Following": account[0]['following_count'],
+                "Toots": account[0]['statuses_count'],
+                "Created": account[0]['created_at'],
+                "Last Active": account[0]['last_status_at'],
+                "Bot": account[0]['bot'],
+                "Avatar": account[0]['avatar'],
+                "Header": account[0]['header'],
+                "Toots": toots
+            }
 
+            # Check if the toot is already boosted
+            if toots[0]['id'] in toot_ids:
+                print(f"Toot already in list: {toots[0]['id']}")
+                continue
 
-                # Save the JSON file to the folder
-                with open(os.path.join(accounts_directory, str(user_id) + '.json'), 'w') as file:
-                    json.dump(account_info, file, indent=4, default=str)
+            # Print the in_reply_to_account_id and in_reply_to_id
+            print(toots[0]['in_reply_to_account_id'])
+            print(toots[0]['in_reply_to_id'])
+
+            # If it's a reply, skip
+            if toots[0]['in_reply_to_account_id'] is not None and toots[0]['in_reply_to_id'] is not None:
+                print(f"Skip toot: {toots[0]['id']}")
+                continue
+
+            # If it contains "mention", skip
+            if "mention" in toots[0]['content']:
+                print(f"Skipping toot with mention: {toots[0]['id']}")
+                continue
+
+            # Add the toot id to the list
+            toot_ids.append(toots[0]['id'])
+            # Save updated toot_ids to the JSON file
+            saveTootIds()
+
+            # Boost the toot
+            print(f"Boosting toot: {toots[0]['id']}")
+            mastodon.status_reblog(toots[0]['id'])
+
+            # Print account information from the mastodon user
+            for key, value in account_info.items():
+                if key not in ["Account Name", "Avatar", "Header", "Toots"]:
+                    print(f"{key}: {value}")
+
+            # Save the JSON file to the folder
+            with open(os.path.join(accounts_directory, str(user_id) + '.json'), 'w') as file:
+                json.dump(account_info, file, indent=4, default=str)
 
         except Exception as e:
             print(f"Error processing {url}: {e}")
