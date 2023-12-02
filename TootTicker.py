@@ -112,6 +112,11 @@ def getAccountInfos(mastodon):
                 print(f"Toot already in list: {toots[0]['id']}")
                 continue
 
+            # Add the toot id to the list
+            toot_ids.append(toots[0]['id'])
+            # Save updated toot_ids to the JSON file
+            saveTootIds()
+
             # Print the in_reply_to_account_id and in_reply_to_id
             print(toots[0]['in_reply_to_account_id'])
             print(toots[0]['in_reply_to_id'])
@@ -125,11 +130,6 @@ def getAccountInfos(mastodon):
             if "mention" in toots[0]['content']:
                 print(f"Skipping toot with mention: {toots[0]['id']}")
                 continue
-
-            # Add the toot id to the list
-            toot_ids.append(toots[0]['id'])
-            # Save updated toot_ids to the JSON file
-            saveTootIds()
 
             # Boost the toot
             print(f"Boosting toot: {toots[0]['id']}")
