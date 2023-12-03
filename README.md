@@ -1,4 +1,4 @@
-[img]https://files.mastodon.social/accounts/headers/111/505/407/593/832/846/original/fdbeaeee174c3375.png[/img]
+![TootTicker Header](https://files.mastodon.social/accounts/headers/111/505/407/593/832/846/original/fdbeaeee174c3375.png)
 
 # TootTicker
 
