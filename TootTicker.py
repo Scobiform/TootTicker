@@ -214,8 +214,11 @@ def generateHTMLOverview():
         # Write the HTML footer
         html_file.write('</body>\n</html>')
         
-
     print(f'HTML overview generated in {output_file}')
+
+    # Open in default browser add current path
+    output_file = os.path.join(os.getcwd(), output_file)
+
 
 # Generate CSS file
 def generateCSSFile():
@@ -274,7 +277,7 @@ def worker(mastodon):
                 threads.append(accountInfos)
             
             # Create HTML overview thread
-            htmlOverview = Thread(target=generateHTMLOverview)
+            htmlOverview = Thread(target=generateHTMLOverview, args=(category, urls))
             threads.append(htmlOverview)
 
             # Start all threads

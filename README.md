@@ -19,6 +19,8 @@
 
 TootTicker is a Python script that fetches account information from provided Mastodon handles (@INSTANCE@USERNAME). The script utilizes the Mastodon API to retrieve details and saves this information in JSON files in the 'accounts/' directory.
 
+I will also create a basic html overview in the public folder.
+
 ## Install
 # Clone the repository
 ```
