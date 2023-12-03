@@ -101,7 +101,6 @@
     "@piradio@chaos.social",
     "@campusradioka@sueden.social",
     "@nintendoconnect@mastodon.social",
-    "@georgrestle@mastodon.social",
     "@Welchering@chaos.social",
     "@zerforschung@chaos.social",
     "@correctiv_org@correctiv.social",
@@ -131,7 +130,8 @@
     "@maxbrandl@mastodon.social",
     "@robsh@mastodon.social",
     "@evawolfangel@chaos.social",
-    "@lalonsander@chaos.social"
+    "@lalonsander@chaos.social",
+    "@georgrestle@mastodon.social",
   ],
   "Government": [
     "@bsi@social.bund.de",
