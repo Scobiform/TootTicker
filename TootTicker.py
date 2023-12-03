@@ -277,7 +277,7 @@ def worker(mastodon):
                 threads.append(accountInfos)
             
             # Create HTML overview thread
-            htmlOverview = Thread(target=generateHTMLOverview, args=(category, urls))
+            htmlOverview = Thread(target=generateHTMLOverview)
             threads.append(htmlOverview)
 
             # Start all threads
