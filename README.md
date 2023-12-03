@@ -17,7 +17,7 @@
 
 ## Background
 
-TootTicker is a Python script that fetches account information from provided Mastodon handles (@INSTANCE@USERNAME). The script utilizes the Mastodon API to retrieve details such as followers, following count, toots, and more, and then saves this information in JSON files in the 'accounts/' directory.
+TootTicker is a Python script that fetches account information from provided Mastodon handles (@INSTANCE@USERNAME). The script utilizes the Mastodon API to retrieve details and saves this information in JSON files in the 'accounts/' directory.
 
 ## Install
 # Clone the repository
