@@ -5,7 +5,7 @@
 [![Python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL%203.0-blue.svg)](https://opensource.org/licenses/GPL-3.0)
 
-> Requesting media and journalists account information via Mastodon API and saving it as pure JSON.
+> Requesting account information via Mastodon API and saving it as pure JSON.
 
 ## Table of Contents
 
