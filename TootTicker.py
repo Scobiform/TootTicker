@@ -42,7 +42,7 @@ def create_secrets():
 with open('mastodon_urls.json', 'r') as file:
     data = json.load(file)
     media = data['Media']
-    creators = data['Creators']
+    creators = data['Creator']
     government = data['Government']
     NGO = data['NGO']
 
@@ -122,7 +122,7 @@ def generateHTMLOverview():
     output_file = 'public/account_overview.html'
 
     # Categories to iterate through
-    categories = ['Media', 'Creators', 'Government', 'NGO']
+    categories = ['Media', 'Creator', 'Government', 'NGO']
 
     # Iterate through each category
     for category in categories:
@@ -150,7 +150,7 @@ def generateHTMLOverview():
         accounts = sort_accounts(accounts, 'Followers')
 
         # Open the HTML file for writing
-        with open(output_file, 'a') as html_file:
+        with open(output_file, 'w') as html_file:
             # Write the HTML header
             html_file.write('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n')
             html_file.write('<meta name="viewport" content="width=device-width, initial-scale=1">\n')
@@ -189,8 +189,7 @@ def generateHTMLOverview():
             # Close the grid wrapper
             html_file.write('</div>\n')
 
-    # Write the HTML footer
-    with open(output_file, 'a') as html_file:  # Use 'a' to append for each category
+        # Write the HTML footer
         html_file.write('</body>\n</html>')
 
     print(f'HTML overview generated in {output_file}')
