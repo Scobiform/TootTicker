@@ -289,8 +289,8 @@ def worker(mastodon):
                 thread.join()
 
             # Sleep for a period before restarting the process
-            print("Sleeping for 60 seconds...")
-            time.sleep(60)  # Sleep for 10 minutes (adjust as needed)
+            print("Sleeping for 350 seconds...")
+            time.sleep(350)  # Sleep for 350 seconds (adjust as needed)
             print("Restarting...")
 
     except Exception as errorcode:
