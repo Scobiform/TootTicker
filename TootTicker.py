@@ -189,8 +189,8 @@ def generateHTMLOverview():
             # Close the grid wrapper
             html_file.write('</div>\n')
 
-        # Write the HTML footer
-        html_file.write('</body>\n</html>')
+            # Write the HTML footer
+            html_file.write('</body>\n</html>')
 
     print(f'HTML overview generated in {output_file}')
 
