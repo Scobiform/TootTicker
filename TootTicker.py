@@ -101,7 +101,6 @@ def saveAccountInfoToJSON(mastodon, category, urls):
         except Exception as e:
             print(f"Error processing {url}: {e}")
 
-# Generate HTML overview
 # Function to generate HTML overview
 def generateHTMLOverview():
     # Function to generate HTML overview
@@ -121,44 +120,44 @@ def generateHTMLOverview():
     # Define the output HTML file
     output_file = 'public/account_overview.html'
 
-    # Categories to iterate through
-    categories = ['Media', 'Creator', 'Government', 'NGO']
+    # Open the HTML file for writing
+    with open(output_file, 'w') as html_file:
+        # Write the HTML header
+        html_file.write('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n')
+        html_file.write('<meta name="viewport" content="width=device-width, initial-scale=1">\n')
+        html_file.write(f'<link rel="stylesheet" href="account_overview.css">\n')
+        html_file.write('<title>TootTicker - boost your media and journalists</title>\n</head>\n<body>\n')
 
-    # Iterate through each category
-    for category in categories:
-        # Get the list of JSON files in the 'accounts/' folder for the current category
-        json_files = [f for f in os.listdir(f'accounts/{category}/') if f.endswith('.json')]
+        # Write a grid wrapper
+        html_file.write('<div class="grid">\n')
 
-        # List to store account information
-        accounts = []
+        # Categories to iterate through
+        categories = ['Media', 'Creator', 'Government', 'NGO']
 
-        # Iterate through each JSON file
-        for json_file in json_files:
-            # Read the contents of the JSON file
-            with open(f'accounts/{category}/{json_file}', 'r') as file:
-                try:
-                    # Attempt to load JSON content
-                    account_info = json.load(file)
-                    # Append the account information to the list
-                    accounts.append(account_info)
-                except json.decoder.JSONDecodeError as e:
-                    # Handle JSON decoding error (e.g., empty file or invalid JSON)
-                    print(f"Error decoding {json_file}: {e}")
-                    continue
+        # Iterate through each category
+        for category in categories:
+            # Get the list of JSON files in the 'accounts/' folder for the current category
+            json_files = [f for f in os.listdir(f'accounts/{category}/') if f.endswith('.json')]
 
-        # Sort the list of accounts based on followers (you can replace this with other keys)
-        accounts = sort_accounts(accounts, 'Followers')
+            # List to store account information
+            accounts = []
 
-        # Open the HTML file for writing
-        with open(output_file, 'w') as html_file:
-            # Write the HTML header
-            html_file.write('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n')
-            html_file.write('<meta name="viewport" content="width=device-width, initial-scale=1">\n')
-            html_file.write(f'<link rel="stylesheet" href="account_overview.css">\n')
-            html_file.write('<title>TootTicker - boost your media and journalists</title>\n</head>\n<body>\n')
+            # Iterate through each JSON file
+            for json_file in json_files:
+                # Read the contents of the JSON file
+                with open(f'accounts/{category}/{json_file}', 'r') as file:
+                    try:
+                        # Attempt to load JSON content
+                        account_info = json.load(file)
+                        # Append the account information to the list
+                        accounts.append(account_info)
+                    except json.decoder.JSONDecodeError as e:
+                        # Handle JSON decoding error (e.g., empty file or invalid JSON)
+                        print(f"Error decoding {json_file}: {e}")
+                        continue
 
-            # Write a grid wrapper
-            html_file.write('<div class="grid">\n')
+            # Sort the list of accounts based on followers (you can replace this with other keys)
+            accounts = sort_accounts(accounts, 'Followers')
 
             # Write the HTML header for each category
             html_file.write(f'<h1>{category} Accounts</h1>\n')
@@ -181,18 +180,19 @@ def generateHTMLOverview():
 
                 # Write the toots
                 for toot in account_info['Toots']:
-                    html_file.write('<a href"'+str(toot["url"])+'" target="_blank"></a>')
+                    html_file.write('<a href="'+str(toot["url"])+'" target="_blank"></a>')
 
                 # Close the div
                 html_file.write('</div>\n')
 
-            # Close the grid wrapper
-            html_file.write('</div>\n')
+        # Close the grid wrapper
+        html_file.write('</div>\n')
 
-            # Write the HTML footer
-            html_file.write('</body>\n</html>')
+        # Write the HTML footer
+        html_file.write('</body>\n</html>')
 
     print(f'HTML overview generated in {output_file}')
+
 
 # Generate CSS file
 def generateCSSFile():
