@@ -42,7 +42,7 @@ def create_secrets():
 with open('mastodon_urls.json', 'r') as file:
     data = json.load(file)
     media = data['Media']
-    creators = data['Creator']
+    creatora = data['Creator']
     government = data['Government']
     NGO = data['NGO']
 
@@ -126,7 +126,16 @@ def generateHTMLOverview():
         html_file.write('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n')
         html_file.write('<meta name="viewport" content="width=device-width, initial-scale=1">\n')
         html_file.write(f'<link rel="stylesheet" href="account_overview.css">\n')
-        html_file.write('<title>TootTicker - boost your media and journalists</title>\n</head>\n<body>\n')
+        html_file.write('<title>TootTicker - boost your media and journalists</title>\n')
+        html_file.write('<script>\n')
+        html_file.write('function toggleVisibility(category) {\n')
+        html_file.write('var accounts = document.querySelectorAll("." + category);\n')
+        html_file.write('accounts.forEach(function(account) {\n')
+        html_file.write('account.style.display = account.style.display === "none" ? "block" : "none";\n')
+        html_file.write('});\n')
+        html_file.write('}\n')
+        html_file.write('</script>\n')
+        html_file.write('</head>\n<body>\n')
 
         # Write a grid wrapper
         html_file.write('<div class="grid">\n')
@@ -160,27 +169,32 @@ def generateHTMLOverview():
             accounts = sort_accounts(accounts, 'Followers')
 
             # Write the HTML header for each category
-            html_file.write(f'<h1>{category} Accounts</h1>\n')
+            html_file.write(f'<h1 onclick="toggleVisibility(\'{category}\')">{category}</h1>\n')
 
             # Iterate through each account in the sorted list
             for account_info in accounts:
-                # Write a div for each account
-                html_file.write('<div class="accountInfo">\n')
+                # Write a div for each account with class as the category
+                html_file.write(f'<div class="accountInfo {category}" style="display:none;">\n')
 
                 # Write the account name as a header
-                html_file.write(f'<h2>{account_info["Account Name"]}</h2>\n')
+                html_file.write(f'<h2><a href="{account_info["Account URL"]}" target="_blank" rel="noopener noreferrer">{account_info["Account Name"]}</a></h2>\n')
 
-                # Display the avatar and header using img tags
+                # Display the avatar using img tag
                 html_file.write(f'<img src="{account_info["Avatar"]}" alt="Avatar" style="max-width: 100px; max-height: 100px;">\n')
 
                 # Write the rest of the account information
                 for key, value in account_info.items():
-                    if key not in ["Account Name", "Avatar", "Header", "Toots"]:
+                    if key not in ["Account Name", "Avatar", "Header", "Toots", "Account URL"]:
                         html_file.write(f'<p><strong>{key}:</strong> {value}</p>\n')
 
+                # Write the header for the toots
+                html_file.write('<p><strong>Recent Toots:</strong></p>\n')
+                html_file.write('<ul>')
                 # Write the toots
                 for toot in account_info['Toots']:
-                    html_file.write('<a href="'+str(toot["url"])+'" target="_blank"></a>')
+                    html_file.write('<li><a href="'+str(toot["url"])+'" target="_blank">'+str(toot["url"])+'</a></li>')
+                # Close the toots list
+                html_file.write('</ul>')
 
                 # Close the div
                 html_file.write('</div>\n')
@@ -193,7 +207,6 @@ def generateHTMLOverview():
 
     print(f'HTML overview generated in {output_file}')
 
-
 # Generate CSS file
 def generateCSSFile():
     # Define the output CSS file
@@ -203,6 +216,7 @@ def generateCSSFile():
     with open(output_file, 'w') as css_file:
         # Write the CSS header
         css_file.write('body { font-family: sans-serif; background-color: #191b22; }\n')
+        css_file.write('h1 { color: #d9e1e8; background-color: #6364FF; padding: 2.1rem; cursor: pointer; }\n')
         css_file.write('h2 { color: #d9e1e8; }\n')
         css_file.write('p { color: #d9e1e8; }\n')
         css_file.write('.accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }\n')

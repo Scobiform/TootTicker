@@ -127,7 +127,12 @@
     "@markus_netzpolitik@chaos.social"
   ],
   "Government": [
-    "@bsi@social.bund.de"
+    "@bsi@social.bund.de",
+    "@itzbund@social.bund.de",
+    "@Zoll@social.bund.de",
+    "@certbund@social.bund.de",
+    "@BMWK@social.bund.de",
+    "@DeutscherWetterdienst@social.bund.de"
   ],
   "NGO": [
     "@DJV@federated.press"
