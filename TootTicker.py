@@ -228,6 +228,13 @@ def generateCSSFile():
         css_file.write('h1 { color: #d9e1e8; background-color: #6364FF; padding: 2.1rem; cursor: pointer; }\n')
         css_file.write('h2 { color: #d9e1e8; }\n')
         css_file.write('p { color: #d9e1e8; }\n')
+        # a class
+        css_file.write('a { color: #d9e1e8; }\n')
+        css_file.write('a:hover { color: #ff64FF; }\n')
+        css_file.write('a:visited { color: #ff64FF; }\n')
+        css_file.write('a:active { color: #ff64FF; }\n')
+        css_file.write('a:focus { color: #ff64FF; }\n')
+        css_file.write('a:link { color: #ff64FF; }\n')
         css_file.write('.accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }\n')
         css_file.write('.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); grid-gap: 10px; }\n')
 
