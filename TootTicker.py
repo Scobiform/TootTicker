@@ -78,6 +78,8 @@ def saveAccountInfoToJSON(mastodon, category, urls):
             account_info = {
                 "Account Name": account[0]['username'],
                 "Account URL": account[0]['url'],
+                "Display Name": account[0]['display_name'],
+                "Instance": '@' + account[0]['url'].split('https://')[1].split('/')[0],
                 "Account ID": user_id,
                 "Followers": account[0]['followers_count'],
                 "Following": account[0]['following_count'],
@@ -121,7 +123,7 @@ def generateHTMLOverview():
     output_file = 'public/account_overview.html'
 
     # Open the HTML file for writing
-    with open(output_file, 'w') as html_file:
+    with open(output_file, 'w', encoding='utf-8') as html_file:
         # Write the HTML header
         html_file.write('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n')
         html_file.write('<meta name="viewport" content="width=device-width, initial-scale=1">\n')
@@ -136,6 +138,16 @@ def generateHTMLOverview():
         html_file.write('}\n')
         html_file.write('</script>\n')
         html_file.write('</head>\n<body>\n')
+
+        # Div for Mastodon authentication
+        html_file.write('<div class="mastodonAuthenticate">\n')
+        html_file.write('<h1>Mastodon Authentication</h1>\n')
+        html_file.write('<p>Who Am I?</p>\n')
+        html_file.write(f'<p>{mastodon.me().username}</p>\n')
+        html_file.write(f'<p>{mastodon.me().id}</p>\n')
+        # Mastodon instance
+        html_file.write(f'<p>{mastodon.me().url.split("https://")[1].split("/")[0]}</p>\n')
+        html_file.write('</div>\n')
 
         # Write a grid wrapper
         html_file.write('<div class="grid">\n')
@@ -177,24 +189,16 @@ def generateHTMLOverview():
                 html_file.write(f'<div class="accountInfo {category}" style="display:none;">\n')
 
                 # Write the account name as a header
-                html_file.write(f'<h2><a href="{account_info["Account URL"]}" target="_blank" rel="noopener noreferrer">{account_info["Account Name"]}</a></h2>\n')
+                tempUrl = 'https://'+mastodon.me().url.split("https://")[1].split("/")[0]+'/@'+ account_info["Account Name"] + account_info["Instance"]
+                html_file.write(f'<h2><a href="{tempUrl}" target="_blank" rel="noopener noreferrer">{account_info["Display Name"]}</a></h2>\n')
 
                 # Display the avatar using img tag
                 html_file.write(f'<img src="{account_info["Avatar"]}" alt="Avatar" style="max-width: 100px; max-height: 100px;">\n')
 
                 # Write the rest of the account information
                 for key, value in account_info.items():
-                    if key not in ["Account Name", "Avatar", "Header", "Toots", "Account URL"]:
+                    if key not in ["Account Name", "Avatar", "Header", "Toots", "Account URL", "Display Name", "Instance", "Account ID"]:
                         html_file.write(f'<p><strong>{key}:</strong> {value}</p>\n')
-
-                # Write the header for the toots
-                html_file.write('<p><strong>Recent Toots:</strong></p>\n')
-                html_file.write('<ul>')
-                # Write the toots
-                for toot in account_info['Toots']:
-                    html_file.write('<li><a href="'+str(toot["url"])+'" target="_blank">'+str(toot["url"])+'</a></li>')
-                # Close the toots list
-                html_file.write('</ul>')
 
                 # Close the div
                 html_file.write('</div>\n')
@@ -202,8 +206,13 @@ def generateHTMLOverview():
         # Close the grid wrapper
         html_file.write('</div>\n')
 
+        # Debug item in data.items():
+        #for key, value in data.items():
+        #    print(key, value)
+
         # Write the HTML footer
         html_file.write('</body>\n</html>')
+        
 
     print(f'HTML overview generated in {output_file}')
 
