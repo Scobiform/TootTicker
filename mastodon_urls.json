@@ -131,7 +131,8 @@
     "@robsh@mastodon.social",
     "@evawolfangel@chaos.social",
     "@lalonsander@chaos.social",
-    "@georgrestle@mastodon.social"
+    "@georgrestle@mastodon.social",
+    "@arnesemsrott@chaos.social"
   ],
   "Government": [
     "@bsi@social.bund.de",
@@ -139,9 +140,12 @@
     "@Zoll@social.bund.de",
     "@certbund@social.bund.de",
     "@BMWK@social.bund.de",
-    "@DeutscherWetterdienst@social.bund.de"
+    "@DeutscherWetterdienst@social.bund.de",
+    "@hib_Nachrichten@social.bund.de"
   ],
   "NGO": [
-    "@DJV@federated.press"
+    "@DJV@federated.press",
+    "@wai@w3c.social",
+    "@freiheitsfonds@mas.to"
   ]
 }
