@@ -101,7 +101,6 @@
     "@piradio@chaos.social",
     "@campusradioka@sueden.social",
     "@nintendoconnect@mastodon.social",
-    "@Welchering@chaos.social",
     "@zerforschung@chaos.social",
     "@correctiv_org@correctiv.social",
     "@br_data@ard.social",
@@ -133,7 +132,15 @@
     "@lalonsander@chaos.social",
     "@georgrestle@mastodon.social",
     "@arnesemsrott@chaos.social",
-    "@insavandenberg@mstdn.social"
+    "@insavandenberg@mstdn.social",
+    "@danielnazer@mastodon.social",
+    "@triketora@mastodon.social",
+    "@natematias@social.coop",
+    "@than@mozilla.social",
+    "@AMAOZ@mozilla.social",
+    "@rebeccasmith@mozilla.social",
+    "@stevetex@mozilla.social",
+    "@Welchering@chaos.social"
   ],
   "Government": [
     "@bsi@social.bund.de",
@@ -147,6 +154,11 @@
   "NGO": [
     "@DJV@federated.press",
     "@wai@w3c.social",
-    "@freiheitsfonds@mas.to"
+    "@freiheitsfonds@mas.to",
+    "@torproject@mastodon.social",
+    "@fsfe@mastodon.social",
+    "@mozilla@mozilla.social",
+    "@info_activism@mastodon.cc",
+    "@social@mozilla.social"
   ]
 }
