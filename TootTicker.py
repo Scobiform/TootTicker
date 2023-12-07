@@ -38,14 +38,9 @@ def create_secrets():
 # --- Uncomment the following line to generate credentials ---
 #create_secrets()
 
-#ToDO: Create categories from base structure
 # Load Mastodon URLs from the provided JSON
 with open('mastodon_urls.json', 'r') as file:
     data = json.load(file)
-    media = data['Media']
-    creator = data['Creator']
-    government = data['Government']
-    NGO = data['NGO']
 
 # Create Mastodon API instance
 mastodon = Mastodon(access_token='usercred.secret')
