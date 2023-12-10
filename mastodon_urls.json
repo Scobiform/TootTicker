@@ -142,7 +142,8 @@
     "@Welchering@chaos.social",
     "@marcuwekling@cultur.social",
     "@nicosemsrott@mastodon.social",
-    "@HonkHase@chaos.social"
+    "@HonkHase@chaos.social",
+    "@kirschner@mastodon.social"
   ],
   "Government": [
     "@bsi@social.bund.de",
@@ -152,7 +153,18 @@
     "@BMWK@social.bund.de",
     "@DeutscherWetterdienst@social.bund.de",
     "@hib_Nachrichten@social.bund.de",
-    "@AuswaertigesAmt@social.bund.de"
+    "@AuswaertigesAmt@social.bund.de",
+    "@KfW@social.bund.de",
+    "@BMWSB_Bund@social.bund.de",
+    "@bfr@social.bund.de",
+    "@strahlenschutz@social.bund.de",
+    "@thw@social.bund.de",
+    "@EU_Commission@social.network.europa.eu",
+    "@Bundesregierung@social.bund.de",
+    "@bmbf_bund@social.bund.de",
+    "@bmi@social.bund.de",
+    "@bfdi@social.bund.de",
+    "@aa_stabilisiert@social.bund.de"
   ],
   "NGO": [
     "@DJV@federated.press",
