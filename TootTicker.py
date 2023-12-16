@@ -101,8 +101,11 @@ def saveAccountInfoToJSON(mastodon, category, urls):
 
 # Function to generate HTML overview
 def generateHTMLOverview():
-    # Function to generate HTML overview
 
+    # Get the current instance URL
+    meUrl = 'https://'+mastodon.me().url.split("https://")[1].split("/")[0]
+
+    # Function to sort accounts based on a given key
     def sort_accounts(accounts, key):
         # Helper function to sort accounts based on a given key
         return sorted(accounts, key=lambda x: x[key], reverse=True)
@@ -176,17 +179,17 @@ def generateHTMLOverview():
             # Write the HTML header for each category
             html_file.write(f'<h1 onclick="toggleVisibility(\'{category}\')">{category}</h1>\n')
 
-            # Get the current instance URL
-            meUrl = 'https://'+mastodon.me().url.split("https://")[1].split("/")[0]
-
             # Iterate through each account in the sorted list
             for account_info in accounts:
                 # Get the account header image URL
                 header_image_url = account_info.get("Header", "")
+
                 # Write a div for each account with class as the category
                 html_file.write(f'<div class="accountInfo {category}" style="background-image: url(\'{header_image_url}\'); display:none;">\n')
 
+                # Write a div for the account facts
                 html_file.write('<div class="accountFacts">')
+
                 # Write the account name as a header
                 tempUrl = meUrl+'/@'+ account_info["Account Name"] + account_info["Instance"]
                 html_file.write(f'<h2><a href="{tempUrl}" target="_blank" rel="noopener noreferrer">{account_info["Display Name"]}</a></h2>\n')
@@ -198,9 +201,40 @@ def generateHTMLOverview():
                 for key, value in account_info.items():
                     if key not in ["Account Name", "Avatar", "Header", "Toots", "Account URL", "Display Name", "Instance", "Account ID"]:
                         html_file.write(f'<p><strong>{key}:</strong> {value}</p>\n')
+                
+                 # Write the Toots header
+                html_file.write('<h3 class="toots-toggle" onclick="toggleVisibility(\'toots-content\')">Toots</h3>\n')
 
-                # Close the div
-                html_file.write('</div>')
+                # Write the Toots in a separate div
+                html_file.write('<div class="toots-content" style="display:none;">\n')
+                if "Toots" in account_info:
+                    for toot in account_info["Toots"]:
+                        # Assuming 'Toot' is a dictionary and contains text in a 'content' key
+                        toot_content = toot.get("content", "No content")
+                        toot_url = toot.get("url", "")
+                        toot_created_at = toot.get("created_at", "")
+                        toot_replies_count = toot.get("replies_count", "")
+                        toot_reblogs_count = toot.get("reblogs_count", "")
+                        toot_favourites_count = toot.get("favourites_count", "")
+
+                        # Write the toot created at
+                        html_file.write(f'<div class="toot"><strong>Created At:</strong> {toot_created_at}</div>\n')
+                        # Write the toot content
+                        html_file.write(f'<div class="toot">{toot_content}</div>\n')
+                        # Write the toot URL
+                        html_file.write(f'<div class="toot"><a href="{toot_url}" target="_blank" rel="noopener norefrrer">{toot_url}</a></div>\n')
+                        # Write the toot replies count
+                        html_file.write(f'<div class="toot"><strong>Replies:</strong> {toot_replies_count}</div>\n')
+                        # Write the toot reblogs count
+                        html_file.write(f'<div class="toot"><strong>Reblogs:</strong> {toot_reblogs_count}</div>\n')
+                        # Write the toot favourites count
+                        html_file.write(f'<div class="toot"><strong>Favourites:</strong> {toot_favourites_count}</div>\n')
+                        # Write a horizontal rule
+                        html_file.write('<hr>\n')
+                else:
+                    html_file.write('<p>No toots found.</p>\n')
+
+                html_file.write('</div>\n')  # Close the toots div
 
                 # Close the accountInfo div
                 html_file.write('</div>\n')
@@ -226,8 +260,9 @@ def generateCSSFile(output_file='public/account_overview.css'):
         h2, p, a { color: #d9e1e8; }
         a:hover, a:visited, a:active, a:focus, a:link { color: #ff64FF; }
         .accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
-        .accountFacts { background: rgba(25, 27, 34, 0.7); padding: 10px; min-width: 160px; width: 21vw; }
+        .accountFacts { background: rgba(25, 27, 34, 0.7); padding: 10px; min-width: 160px; width: 70vw; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(1fr)); grid-gap: 10px; }
+        .toots-content { background: rgba(25, 27, 34, 0.7); padding: 10px; }
         /* Dark Violet Scrollbar Styles */
         ::-webkit-scrollbar { width: 12px; display: none; }
         ::-webkit-scrollbar-thumb { background-color: #4B0082; border-radius: 6px; }
