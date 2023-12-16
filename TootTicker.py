@@ -5,7 +5,7 @@ import json
 import time
 from threading import Thread
 
-# TootTicker - boost your mind
+# TootTicker - boost your bubble
 # Gathering account informations from Mastodon and make them available as pure json files
 # GPLv3 - 2023 - by scobiform.com
 # github.com/Scobiform/TootTicker
@@ -175,6 +175,7 @@ def generateHTMLOverview():
                     element.style.display = element.style.display === "none" ? "block" : "none";
                 }
             }
+
             </script>
         </head>
         <body>
@@ -210,11 +211,14 @@ def generateHTMLOverview():
                         print(f"Error decoding {json_file}: {e}")
                         continue
 
-            # Sort the list of accounts based on followers (you can replace this with other keys)
+            # Sort the list of accounts based on followers
             accounts = sort_accounts(accounts, 'Followers')
 
             # Write the HTML header for each category
             html_file.write(f'<h1 onclick="toggleVisibility(\'{category}\')">{category}</h1>\n')
+
+            # Write the category chart container
+            html_file.write(f'<div id="chart-container-{category}" class="{category}"></div>\n')
 
             # Iterate through each account in the sorted list
             for account_info in accounts:
@@ -289,9 +293,9 @@ def generateHTMLOverview():
             <script>
                 const categoriesData = """ + generateChart() + """;
 
-                function createChart(category, data) {
+                function createChart(containerId, category, data) {
                     const ctx = document.createElement('canvas');
-                    document.getElementById('charts-container').appendChild(ctx);
+                    document.getElementById(containerId).appendChild(ctx);
 
                     new Chart(ctx, {
                             type: 'bar',
@@ -315,7 +319,7 @@ def generateHTMLOverview():
 
                 window.onload = function() {
                     for (const [category, data] of Object.entries(categoriesData)) {
-                        createChart(category, data);
+                        createChart(`chart-container-${category}`, category, data);
                     }
                 }
             </script>
