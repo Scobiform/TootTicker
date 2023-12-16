@@ -176,13 +176,19 @@ def generateHTMLOverview():
             # Write the HTML header for each category
             html_file.write(f'<h1 onclick="toggleVisibility(\'{category}\')">{category}</h1>\n')
 
+            # Get the current instance URL
+            meUrl = 'https://'+mastodon.me().url.split("https://")[1].split("/")[0]
+
             # Iterate through each account in the sorted list
             for account_info in accounts:
+                # Get the account header image URL
+                header_image_url = account_info.get("Header", "")
                 # Write a div for each account with class as the category
-                html_file.write(f'<div class="accountInfo {category}" style="display:none;">\n')
+                html_file.write(f'<div class="accountInfo {category}" style="background-image: url(\'{header_image_url}\'); display:none;">\n')
 
+                html_file.write('<div class="accountFacts">')
                 # Write the account name as a header
-                tempUrl = 'https://'+mastodon.me().url.split("https://")[1].split("/")[0]+'/@'+ account_info["Account Name"] + account_info["Instance"]
+                tempUrl = meUrl+'/@'+ account_info["Account Name"] + account_info["Instance"]
                 html_file.write(f'<h2><a href="{tempUrl}" target="_blank" rel="noopener noreferrer">{account_info["Display Name"]}</a></h2>\n')
 
                 # Display the avatar using img tag
@@ -194,6 +200,9 @@ def generateHTMLOverview():
                         html_file.write(f'<p><strong>{key}:</strong> {value}</p>\n')
 
                 # Close the div
+                html_file.write('</div>')
+
+                # Close the accountInfo div
                 html_file.write('</div>\n')
 
         # Close the grid wrapper
@@ -217,6 +226,7 @@ def generateCSSFile(output_file='public/account_overview.css'):
         h2, p, a { color: #d9e1e8; }
         a:hover, a:visited, a:active, a:focus, a:link { color: #ff64FF; }
         .accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
+        .accountFacts { background: rgba(25, 27, 34, 0.7); padding: 10px; min-width: 160px; width: 21vw; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(1fr)); grid-gap: 10px; }
         /* Dark Violet Scrollbar Styles */
         ::-webkit-scrollbar { width: 12px; display: none; }
@@ -258,8 +268,8 @@ def worker(mastodon):
                 thread.join()
 
             # Sleep for a period before restarting the process
-            print("Sleeping for 350 seconds...")
-            time.sleep(350)  # Sleep for 350 seconds (adjust as needed)
+            print("Sleeping for 420 seconds...")
+            time.sleep(420)  # Sleep for 420 seconds (adjust as needed)
             print("Restarting...")
 
     except Exception as errorcode:
