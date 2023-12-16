@@ -5,7 +5,7 @@ import json
 import time
 from threading import Thread
 
-# TootTicker - boost your media and journalists
+# TootTicker - boost your mind
 # Gathering account informations from Mastodon and make them available as pure json files
 # GPLv3 - 2023 - by scobiform.com
 # github.com/Scobiform/TootTicker
