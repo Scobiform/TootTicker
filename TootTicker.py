@@ -5,7 +5,7 @@ import json
 import time
 from threading import Thread
 
-# TootTicker - boost your mind
+# TootTicker - boost your media and journalists
 # Gathering account informations from Mastodon and make them available as pure json files
 # GPLv3 - 2023 - by scobiform.com
 # github.com/Scobiform/TootTicker
@@ -121,19 +121,26 @@ def generateHTMLOverview():
     # Open the HTML file for writing
     with open(output_file, 'w', encoding='utf-8') as html_file:
         # Write the HTML header
-        html_file.write('<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n')
-        html_file.write('<meta name="viewport" content="width=device-width, initial-scale=1">\n')
-        html_file.write(f'<link rel="stylesheet" href="account_overview.css">\n')
-        html_file.write('<title>TootTicker - boost your media and journalists</title>\n')
-        html_file.write('<script>\n')
-        html_file.write('function toggleVisibility(category) {\n')
-        html_file.write('var accounts = document.querySelectorAll("." + category);\n')
-        html_file.write('accounts.forEach(function(account) {\n')
-        html_file.write('account.style.display = account.style.display === "none" ? "block" : "none";\n')
-        html_file.write('});\n')
-        html_file.write('}\n')
-        html_file.write('</script>\n')
-        html_file.write('</head>\n<body>\n')
+        html_header = """
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="account_overview.css">
+            <title>TootTicker - boost your media and journalists</title>
+            <script>
+            function toggleVisibility(category) {
+                var accounts = document.querySelectorAll("." + category);
+                accounts.forEach(function(account) {
+                    account.style.display = account.style.display === "none" ? "block" : "none";
+                });
+            }
+            </script>
+        </head>
+        <body>
+        """
+        html_file.write(html_header)
 
         # Write a grid wrapper
         html_file.write('<div class="grid">\n')
@@ -200,9 +207,6 @@ def generateHTMLOverview():
         html_file.write('</body>\n</html>')
         
     print(f'HTML overview generated in {output_file}')
-
-    # Open in default browser add current path
-    output_file = os.path.join(os.getcwd(), output_file)
 
 def generateCSSFile(output_file='public/account_overview.css'):
     try:
