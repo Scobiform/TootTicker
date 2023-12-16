@@ -212,7 +212,7 @@ def generateCSSFile(output_file='public/account_overview.css'):
         h2, p, a { color: #d9e1e8; }
         a:hover, a:visited, a:active, a:focus, a:link { color: #ff64FF; }
         .accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); grid-gap: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(1fr)); grid-gap: 10px; }
         /* Dark Violet Scrollbar Styles */
         ::-webkit-scrollbar { width: 12px; }
         ::-webkit-scrollbar-thumb { background-color: #4B0082; border-radius: 6px; }
