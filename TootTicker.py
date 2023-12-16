@@ -125,9 +125,6 @@ def generateChart():
 
 # Function to generate HTML overview
 def generateHTMLOverview():
-    # Generate ChartJS data object
-    #chartJSDataObject = generateChart()
-    #print(chartJSDataObject)
 
     # Get the current instance URL
     meUrl = 'https://'+mastodon.me().url.split("https://")[1].split("/")[0]
@@ -314,7 +311,7 @@ def generateHTMLOverview():
                                     y: { beginAtZero: true }
                                 }
                             }
-                        });
+                    });
                 }
 
                 window.onload = function() {
@@ -369,10 +366,10 @@ def worker(mastodon):
             threads = []
 
             # Iterate through each category and start a thread for each
-            # for category, urls in data.items():
-            #     # Create account gathering thread for each category
-            #     accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
-            #     threads.append(accountInfos)
+            for category, urls in data.items():
+                # Create account gathering thread for each category
+                accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
+                threads.append(accountInfos)
             
             # Create HTML overview thread
             htmlOverview = Thread(target=generateHTMLOverview)
