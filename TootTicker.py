@@ -145,9 +145,6 @@ def generateHTMLOverview():
     # Create CSS file
     generateCSSFile()
 
-    # Get the ChartJS object
-    js_data_object = generate_js_data_object()
-
     # Define the output HTML file
     output_file = 'public/account_overview.html'
 
@@ -161,7 +158,8 @@ def generateHTMLOverview():
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <link rel="stylesheet" href="account_overview.css">
-            <title>TootTicker - boost your media and journalists</title>
+            <title>TootTicker - boost your bubble</title>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             <script>
 
             function toggleVisibility(category) {
@@ -180,11 +178,10 @@ def generateHTMLOverview():
             </script>
         </head>
         <body>
+        <div id="charts-container"></div>
         """
         html_file.write(html_header)
 
-        # Write the ChatJS container
-        html_file.write('<div id="charts-container"></div>\n')
         # Write a grid wrapper
         html_file.write('<div class="grid">\n')
 
@@ -288,6 +285,42 @@ def generateHTMLOverview():
         #    print(key, value)
 
         # Write the HTML footer
+        html_file.write("""
+            <script>
+                const categoriesData = """ + generateChart() + """;
+
+                function createChart(category, data) {
+                    const ctx = document.createElement('canvas');
+                    document.getElementById('charts-container').appendChild(ctx);
+
+                    new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: Object.keys(data),
+                                datasets: [{
+                                    label: `${category} Followers`,
+                                    data: Object.values(data),
+                                    backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                                    borderColor: 'rgba(0, 123, 255, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: { beginAtZero: true }
+                                }
+                            }
+                        });
+                }
+
+                window.onload = function() {
+                    for (const [category, data] of Object.entries(categoriesData)) {
+                        createChart(category, data);
+                    }
+                }
+            </script>
+        """)
+
         html_file.write('</body>\n</html>')
         
     print(f'HTML overview generated in {output_file}')
