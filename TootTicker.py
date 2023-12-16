@@ -208,6 +208,7 @@ def generateHTMLOverview():
         
     print(f'HTML overview generated in {output_file}')
 
+# Function to generate CSS file
 def generateCSSFile(output_file='public/account_overview.css'):
     try:
         css_content = """
@@ -218,7 +219,7 @@ def generateCSSFile(output_file='public/account_overview.css'):
         .accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(1fr)); grid-gap: 10px; }
         /* Dark Violet Scrollbar Styles */
-        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar { width: 12px; display: none; }
         ::-webkit-scrollbar-thumb { background-color: #4B0082; border-radius: 6px; }
         ::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background-color: #1E1E1E; }
         ::-webkit-scrollbar-thumb:hover { background-color: #6A5ACD; }
