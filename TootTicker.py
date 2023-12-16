@@ -9,6 +9,7 @@ from threading import Thread
 # Gathering account informations from Mastodon and make them available as pure json files
 # GPLv3 - 2023 - by scobiform.com
 # github.com/Scobiform/TootTicker
+# Chart.js - MIT License - https://www.chartjs.org/
 
 # Create Mastodon app and get user credentials
 def create_secrets():
@@ -99,6 +100,7 @@ def saveAccountInfoToJSON(mastodon, category, urls):
         except Exception as e:
             print(f"Error processing {url}: {e}")
 
+# Function to generate the Chart.js data object
 def generateChart():
     categories = ['Media', 'Creator', 'Government', 'NGO']
     categories_data = {}
@@ -123,8 +125,42 @@ def generateChart():
     js_data_object = json.dumps(categories_data, indent=4)
     return js_data_object
 
+# Function to generate the HTML header
+def generateHTMLHeader():
+    # Write the HTML header
+    html_header = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>TootTicker - boost your bubble</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link rel="stylesheet" href="style.css">
+        <script>
+
+        function toggleVisibility(category) {
+            var accounts = document.querySelectorAll("." + category);
+            accounts.forEach(function(account) {
+                account.style.display = account.style.display === "none" ? "block" : "none";
+            });
+        }
+
+        function toggleToots(elementId) {
+            var element = document.getElementById(elementId);
+            if (element) {
+                element.style.display = element.style.display === "none" ? "block" : "none";
+            }
+        }
+
+        </script>
+    </head>
+    <body>
+    <div id="charts-container"></div>
+    """
+    return html_header
+
 # Function to generate HTML overview
-def generateHTMLOverview():
+def generateAccountOverview():
 
     # Get the current instance URL
     meUrl = 'https://'+mastodon.me().url.split("https://")[1].split("/")[0]
@@ -134,200 +170,150 @@ def generateHTMLOverview():
         # Helper function to sort accounts based on a given key
         return sorted(accounts, key=lambda x: x[key], reverse=True)
 
-    # Create the 'public/' directory if it doesn't exist
-    public_directory = 'public/'
-    if not os.path.exists(public_directory):
-        os.makedirs(public_directory)
+    html_content = '<div class="grid">\n'
 
-    # Create CSS file
-    generateCSSFile()
+    # Categories to iterate through
+    categories = ['Media', 'Creator', 'Government', 'NGO']
 
-    # Define the output HTML file
-    output_file = 'public/account_overview.html'
+    # Iterate through each category
+    for category in categories:
+        # Get the list of JSON files in the 'accounts/' folder for the current category
+        json_files = [f for f in os.listdir(f'accounts/{category}/') if f.endswith('.json')]
 
-    # Open the HTML file for writing
-    with open(output_file, 'w', encoding='utf-8') as html_file:
-        # Write the HTML header
-        html_header = """
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <link rel="stylesheet" href="account_overview.css">
-            <title>TootTicker - boost your bubble</title>
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <script>
+        # List to store account information
+        accounts = []
 
-            function toggleVisibility(category) {
-                var accounts = document.querySelectorAll("." + category);
-                accounts.forEach(function(account) {
-                    account.style.display = account.style.display === "none" ? "block" : "none";
+        # Iterate through each JSON file
+        for json_file in json_files:
+            # Read the contents of the JSON file
+            with open(f'accounts/{category}/{json_file}', 'r') as file:
+                try:
+                    # Attempt to load JSON content
+                    account_info = json.load(file)
+                    # Append the account information to the list
+                    accounts.append(account_info)
+                except json.decoder.JSONDecodeError as e:
+                    # Handle JSON decoding error (e.g., empty file or invalid JSON)
+                    print(f"Error decoding {json_file}: {e}")
+                    continue
+
+        # Sort the list of accounts based on followers
+        accounts = sort_accounts(accounts, 'Followers')
+
+        # Write the HTML header for each category
+        html_content += f'<h1 onclick="toggleVisibility(\'{category}\')">{category}</h1>\n'
+
+        # Write the category chart container
+        html_content += f'<div id="chart-container-{category}" class="{category}"></div>\n'
+
+        # Iterate through each account in the sorted list
+        for account_info in accounts:
+            
+            # Get the account ID
+            account_id = account_info["Account ID"]
+
+            # Get the account header image URL
+            header_image_url = account_info.get("Header", "")
+
+            # Write a div for each account with class as the category
+            html_content += f'<div class="accountInfo {category}" style="background-image: url(\'{header_image_url}\'); display:none;">\n'
+
+            # Write a div for the account facts
+            html_content += '<div class="accountFacts">'
+
+            # Write the account name as a header
+            tempUrl = meUrl+'/@'+ account_info["Account Name"] + account_info["Instance"]
+            html_content += f'<h2><a href="{tempUrl}" target="_blank" rel="noopener noreferrer">{account_info["Display Name"]}</a></h2>\n'
+
+            # Display the avatar using img tag
+            html_content += f'<img src="{account_info["Avatar"]}" alt="Avatar" style="max-width: 100px; max-height: 100px;">\n'
+
+            # Write the rest of the account information
+            for key, value in account_info.items():
+                if key not in ["Account Name", "Avatar", "Header", "Toots", "Account URL", "Display Name", "Instance", "Account ID"]:
+                    html_content += f'<p><strong>{key}:</strong> {value}</p>\n'
+
+            # Write the Toots header
+            html_content += f'<h3 class="toots-toggle" onclick="toggleToots(\'toots-{account_id}\')">Toots</h3>\n'
+
+            # # Write the Toots in a separate div
+            # html_content += f'<div class="toots" id="toots-{account_id}" style="display:none;">\n'
+            # if "Toots" in account_info:
+            #     for toot in account_info["Toots"]:
+            #         # Assuming 'Toot' is a dictionary and contains text in a 'content' key
+            #         toot_content = toot.get("content", "No content")
+            #         toot_url = toot.get("url", "")
+            #         toot_created_at = toot.get("created_at", "")
+            #         toot_replies_count = toot.get("replies_count", "")
+            #         toot_reblogs_count = toot.get("reblogs_count", "")
+            #         toot_favourites_count = toot.get("favourites_count", "")
+
+            #             # Write the toot created at
+            #         html_content += f'<div class="tootDate"><strong>Created At:</strong> <a href="{toot_url}" target="_blank" rel="noopener norefrrer">{toot_created_at}</a></div>\n'
+            #         # Write the toot content
+            #         html_content += f'<div class="toot">{toot_content}</div>\n'
+            #         # Write the toot replies count
+            #         html_content += f'<div class="tootCounts"><strong>Replies:</strong> {toot_replies_count} <strong>Reblogs:</strong> {toot_reblogs_count} <strong>Favourites:</strong> {toot_favourites_count}</div>\n'
+            #         # Write a horizontal rule
+            #         html_content += ('<hr>\n')
+            # else:
+            #     html_content += '<p>No toots found.</p>\n'
+
+            html_content += '</div>\n'  # Close the toots div
+
+            # Close the accountFacts div
+            html_content += '</div>\n'
+
+            # Close the accountInfo div
+            html_content += '</div>\n'
+
+    # Close the grid wrapper
+    html_content += '</div>\n'
+
+    # Return the HTML content
+    return html_content
+
+# Function to generate the footer
+def generateHTMLFooter():
+    html_footer = ("""
+        <script>
+            const categoriesData = """ + generateChart() + """;
+
+            function createChart(containerId, category, data) {
+                const ctx = document.createElement('canvas');
+                document.getElementById(containerId).appendChild(ctx);
+
+                new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(data),
+                            datasets: [{
+                                label: `${category} Followers`,
+                                data: Object.values(data),
+                                backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                                borderColor: 'rgba(0, 123, 255, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: { beginAtZero: true }
+                            }
+                        }
                 });
             }
 
-            function toggleToots(elementId) {
-                var element = document.getElementById(elementId);
-                if (element) {
-                    element.style.display = element.style.display === "none" ? "block" : "none";
+            window.onload = function() {
+                for (const [category, data] of Object.entries(categoriesData)) {
+                    createChart(`chart-container-${category}`, category, data);
                 }
             }
-
-            </script>
-        </head>
-        <body>
-        <div id="charts-container"></div>
-        """
-        html_file.write(html_header)
-
-        # Write a grid wrapper
-        html_file.write('<div class="grid">\n')
-
-        # Categories to iterate through
-        categories = ['Media', 'Creator', 'Government', 'NGO']
-
-        # Iterate through each category
-        for category in categories:
-            # Get the list of JSON files in the 'accounts/' folder for the current category
-            json_files = [f for f in os.listdir(f'accounts/{category}/') if f.endswith('.json')]
-
-            # List to store account information
-            accounts = []
-
-            # Iterate through each JSON file
-            for json_file in json_files:
-                # Read the contents of the JSON file
-                with open(f'accounts/{category}/{json_file}', 'r') as file:
-                    try:
-                        # Attempt to load JSON content
-                        account_info = json.load(file)
-                        # Append the account information to the list
-                        accounts.append(account_info)
-                    except json.decoder.JSONDecodeError as e:
-                        # Handle JSON decoding error (e.g., empty file or invalid JSON)
-                        print(f"Error decoding {json_file}: {e}")
-                        continue
-
-            # Sort the list of accounts based on followers
-            accounts = sort_accounts(accounts, 'Followers')
-
-            # Write the HTML header for each category
-            html_file.write(f'<h1 onclick="toggleVisibility(\'{category}\')">{category}</h1>\n')
-
-            # Write the category chart container
-            html_file.write(f'<div id="chart-container-{category}" class="{category}"></div>\n')
-
-            # Iterate through each account in the sorted list
-            for account_info in accounts:
-                
-                # Get the account ID
-                account_id = account_info["Account ID"]
-
-                # Get the account header image URL
-                header_image_url = account_info.get("Header", "")
-
-                # Write a div for each account with class as the category
-                html_file.write(f'<div class="accountInfo {category}" style="background-image: url(\'{header_image_url}\'); display:none;">\n')
-
-                # Write a div for the account facts
-                html_file.write('<div class="accountFacts">')
-
-                # Write the account name as a header
-                tempUrl = meUrl+'/@'+ account_info["Account Name"] + account_info["Instance"]
-                html_file.write(f'<h2><a href="{tempUrl}" target="_blank" rel="noopener noreferrer">{account_info["Display Name"]}</a></h2>\n')
-
-                # Display the avatar using img tag
-                html_file.write(f'<img src="{account_info["Avatar"]}" alt="Avatar" style="max-width: 100px; max-height: 100px;">\n')
-
-                # Write the rest of the account information
-                for key, value in account_info.items():
-                    if key not in ["Account Name", "Avatar", "Header", "Toots", "Account URL", "Display Name", "Instance", "Account ID"]:
-                        html_file.write(f'<p><strong>{key}:</strong> {value}</p>\n')
-
-                # Write the Toots header
-                html_file.write(f'<h3 class="toots-toggle" onclick="toggleToots(\'toots-{account_id}\')">Toots</h3>\n')
-
-                # Write the Toots in a separate div
-                html_file.write(f'<div class="toots" id="toots-{account_id}" style="display:none;">\n')
-                if "Toots" in account_info:
-                    for toot in account_info["Toots"]:
-                        # Assuming 'Toot' is a dictionary and contains text in a 'content' key
-                        toot_content = toot.get("content", "No content")
-                        toot_url = toot.get("url", "")
-                        toot_created_at = toot.get("created_at", "")
-                        toot_replies_count = toot.get("replies_count", "")
-                        toot_reblogs_count = toot.get("reblogs_count", "")
-                        toot_favourites_count = toot.get("favourites_count", "")
-
-                         # Write the toot created at
-                        html_file.write(f'<div class="tootDate"><strong>Created At:</strong> <a href="{toot_url}" target="_blank" rel="noopener norefrrer">{toot_created_at}</a></div>\n')              
-                        # Write the toot content
-                        html_file.write(f'<div class="toot">{toot_content}</div>\n')
-                        # Write the toot replies count
-                        html_file.write(f'<div class="tootCounts"><strong>Replies:</strong> {toot_replies_count} <strong>Reblogs:</strong> {toot_reblogs_count} <strong>Favourites:</strong> {toot_favourites_count}</div>\n')
-                        # Write a horizontal rule
-                        html_file.write('<hr>\n')
-                else:
-                    html_file.write('<p>No toots found.</p>\n')
-
-                html_file.write('</div>\n')  # Close the toots div
-
-                # Close the accountFacts div
-                html_file.write('</div>\n')
-
-                # Close the accountInfo div
-                html_file.write('</div>\n')
-
-        # Close the grid wrapper
-        html_file.write('</div>\n')
-
-        # Debug item in data.items():
-        #for key, value in data.items():
-        #    print(key, value)
-
-        # Write the HTML footer
-        html_file.write("""
-            <script>
-                const categoriesData = """ + generateChart() + """;
-
-                function createChart(containerId, category, data) {
-                    const ctx = document.createElement('canvas');
-                    document.getElementById(containerId).appendChild(ctx);
-
-                    new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: Object.keys(data),
-                                datasets: [{
-                                    label: `${category} Followers`,
-                                    data: Object.values(data),
-                                    backgroundColor: 'rgba(0, 123, 255, 0.5)',
-                                    borderColor: 'rgba(0, 123, 255, 1)',
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    y: { beginAtZero: true }
-                                }
-                            }
-                    });
-                }
-
-                window.onload = function() {
-                    for (const [category, data] of Object.entries(categoriesData)) {
-                        createChart(`chart-container-${category}`, category, data);
-                    }
-                }
-            </script>
-        """)
-
-        html_file.write('</body>\n</html>')
-        
-    print(f'HTML overview generated in {output_file}')
+        </script>
+    """)
+    return html_footer
 
 # Function to generate CSS file
-def generateCSSFile(output_file='public/account_overview.css'):
+def generateCSSFile(output_file='public/style.css'):
     try:
         css_content = """
         body { font-family: sans-serif; background-color: #191b22; }
@@ -357,7 +343,42 @@ def generateCSSFile(output_file='public/account_overview.css'):
         print(f'CSS file generated in {output_file}')
     except IOError as e:
         print(f"Error writing to {output_file}: {e}")
- 
+
+# function to get String from html file
+def getHTMLStringFromFile(file):
+    with open(file, 'r', encoding='utf-8') as file:
+        return file.read()
+
+# Function to generate index.html from the account_overview.html
+def generateIndexFile():
+    try:
+        # Create the 'public/' directory if it doesn't exist
+        public_directory = 'public/'
+        if not os.path.exists(public_directory):
+            os.makedirs(public_directory)
+
+        # Create CSS file
+        generateCSSFile()
+
+        # Define the output HTML file
+        output_file = 'public/index.html'
+
+
+        # Open the HTML file for writing
+        with open(output_file, 'w', encoding='utf-8') as html_file:
+            # Write the HTML header
+            # Write the HTML header
+            html_header = generateHTMLHeader()
+            html_file.write(html_header)
+            html_accountOverview = generateAccountOverview()
+            html_file.write(html_accountOverview)
+            html_footer = generateHTMLFooter()
+            html_file.write(html_footer)
+
+        print(f'index.html generated in {output_file}')
+    except IOError as e:
+        print(f"Error writing to {output_file}: {e}")
+
 # Function to start the worker
 def worker(mastodon):
     try:
@@ -366,14 +387,18 @@ def worker(mastodon):
             threads = []
 
             # Iterate through each category and start a thread for each
-            for category, urls in data.items():
-                # Create account gathering thread for each category
-                accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
-                threads.append(accountInfos)
+            # for category, urls in data.items():
+            #     # Create account gathering thread for each category
+            #     accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
+            #     threads.append(accountInfos)
             
             # Create HTML overview thread
-            htmlOverview = Thread(target=generateHTMLOverview)
+            htmlOverview = Thread(target=generateAccountOverview)
             threads.append(htmlOverview)
+
+            # Create index.html thread
+            indexFile = Thread(target=generateIndexFile)
+            threads.append(indexFile)
 
             # Start all threads
             for thread in threads:
