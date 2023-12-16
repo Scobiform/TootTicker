@@ -99,8 +99,35 @@ def saveAccountInfoToJSON(mastodon, category, urls):
         except Exception as e:
             print(f"Error processing {url}: {e}")
 
+def generateChart():
+    categories = ['Media', 'Creator', 'Government', 'NGO']
+    categories_data = {}
+
+    for category in categories:
+        category_path = f'accounts/{category}/'
+        category_data = {}
+
+        if os.path.exists(category_path):
+            for json_file in os.listdir(category_path):
+                if json_file.endswith('.json'):
+                    with open(os.path.join(category_path, json_file), 'r') as file:
+                        try:
+                            account_info = json.load(file)
+                            category_data[account_info["Display Name"]] = account_info["Followers"]
+                        except json.decoder.JSONDecodeError as e:
+                            print(f"Error decoding {json_file}: {e}")
+
+        categories_data[category] = category_data
+
+    # Convert the Python dictionary to a JavaScript object notation
+    js_data_object = json.dumps(categories_data, indent=4)
+    return js_data_object
+
 # Function to generate HTML overview
 def generateHTMLOverview():
+    # Generate ChartJS data object
+    #chartJSDataObject = generateChart()
+    #print(chartJSDataObject)
 
     # Get the current instance URL
     meUrl = 'https://'+mastodon.me().url.split("https://")[1].split("/")[0]
@@ -118,6 +145,9 @@ def generateHTMLOverview():
     # Create CSS file
     generateCSSFile()
 
+    # Get the ChartJS object
+    js_data_object = generate_js_data_object()
+
     # Define the output HTML file
     output_file = 'public/account_overview.html'
 
@@ -133,11 +163,19 @@ def generateHTMLOverview():
             <link rel="stylesheet" href="account_overview.css">
             <title>TootTicker - boost your media and journalists</title>
             <script>
+
             function toggleVisibility(category) {
                 var accounts = document.querySelectorAll("." + category);
                 accounts.forEach(function(account) {
                     account.style.display = account.style.display === "none" ? "block" : "none";
                 });
+            }
+
+            function toggleToots(elementId) {
+                var element = document.getElementById(elementId);
+                if (element) {
+                    element.style.display = element.style.display === "none" ? "block" : "none";
+                }
             }
             </script>
         </head>
@@ -145,6 +183,8 @@ def generateHTMLOverview():
         """
         html_file.write(html_header)
 
+        # Write the ChatJS container
+        html_file.write('<div id="charts-container"></div>\n')
         # Write a grid wrapper
         html_file.write('<div class="grid">\n')
 
@@ -181,6 +221,10 @@ def generateHTMLOverview():
 
             # Iterate through each account in the sorted list
             for account_info in accounts:
+                
+                # Get the account ID
+                account_id = account_info["Account ID"]
+
                 # Get the account header image URL
                 header_image_url = account_info.get("Header", "")
 
@@ -201,12 +245,12 @@ def generateHTMLOverview():
                 for key, value in account_info.items():
                     if key not in ["Account Name", "Avatar", "Header", "Toots", "Account URL", "Display Name", "Instance", "Account ID"]:
                         html_file.write(f'<p><strong>{key}:</strong> {value}</p>\n')
-                
-                 # Write the Toots header
-                html_file.write('<h3 class="toots-toggle" onclick="toggleVisibility(\'toots-content\')">Toots</h3>\n')
+
+                # Write the Toots header
+                html_file.write(f'<h3 class="toots-toggle" onclick="toggleToots(\'toots-{account_id}\')">Toots</h3>\n')
 
                 # Write the Toots in a separate div
-                html_file.write('<div class="toots-content" style="display:none;">\n')
+                html_file.write(f'<div class="toots" id="toots-{account_id}" style="display:none;">\n')
                 if "Toots" in account_info:
                     for toot in account_info["Toots"]:
                         # Assuming 'Toot' is a dictionary and contains text in a 'content' key
@@ -217,24 +261,21 @@ def generateHTMLOverview():
                         toot_reblogs_count = toot.get("reblogs_count", "")
                         toot_favourites_count = toot.get("favourites_count", "")
 
-                        # Write the toot created at
-                        html_file.write(f'<div class="toot"><strong>Created At:</strong> {toot_created_at}</div>\n')
+                         # Write the toot created at
+                        html_file.write(f'<div class="tootDate"><strong>Created At:</strong> <a href="{toot_url}" target="_blank" rel="noopener norefrrer">{toot_created_at}</a></div>\n')              
                         # Write the toot content
                         html_file.write(f'<div class="toot">{toot_content}</div>\n')
-                        # Write the toot URL
-                        html_file.write(f'<div class="toot"><a href="{toot_url}" target="_blank" rel="noopener norefrrer">{toot_url}</a></div>\n')
                         # Write the toot replies count
-                        html_file.write(f'<div class="toot"><strong>Replies:</strong> {toot_replies_count}</div>\n')
-                        # Write the toot reblogs count
-                        html_file.write(f'<div class="toot"><strong>Reblogs:</strong> {toot_reblogs_count}</div>\n')
-                        # Write the toot favourites count
-                        html_file.write(f'<div class="toot"><strong>Favourites:</strong> {toot_favourites_count}</div>\n')
+                        html_file.write(f'<div class="tootCounts"><strong>Replies:</strong> {toot_replies_count} <strong>Reblogs:</strong> {toot_reblogs_count} <strong>Favourites:</strong> {toot_favourites_count}</div>\n')
                         # Write a horizontal rule
                         html_file.write('<hr>\n')
                 else:
                     html_file.write('<p>No toots found.</p>\n')
 
                 html_file.write('</div>\n')  # Close the toots div
+
+                # Close the accountFacts div
+                html_file.write('</div>\n')
 
                 # Close the accountInfo div
                 html_file.write('</div>\n')
@@ -263,6 +304,12 @@ def generateCSSFile(output_file='public/account_overview.css'):
         .accountFacts { background: rgba(25, 27, 34, 0.7); padding: 10px; min-width: 160px; width: 70vw; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(1fr)); grid-gap: 10px; }
         .toots-content { background: rgba(25, 27, 34, 0.7); padding: 10px; }
+        .toots-toggle { cursor: pointer; color: #d9e1e8; background-color: #6364FF; padding: 0.7rem; }
+        .toot { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
+        .tootDate { color:#ff64FF; padding: 10px; margin-bottom: 10px; font-size: 0.7rem; float: right;}
+        .tootUrl { color: #ff64FF; padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
+        .tootCounts {color: #ff64FF; padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
+        hr { border: 0; height: 1px; background: #6364FF; }
         /* Dark Violet Scrollbar Styles */
         ::-webkit-scrollbar { width: 12px; display: none; }
         ::-webkit-scrollbar-thumb { background-color: #4B0082; border-radius: 6px; }
@@ -285,10 +332,10 @@ def worker(mastodon):
             threads = []
 
             # Iterate through each category and start a thread for each
-            for category, urls in data.items():
-                # Create account gathering thread for each category
-                accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
-                threads.append(accountInfos)
+            # for category, urls in data.items():
+            #     # Create account gathering thread for each category
+            #     accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
+            #     threads.append(accountInfos)
             
             # Create HTML overview thread
             htmlOverview = Thread(target=generateHTMLOverview)
