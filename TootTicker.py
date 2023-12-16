@@ -68,7 +68,7 @@ def saveAccountInfoToJSON(mastodon, category, urls):
             user_id = account[0]['id']
 
             # Get recent toots from the user's timeline
-            toots = mastodon.account_statuses(user_id, limit=7)
+            toots = mastodon.account_statuses(user_id)
 
             # Create a dictionary with account information
             account_info = {
@@ -134,16 +134,6 @@ def generateHTMLOverview():
         html_file.write('}\n')
         html_file.write('</script>\n')
         html_file.write('</head>\n<body>\n')
-
-        # Div for Mastodon authentication
-        html_file.write('<div class="mastodonAuthenticate">\n')
-        html_file.write('<h1>Mastodon Authentication</h1>\n')
-        html_file.write('<p>Who Am I?</p>\n')
-        html_file.write(f'<p>{mastodon.me().username}</p>\n')
-        html_file.write(f'<p>{mastodon.me().id}</p>\n')
-        # Mastodon instance
-        html_file.write(f'<p>{mastodon.me().url.split("https://")[1].split("/")[0]}</p>\n')
-        html_file.write('</div>\n')
 
         # Write a grid wrapper
         html_file.write('<div class="grid">\n')
@@ -214,49 +204,28 @@ def generateHTMLOverview():
     # Open in default browser add current path
     output_file = os.path.join(os.getcwd(), output_file)
 
+def generateCSSFile(output_file='public/account_overview.css'):
+    try:
+        css_content = """
+        body { font-family: sans-serif; background-color: #191b22; }
+        h1 { color: #d9e1e8; background-color: #6364FF; padding: 2.1rem; cursor: pointer; }
+        h2, p, a { color: #d9e1e8; }
+        a:hover, a:visited, a:active, a:focus, a:link { color: #ff64FF; }
+        .accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); grid-gap: 10px; }
+        /* Dark Violet Scrollbar Styles */
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-thumb { background-color: #4B0082; border-radius: 6px; }
+        ::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background-color: #1E1E1E; }
+        ::-webkit-scrollbar-thumb:hover { background-color: #6A5ACD; }
+        """
 
-# Generate CSS file
-def generateCSSFile():
-    # Define the output CSS file
-    output_file = 'public/account_overview.css'
+        with open(output_file, 'w') as css_file:
+            css_file.write(css_content)
 
-    # Open the CSS file for writing
-    with open(output_file, 'w') as css_file:
-        # Write the CSS header
-        css_file.write('body { font-family: sans-serif; background-color: #191b22; }\n')
-        css_file.write('h1 { color: #d9e1e8; background-color: #6364FF; padding: 2.1rem; cursor: pointer; }\n')
-        css_file.write('h2 { color: #d9e1e8; }\n')
-        css_file.write('p { color: #d9e1e8; }\n')
-        # a class
-        css_file.write('a { color: #d9e1e8; }\n')
-        css_file.write('a:hover { color: #ff64FF; }\n')
-        css_file.write('a:visited { color: #ff64FF; }\n')
-        css_file.write('a:active { color: #ff64FF; }\n')
-        css_file.write('a:focus { color: #ff64FF; }\n')
-        css_file.write('a:link { color: #ff64FF; }\n')
-        css_file.write('.accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }\n')
-        css_file.write('.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); grid-gap: 10px; }\n')
-
-        # Add styles for the dark violet scrollbar
-        css_file.write('/* Dark Violet Scrollbar Styles */\n')
-        css_file.write('::-webkit-scrollbar {\n')
-        css_file.write('  width: 12px;\n')
-        css_file.write('}\n')
-        css_file.write('::-webkit-scrollbar-thumb {\n')
-        css_file.write('  background-color: #4B0082; /* Dark violet color */\n')
-        css_file.write('  border-radius: 6px;\n')
-        css_file.write('}\n')
-        css_file.write('::-webkit-scrollbar-track {\n')
-        css_file.write('  background-color: #1E1E1E; /* Dark background color */\n')
-        css_file.write('}\n')
-        css_file.write('::-webkit-scrollbar-corner {\n')
-        css_file.write('  background-color: #1E1E1E; /* Dark background color */\n')
-        css_file.write('}\n')
-        css_file.write('::-webkit-scrollbar-thumb:hover {\n')
-        css_file.write('  background-color: #6A5ACD; /* A lighter violet color on hover */\n')
-        css_file.write('}\n')
-
-    print(f'CSS file generated in {output_file}')
+        print(f'CSS file generated in {output_file}')
+    except IOError as e:
+        print(f"Error writing to {output_file}: {e}")
  
 # Function to start the worker
 def worker(mastodon):

@@ -108,7 +108,8 @@
     "@Sicherheitspod@mastodontech.de",
     "@bundesedit@botsin.space",
     "@Bellingcat@mstdn.social",
-    "@BleepingComputer@infosec.exchange"
+    "@BleepingComputer@infosec.exchange",
+    "@UnitedSpaceCats@mastodon.social"
     ],
   "Creator": [
     "@rikefranke@bagarrosphere.fr",
@@ -144,7 +145,10 @@
     "@nicosemsrott@mastodon.social",
     "@HonkHase@chaos.social",
     "@kirschner@mastodon.social",
-    "@wahl_beobachter@mastodon.social"
+    "@wahl_beobachter@mastodon.social",
+    "@sveckert@mastodon.social",
+    "@netzwerkerin@mastodon.social",
+    "@linuzifer@chaos.social"
   ],
   "Government": [
     "@bsi@social.bund.de",
@@ -176,6 +180,9 @@
     "@mozilla@mozilla.social",
     "@info_activism@mastodon.cc",
     "@social@mozilla.social",
-    "@lobbycontrol@bewegung.social"
+    "@lobbycontrol@bewegung.social",
+    "@OttoBrennerStiftung@mastodon.online",
+    "@wahlrecht_de@fairmove.net",
+    "@fsf@hostux.social"
   ]
 }
