@@ -35,14 +35,22 @@ cd TootTicker
 pip install Mastodon.py
 ```
 ## Usage
-1. Uncomment (First run) to create your app credentials
+1. Edit TootTicker.py
 ```
-#createSecrets()
+createSecrets():
+    # Replace the following placeholders with your actual values
+    app_name = 'TootTicker - boost your bubble'  # Replace with your desired app name
+    instance_url = 'https://mastodon.social/'  # Replace with your Mastodon instance URL
+    email = 'your@mail.com'  # Replace with your Mastodon account email
+    password = 'yourPassword'  # Replace with your Mastodon account password
 ```
 2. Run
 ```
 python3 TootTicker.py
 ```
+2. Wait till the gathering is done.
+
+3. Open the index.html in public folder.
 
 The account informations will be saved to accounts/ folder
 

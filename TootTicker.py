@@ -17,7 +17,7 @@ from threading import Thread
 # Create Mastodon app and get user credentials
 def createSecrets():
     # Replace the following placeholders with your actual values
-    app_name = 'TootTicker - boost your media and journalists'  # Replace with your desired app name
+    app_name = 'TootTicker - boost your bubble'  # Replace with your desired app name
     instance_url = 'https://mastodon.social/'  # Replace with your Mastodon instance URL
     email = 'your@mail.com'  # Replace with your Mastodon account email
     password = 'yourPassword'  # Replace with your Mastodon account password
@@ -37,10 +37,13 @@ def createSecrets():
         to_file='usercred.secret'
     )
 
-#ToDo: Check for first run and create secrets
-# Call the create_secrets function to generate credentials
-# --- Uncomment the following line to generate credentials ---
-#createSecrets()
+# If secrets are not present, create them
+def checkForSecrets():
+    if os.path.exists('usercred.secret'):
+        print("Secrets found.")
+    else:
+        print("Secrets not found.")
+        createSecrets()
 
 # Load Mastodon URLs from the provided JSON
 with open('mastodon_urls.json', 'r') as file:
@@ -102,6 +105,8 @@ def saveAccountInfoToJSON(mastodon, category, urls):
 
         except Exception as e:
             print(f"Error processing {url}: {e}")
+    # Generate index.html
+    generateIndexFile()
 
 # Function to generate the HTML header
 def generateHTMLHeader():
@@ -136,30 +141,6 @@ def generateHTMLHeader():
     <div id="charts-container"></div>
     """
     return html_header
-
-    sideMenu = """
-    <div id="sideMenu">
-        <div id="blog">
-            <a href="" target="_blank" rel="noopener noreferrer">Blog</a>
-        </div>
-        <div id="about">
-            <a href="" target="_blank" rel="noopener noreferrer">About</a>
-        </div>
-        <div id="contact">
-            <a href="" target="_blank" rel="noopener noreferrer">Contact</a>
-        </div>
-        <div id="donate">
-            <a href="" target="_blank" rel="noopener noreferrer">Donate</a>
-        </div>
-        <div id="settings">
-            <a href="" target="_blank" rel="noopener noreferrer">Settings</a>
-        </div>
-        <div id="search">
-            <input type="text" id="search" name="search" placeholder="Search">
-        </div>
-    </div>
-    """
-    return sideMenu
 
 # Function to generate the Chart.js data object
 def generateChart():
@@ -548,10 +529,6 @@ def worker(mastodon):
                 # Create account gathering thread for each category
                 accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
                 threads.append(accountInfos)
-            
-            # Create HTML overview thread
-            htmlOverview = Thread(target=generateAccountOverview)
-            threads.append(htmlOverview)
 
             # Create index.html thread
             indexFile = Thread(target=generateIndexFile)
@@ -578,6 +555,9 @@ def main():
 
     # Enable tracemalloc
     tracemalloc.start()
+
+    # Check for secrets
+    checkForSecrets()
     
     # Authenticate the app
     global mastodon
