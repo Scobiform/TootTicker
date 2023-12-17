@@ -536,10 +536,10 @@ def worker(mastodon):
             threads = []
 
             # # Iterate through each category and start a thread for each
-            # for category, urls in data.items():
-            #     # Create account gathering thread for each category
-            #     accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
-            #     threads.append(accountInfos)
+            for category, urls in data.items():
+                # Create account gathering thread for each category
+                accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
+                threads.append(accountInfos)
 
             # Thread for gnerating index.html
             indexFile = Thread(target=generateIndexFile)
