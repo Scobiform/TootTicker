@@ -315,30 +315,30 @@ def generateAccountOverview():
                     html_content += f'<p><strong>{key}:</strong> {value}</p>\n'
 
             # Write the Toots header
-            #html_content += f'<h3 class="toots-toggle" onclick="toggleToots(\'toots-{account_id}\')">Toots</h3>\n'
+            html_content += f'<h3 class="toots-toggle" onclick="toggleToots(\'toots-{account_id}\')">Toots</h3>\n'
 
-            # # Write the Toots in a separate div
-            # html_content += f'<div class="toots" id="toots-{account_id}" style="display:none;">\n'
-            # if "Toots" in account_info:
-            #     for toot in account_info["Toots"]:
-            #         # Assuming 'Toot' is a dictionary and contains text in a 'content' key
-            #         toot_content = toot.get("content", "No content")
-            #         toot_url = toot.get("url", "")
-            #         toot_created_at = toot.get("created_at", "")
-            #         toot_replies_count = toot.get("replies_count", "")
-            #         toot_reblogs_count = toot.get("reblogs_count", "")
-            #         toot_favourites_count = toot.get("favourites_count", "")
+            # Write the Toots in a separate div
+            html_content += f'<div class="toots" id="toots-{account_id}" style="display:none;">\n'
+            if "TootsList" in account_info:
+                for toot in account_info["TootsList"]:
+                    # Assuming 'Toot' is a dictionary and contains text in a 'content' key
+                    toot_content = toot.get("content", "No content")
+                    toot_url = toot.get("url", "")
+                    toot_created_at = toot.get("created_at", "")
+                    toot_replies_count = toot.get("replies_count", "")
+                    toot_reblogs_count = toot.get("reblogs_count", "")
+                    toot_favourites_count = toot.get("favourites_count", "")
 
-            #             # Write the toot created at
-            #         html_content += f'<div class="tootDate"><strong>Created At:</strong> <a href="{toot_url}" target="_blank" rel="noopener norefrrer">{toot_created_at}</a></div>\n'
-            #         # Write the toot content
-            #         html_content += f'<div class="toot">{toot_content}</div>\n'
-            #         # Write the toot replies count
-            #         html_content += f'<div class="tootCounts"><strong>Replies:</strong> {toot_replies_count} <strong>Reblogs:</strong> {toot_reblogs_count} <strong>Favourites:</strong> {toot_favourites_count}</div>\n'
-            #         # Write a horizontal rule
-            #         html_content += ('<hr>\n')
-            # else:
-            #     html_content += '<p>No toots found.</p>\n'
+                        # Write the toot created at
+                    html_content += f'<div class="tootDate"><strong>Created At:</strong> <a href="{toot_url}" target="_blank" rel="noopener norefrrer">{toot_created_at}</a></div>\n'
+                    # Write the toot content
+                    html_content += f'<div class="toot">{toot_content}</div>\n'
+                    # Write the toot replies count
+                    html_content += f'<div class="tootCounts"><strong>Replies:</strong> {toot_replies_count} <strong>Reblogs:</strong> {toot_reblogs_count} <strong>Favourites:</strong> {toot_favourites_count}</div>\n'
+                    # Write a horizontal rule
+                    html_content += ('<hr>\n')
+            else:
+                html_content += '<p>No toots found.</p>\n'
 
             html_content += '</div>\n'  # Close the toots div
 
@@ -536,11 +536,15 @@ def worker(mastodon):
             threads = []
 
             # # Iterate through each category and start a thread for each
-            for category, urls in data.items():
-                # Create account gathering thread for each category
-                accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
-                threads.append(accountInfos)
+            # for category, urls in data.items():
+            #     # Create account gathering thread for each category
+            #     accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
+            #     threads.append(accountInfos)
 
+            # Thread for gnerating index.html
+            indexFile = Thread(target=generateIndexFile)
+            threads.append(indexFile)
+            
             # Start all threads
             for thread in threads:
                 thread.start()
