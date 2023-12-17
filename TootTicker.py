@@ -178,7 +178,7 @@ def generateChart():
     js_data_object = json.dumps(categories_data, indent=4)
 
     # Save the JavaScript object notation to a file with timestamp
-    timestamp = time.strftime("%Y%m%d")
+    timestamp = time.strftime("%Y%m%d%H")
     with open(f'accounts/data-{timestamp}.json', 'w') as file:
         file.write(js_data_object)
     with open(f'accounts/data-current.json', 'w') as file:
@@ -540,8 +540,8 @@ def worker(mastodon):
             generateIndexFile()
 
             # Sleep for a period before restarting the process
-            print("Sleeping for 1 day...")
-            time.sleep(86400)  # Sleep for 86400 seconds (adjust as needed)
+            print("Sleeping for 1 hour...")
+            time.sleep(3600)  # Sleep for 3600 seconds (adjust as needed)
             print("Restarting...")
 
     except Exception as errorcode:
