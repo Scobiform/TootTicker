@@ -41,12 +41,11 @@ pip install Mastodon.py
 First, you need to configure `TootTicker.py` with your details:
 
 ```python
-def createSecrets():
-    # Replace the following placeholders with your actual values
-    app_name = 'TootTicker - boost your bubble'  # Replace with your desired app name
-    instance_url = 'https://mastodon.social/'  # Replace with your Mastodon instance URL
-    email = 'your@mail.com'  # Replace with your Mastodon account email
-    password = 'yourPassword'  # Replace with your Mastodon account password
+# Configuration
+app_name = 'TootTicker - boost your bubble'  # Replace with your desired app name
+instance_url = 'mastodon.social'  # Replace with your Mastodon instance URL
+email = ''  # Replace with your Mastodon account email
+password = ''  # Replace with your Mastodon account password
 ```
 
 ### 2. Run the Script
