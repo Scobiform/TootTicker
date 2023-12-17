@@ -35,7 +35,7 @@ cd TootTicker
 pip install Mastodon.py
 ```
 ## Usage
-1. Edit TootTicker.py
+* 1. Edit TootTicker.py
 ```
 createSecrets():
     # Replace the following placeholders with your actual values
@@ -44,19 +44,19 @@ createSecrets():
     email = 'your@mail.com'  # Replace with your Mastodon account email
     password = 'yourPassword'  # Replace with your Mastodon account password
 ```
-2. Run
+* 2. Run
 ```
 python3 TootTicker.py
 ```
-2. Wait till the gathering is done.
+* 2. Wait till the gathering is done.
 
-3. Open the index.html in public folder.
+* 3. Open the index.html in public folder.
 
 The account informations will be saved to accounts/ folder
 
-Credits for the German media sites go to.
-https://pertsch.social/@Sebastian
-https://social.heise.de/@mho
+* Credits for the German media sites go to.
+[@pertsch.social@Sebastian](https://pertsch.social/@Sebastian)
+[@social.heise.de@mho](https://social.heise.de/@mho)
 
 ## Contributing
 
