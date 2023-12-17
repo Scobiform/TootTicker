@@ -17,6 +17,7 @@ from threading import Thread
 # Create Mastodon app and get user credentials
 def createSecrets():
     # Replace the following placeholders with your actual values
+    # ToDo: Move to .env file
     app_name = 'TootTicker - boost your bubble'  # Replace with your desired app name
     instance_url = 'https://mastodon.social/'  # Replace with your Mastodon instance URL
     email = 'your@mail.com'  # Replace with your Mastodon account email
@@ -121,19 +122,19 @@ def generateHTMLHeader():
         <link rel="stylesheet" href="style.css">
         <script>
 
-        function toggleVisibility(category) {
-            var accounts = document.querySelectorAll("." + category);
-            accounts.forEach(function(account) {
-                account.style.display = account.style.display === "none" ? "block" : "none";
-            });
-        }
-
-        function toggleToots(elementId) {
-            var element = document.getElementById(elementId);
-            if (element) {
-                element.style.display = element.style.display === "none" ? "block" : "none";
+            function toggleVisibility(category) {
+                var accounts = document.querySelectorAll("." + category);
+                accounts.forEach(function(account) {
+                    account.style.display = account.style.display === "none" ? "block" : "none";
+                });
             }
-        }
+
+            function toggleToots(elementId) {
+                var element = document.getElementById(elementId);
+                if (element) {
+                    element.style.display = element.style.display === "none" ? "block" : "none";
+                }
+            }
 
         </script>
     </head>
@@ -484,11 +485,6 @@ def generateCSSFile(output_file='public/style.css'):
     except IOError as e:
         print(f"Error writing to {output_file}: {e}")
 
-# function to get String from html file
-def getHTMLStringFromFile(file):
-    with open(file, 'r', encoding='utf-8') as file:
-        return file.read()
-
 # Function to generate index.html from the account_overview.html
 def generateIndexFile():
     try:
@@ -529,10 +525,6 @@ def worker(mastodon):
                 # Create account gathering thread for each category
                 accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
                 threads.append(accountInfos)
-
-            # Create index.html thread
-            indexFile = Thread(target=generateIndexFile)
-            threads.append(indexFile)
 
             # Start all threads
             for thread in threads:
