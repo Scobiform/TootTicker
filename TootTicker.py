@@ -181,6 +181,8 @@ def generateChart():
     timestamp = time.strftime("%Y%m%d")
     with open(f'accounts/data-{timestamp}.json', 'w') as file:
         file.write(js_data_object)
+    with open(f'accounts/data-current.json', 'w') as file:
+        file.write(js_data_object)
 
     # Return the JavaScript object notation
     return js_data_object
@@ -344,110 +346,112 @@ def generateAccountOverview():
 # Function to generate the footer
 def generateHTMLFooter():
     html_footer = ("""
-        <script>
-            const categoriesData = """ + generateChart() + """;
+            <script>
+                const categoriesData = """ + generateChart() + """;
 
-            function createChart(containerId, category, categoryData) {
-                const ctx = document.createElement('canvas');
-                document.getElementById(containerId).appendChild(ctx);
+                function createChart(containerId, category, categoryData) {
+                    const ctx = document.createElement('canvas');
+                    document.getElementById(containerId).appendChild(ctx);
 
-                const datasets = [];
-                const labels = Object.keys(categoryData); // Account names
+                    const datasets = [];
+                    const labels = Object.keys(categoryData); // Account names
 
-                // Metrics to display (e.g., Followers, Toots, Following)
-                const metrics = ["Followers", "Toots", "Following"];
+                    // Metrics to display (e.g., Followers, Toots, Following)
+                    const metrics = ["Followers", "Toots", "Following"];
 
-                metrics.forEach(metric => {
-                    const data = labels.map(label => categoryData[label][metric] || 0);
-                    datasets.push({
-                        label: `${metric}`,
-                        data: data,
-                        backgroundColor: getRandomColor(),
-                        borderColor: 'rgba(0, 123, 255, 0.7)',
-                        borderWidth: 1
+                    metrics.forEach(metric => {
+                        const data = labels.map(label => categoryData[label][metric] || 0);
+                        datasets.push({
+                            label: `${metric}`,
+                            data: data,
+                            backgroundColor: getRandomColor(),
+                            borderColor: 'rgba(0, 123, 255, 0.7)',
+                            borderWidth: 1
+                        });
                     });
-                });
 
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: datasets
-                    },
-                    options: {
-                        scales: {
-                            y: { beginAtZero: true }
-                        }
-                    }
-                });
-            }
-
-            window.onload = function() {
-                for (const [category, categoryData] of Object.entries(categoriesData)) {
-                    createChart(`chart-container-${category}`, category, categoryData);
-                }
-            };
-
-           function getRandomColor() {
-                // Base color 99, 100, 255
-                const baseR = 99;
-                const baseG = 100;
-                const baseB = 255;
-
-                // Define a range for variation (+/- 42)
-                const range = 42;
-
-                // Generate random variations around the base color within the specified range
-                const r = Math.max(Math.min(baseR + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
-                const g = Math.max(Math.min(baseG + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
-                const b = Math.max(Math.min(baseB + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
-
-                return `rgba(${r}, ${g}, ${b}, 0.5)`;
-            }
-
-            const accountChanges = """ + compareData() + """;
-
-            function createLineChart(category, accountData) {
-                const ctx = document.getElementById(`chart-${category}`).getContext('2d');
-                const labels = [...Array(accountData[Object.keys(accountData)[0]].length).keys()]; // Assuming equal length arrays
-
-                const datasets = Object.keys(accountData).map(account => {
-                    return {
-                        label: `${account}`,
-                        data: accountData[account],
-                        borderColor: getRandomColor(),
-                        fill: false,
-                        tension: 0.1 // Smooth the line
-                    };
-                });
-
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels, // Representing each data point (time unit)
-                        datasets: datasets
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: datasets
                         },
-                        plugins: {
-                            legend: {
-                                display: false
+                        options: {
+                            scales: {
+                                y: { beginAtZero: true }
                             }
                         }
+                    });
+                }
+
+                window.onload = function() {
+                    for (const [category, categoryData] of Object.entries(categoriesData)) {
+                        createChart(`chart-container-${category}`, category, categoryData);
                     }
+                };
+
+            function getRandomColor() {
+                    // Base color 99, 100, 255
+                    const baseR = 99;
+                    const baseG = 100;
+                    const baseB = 255;
+
+                    // Define a range for variation (+/- 42)
+                    const range = 42;
+
+                    // Generate random variations around the base color within the specified range
+                    const r = Math.max(Math.min(baseR + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
+                    const g = Math.max(Math.min(baseG + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
+                    const b = Math.max(Math.min(baseB + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
+
+                    return `rgba(${r}, ${g}, ${b}, 0.5)`;
+                }
+
+                const accountChanges = """ + compareData() + """;
+
+                function createLineChart(category, accountData) {
+                    const ctx = document.getElementById(`chart-${category}`).getContext('2d');
+                    const labels = [...Array(accountData[Object.keys(accountData)[0]].length).keys()]; // Assuming equal length arrays
+
+                    const datasets = Object.keys(accountData).map(account => {
+                        return {
+                            label: `${account}`,
+                            data: accountData[account],
+                            borderColor: getRandomColor(),
+                            fill: false,
+                            tension: 0.1 // Smooth the line
+                        };
+                    });
+
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels, // Representing each data point (time unit)
+                            datasets: datasets
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Creating a chart for each category
+                Object.keys(accountChanges).forEach(category => {
+                    createLineChart(category, accountChanges[category]);
                 });
-            }
 
-            // Creating a chart for each category
-            Object.keys(accountChanges).forEach(category => {
-                createLineChart(category, accountChanges[category]);
-            });
-
-        </script>
+            </script>
+        </body>
+    </html>
     """)
     return html_footer
 
@@ -518,7 +522,7 @@ def worker(mastodon):
             # Create a list of threads
             threads = []
 
-            # Iterate through each category and start a thread for each
+            # # Iterate through each category and start a thread for each
             for category, urls in data.items():
                 # Create account gathering thread for each category
                 accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
