@@ -15,7 +15,7 @@ from threading import Thread
 # Chart.js - MIT License - https://www.chartjs.org/
 
 # Create Mastodon app and get user credentials
-def create_secrets():
+def createSecrets():
     # Replace the following placeholders with your actual values
     app_name = 'TootTicker - boost your media and journalists'  # Replace with your desired app name
     instance_url = 'https://mastodon.social/'  # Replace with your Mastodon instance URL
@@ -40,7 +40,7 @@ def create_secrets():
 #ToDo: Check for first run and create secrets
 # Call the create_secrets function to generate credentials
 # --- Uncomment the following line to generate credentials ---
-#create_secrets()
+#createSecrets()
 
 # Load Mastodon URLs from the provided JSON
 with open('mastodon_urls.json', 'r') as file:
@@ -199,35 +199,50 @@ def generateChart():
 
     # Save the JavaScript object notation to a file with timestamp
     timestamp = time.strftime("%Y%m%d-%H%M%S")
-    with open(f'public/data-{timestamp}.json', 'w') as file:
+    with open(f'accounts/data-{timestamp}.json', 'w') as file:
         file.write(js_data_object)
 
     # Return the JavaScript object notation
     return js_data_object
 
 # Function to compare data from the two most recent files
-def compare_data():
-    data_files = sorted([f for f in os.listdir('public') if f.startswith('data-') and f.endswith('.json')])
+def compareData():
+    data_files = sorted([f for f in os.listdir('accounts') if f.startswith('data-') and f.endswith('.json')])
     if len(data_files) < 2:
         print("Not enough data to compare.")
         return
 
-    # Load data from the two most recent files
-    with open(f'public/{data_files[-2]}', 'r') as file:
-        previous_data = json.load(file)
-    
-    with open(f'public/{data_files[-1]}', 'r') as file:
-        latest_data = json.load(file)
+    aggregated_data = {}
 
-    # Calculate the increase for each account in each category
-    increase_data = {}
-    for category in latest_data:
-        increase_data[category] = {}
-        for account, followers in latest_data[category].items():
-            previous_followers = previous_data[category].get(account, 0)
-            increase_data[category][account] = followers - previous_followers
+    # Iterate through each file and accumulate data
+    for data_file in data_files:
+        with open(f'accounts/{data_file}', 'r') as file:
+            data = json.load(file)
+            for category, accounts in data.items():
+                if category not in aggregated_data:
+                    aggregated_data[category] = {}
+                for account, metrics in accounts.items():
+                    if account not in aggregated_data[category]:
+                        aggregated_data[category][account] = []
+                    aggregated_data[category][account].append(metrics)
 
-    return increase_data
+    # Calculate the changes over time for each account
+    change_data = {}
+    for category, accounts in aggregated_data.items():
+        change_data[category] = {}
+        for account, metrics_list in accounts.items():
+            changes = []
+            for i in range(1, len(metrics_list)):
+                # Assuming the metric of interest is 'Followers'
+                previous = metrics_list[i-1].get('Followers', 0)
+                current = metrics_list[i].get('Followers', 0)
+                changes.append(current - previous)
+            change_data[category][account] = changes
+
+    # Convert the Python dictionary to a JavaScript object notation
+    js_data_object = json.dumps(change_data, indent=4)
+
+    return js_data_object
 
 # Function to generate HTML overview
 def generateAccountOverview():
@@ -336,6 +351,9 @@ def generateAccountOverview():
 
             # Close the accountInfo div
             html_content += '</div>\n'
+    
+        # Write the chart container
+        html_content += f'<canvas id="chart-{category}" class="chart" width="400" height="400"></canvas>\n'
 
     # Close the grid wrapper
     html_content += '</div>\n'
@@ -406,6 +424,46 @@ def generateHTMLFooter():
 
                 return `rgba(${r}, ${g}, ${b}, 0.5)`;
             }
+
+            const accountChanges = """ + compareData() + """;
+
+            function createLineChart(category, accountData) {
+                const ctx = document.getElementById(`chart-${category}`).getContext('2d');
+                const labels = [...Array(accountData[Object.keys(accountData)[0]].length).keys()]; // Assuming equal length arrays
+
+                const datasets = Object.keys(accountData).map(account => {
+                    return {
+                        label: `${account} Followers Change`,
+                        data: accountData[account],
+                        borderColor: getRandomColor(),
+                        fill: false,
+                        tension: 0.1 // Smooth the line
+                    };
+                });
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels, // Representing each data point (time unit)
+                        datasets: datasets
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        legend: {
+                            display: false // This will hide the legend
+                        }
+                    }
+                });
+            }
+
+            // Creating a chart for each category
+            Object.keys(accountChanges).forEach(category => {
+                createLineChart(category, accountChanges[category]);
+            });
 
         </script>
     """)
@@ -506,8 +564,8 @@ def worker(mastodon):
                 thread.join()
 
             # Sleep for a period before restarting the process
-            print("Sleeping for 420 seconds...")
-            time.sleep(420)  # Sleep for 420 seconds (adjust as needed)
+            print("Sleeping for 86400 seconds...")
+            time.sleep(86400)  # Sleep for 86400 seconds (adjust as needed)
             print("Restarting...")
 
     except Exception as errorcode:
