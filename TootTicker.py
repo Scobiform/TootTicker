@@ -542,8 +542,8 @@ def worker(mastodon):
                 threads.append(accountInfos)
 
             # Thread for gnerating index.html
-            indexFile = Thread(target=generateIndexFile)
-            threads.append(indexFile)
+            #indexFile = Thread(target=generateIndexFile)
+            #threads.append(indexFile)
             
             # Start all threads
             for thread in threads:
