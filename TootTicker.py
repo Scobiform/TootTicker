@@ -433,7 +433,7 @@ def generateHTMLFooter():
 
                 const datasets = Object.keys(accountData).map(account => {
                     return {
-                        label: `${account} Followers Change`,
+                        label: `${account}`,
                         data: accountData[account],
                         borderColor: getRandomColor(),
                         fill: false,
@@ -453,8 +453,10 @@ def generateHTMLFooter():
                                 beginAtZero: true
                             }
                         },
-                        legend: {
-                            display: false // This will hide the legend
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
                         }
                     }
                 });
