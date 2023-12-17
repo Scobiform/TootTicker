@@ -35,28 +35,46 @@ cd TootTicker
 pip install Mastodon.py
 ```
 ## Usage
-* 1. Edit TootTicker.py
-```
-createSecrets():
+
+### 1. Edit TootTicker.py
+
+First, you need to configure `TootTicker.py` with your details:
+
+```python
+def createSecrets():
     # Replace the following placeholders with your actual values
     app_name = 'TootTicker - boost your bubble'  # Replace with your desired app name
     instance_url = 'https://mastodon.social/'  # Replace with your Mastodon instance URL
     email = 'your@mail.com'  # Replace with your Mastodon account email
     password = 'yourPassword'  # Replace with your Mastodon account password
 ```
-* 2. Run
-```
+
+### 2. Run the Script
+
+Execute the script by running the following command in your terminal:
+
+```bash
 python3 TootTicker.py
 ```
-* 2. Wait till the gathering is done.
 
-* 3. Open the index.html in public folder.
+### 3. Wait for Data Gathering
 
-The account informations will be saved to accounts/ folder
+Allow some time for the script to gather the necessary data.
 
-* Credits for the German media sites go to.
-[@pertsch.social@Sebastian](https://pertsch.social/@Sebastian)
-[@social.heise.de@mho](https://social.heise.de/@mho)
+### 4. Access the Results
+
+After the data gathering is complete:
+
+- Open `index.html` located in the `public` folder.
+
+The account information will be saved in the `accounts/` folder.
+
+### Credits
+
+Special thanks to the contributors from German media sites:
+
+- Sebastian: [@pertsch.social@Sebastian](https://pertsch.social/@Sebastian)
+- Mho: [@social.heise.de@mho](https://social.heise.de/@mho)
 
 ## Contributing
 
