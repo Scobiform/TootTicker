@@ -473,10 +473,10 @@ def worker(mastodon):
             threads = []
 
             # Iterate through each category and start a thread for each
-            # for category, urls in data.items():
-            #     # Create account gathering thread for each category
-            #     accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
-            #     threads.append(accountInfos)
+            for category, urls in data.items():
+                # Create account gathering thread for each category
+                accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
+                threads.append(accountInfos)
             
             # Create HTML overview thread
             htmlOverview = Thread(target=generateAccountOverview)
