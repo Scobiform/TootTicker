@@ -14,14 +14,26 @@ from threading import Thread
 # Mastodon.py - GNU Affero General Public License v3.0
 # Chart.js - MIT License - https://www.chartjs.org/
 
+# Create a file if it doesn't exist
+def create_file_if_not_exists(file_name):
+    try:
+        with open(file_name, 'a'):
+            pass
+        print(f"File '{file_name}' checked or created successfully.")
+    except Exception as e:
+        print(f"Error creating '{file_name}': {e}")
+
 # Create Mastodon app and get user credentials
 def createSecrets():
     # Replace the following placeholders with your actual values
     # ToDo: Move to .env file
     app_name = 'TootTicker - boost your bubble'  # Replace with your desired app name
-    instance_url = 'https://mastodon.social/'  # Replace with your Mastodon instance URL
-    email = 'your@mail.com'  # Replace with your Mastodon account email
-    password = 'yourPassword'  # Replace with your Mastodon account password
+    instance_url = 'mastodon.social'  # Replace with your Mastodon instance URL
+    email = ''  # Replace with your Mastodon account email
+    password = ''  # Replace with your Mastodon account password
+
+    create_file_if_not_exists('clientcred.secret')
+    create_file_if_not_exists('usercred.secret')
 
     # Create Mastodon app (client credentials)
     Mastodon.create_app(
@@ -30,8 +42,13 @@ def createSecrets():
         to_file='clientcred.secret'
     )
 
-    # Fill in your credentials - RUN ONCE
-    mastodon = Mastodon(client_id='clientcred.secret')
+    # Initialize Mastodon with client credentials
+    mastodon = Mastodon(
+        client_id='clientcred.secret',
+        api_base_url=instance_url
+    )
+
+    # Log in and save user credentials
     mastodon.log_in(
         email,
         password,
@@ -49,9 +66,6 @@ def checkForSecrets():
 # Load Mastodon URLs from the provided JSON
 with open('mastodon_urls.json', 'r') as file:
     data = json.load(file)
-
-# Create Mastodon API instance
-mastodon = Mastodon(access_token='usercred.secret')
 
 # Function to get account information from Mastodon and save to JSON file
 def saveAccountInfoToJSON(mastodon, category, urls):
@@ -137,7 +151,7 @@ def generateHTMLHeader():
         </script>
     </head>
     <body>
-    <div id="charts-container"></div>
+        <div id="charts-container"></div>
     """
     return html_header
 
@@ -215,13 +229,13 @@ def compareData():
         for account, metrics_list in accounts.items():
             changes = []
             for i in range(1, len(metrics_list)):
-                # Assuming the metric of interest is 'Followers'
+                # Metric of interest is 'Followers'
                 previous = metrics_list[i-1].get('Followers', 0)
                 current = metrics_list[i].get('Followers', 0)
                 changes.append(current - previous)
             change_data[category][account] = changes
 
-    # Convert the Python dictionary to a JavaScript object notation
+    # Convert the Python dictionary to JSON
     js_data_object = json.dumps(change_data, indent=4)
 
     return js_data_object
@@ -390,21 +404,21 @@ def generateHTMLFooter():
                     }
                 };
 
-            function getRandomColor() {
-                    // Base color 99, 100, 255
-                    const baseR = 99;
-                    const baseG = 100;
-                    const baseB = 255;
+                function getRandomColor() {
+                        // Base color 99, 100, 255
+                        const baseR = 99;
+                        const baseG = 100;
+                        const baseB = 255;
 
-                    // Define a range for variation (+/- 42)
-                    const range = 42;
+                        // Define a range for variation (+/- 42)
+                        const range = 42;
 
-                    // Generate random variations around the base color within the specified range
-                    const r = Math.max(Math.min(baseR + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
-                    const g = Math.max(Math.min(baseG + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
-                    const b = Math.max(Math.min(baseB + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
+                        // Generate random variations around the base color within the specified range
+                        const r = Math.max(Math.min(baseR + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
+                        const g = Math.max(Math.min(baseG + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
+                        const b = Math.max(Math.min(baseB + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
 
-                    return `rgba(${r}, ${g}, ${b}, 0.5)`;
+                        return `rgba(${r}, ${g}, ${b}, 0.5)`;
                 }
 
                 const accountChanges = """ + compareData() + """;
@@ -448,7 +462,6 @@ def generateHTMLFooter():
                 Object.keys(accountChanges).forEach(category => {
                     createLineChart(category, accountChanges[category]);
                 });
-
             </script>
         </body>
     </html>
@@ -515,7 +528,7 @@ def generateIndexFile():
     except IOError as e:
         print(f"Error writing to {output_file}: {e}")
 
-# Function to start the worker
+# Function to start the worker threads
 def worker(mastodon):
     try:
         while True:
