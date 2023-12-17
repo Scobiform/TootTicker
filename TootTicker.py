@@ -14,24 +14,24 @@ from threading import Thread
 # Mastodon.py - GNU Affero General Public License v3.0
 # Chart.js - MIT License - https://www.chartjs.org/
 
+# Configuration
+app_name = 'TootTicker - boost your bubble'  # Replace with your desired app name
+instance_url = 'mastodon.social'  # Replace with your Mastodon instance URL
+email = ''  # Replace with your Mastodon account email
+password = ''  # Replace with your Mastodon account password
+
 # Create a file if it doesn't exist
 def create_file_if_not_exists(file_name):
     try:
         with open(file_name, 'a'):
             pass
-        print(f"File '{file_name}' checked or created successfully.")
+        print(f"File '{file_name}' created successfully.")
     except Exception as e:
         print(f"Error creating '{file_name}': {e}")
 
 # Create Mastodon app and get user credentials
 def createSecrets():
-    # Replace the following placeholders with your actual values
-    # ToDo: Move to .env file
-    app_name = 'TootTicker - boost your bubble'  # Replace with your desired app name
-    instance_url = 'mastodon.social'  # Replace with your Mastodon instance URL
-    email = ''  # Replace with your Mastodon account email
-    password = ''  # Replace with your Mastodon account password
-
+    # Create the secrets files if they don't exist
     create_file_if_not_exists('clientcred.secret')
     create_file_if_not_exists('usercred.secret')
 
