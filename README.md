@@ -24,7 +24,7 @@ It will also create a basic html overview in the 'public' folder.
 ## Install
 # Clone the repository
 ```
-git clone https://github.com/your-username/TootTicker.git
+git clone https://github.com/Scobiform/TootTicker.git
 ```
 # Change into the project directory
 ```
