@@ -37,7 +37,7 @@ pip install Mastodon.py
 ## Usage
 1. Uncomment (First run) to create your app credentials
 ```
-#create_secrets()
+#createSecrets()
 ```
 2. Run
 ```
