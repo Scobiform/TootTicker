@@ -461,7 +461,7 @@ def generateCSSFile(output_file='public/style.css'):
         a:hover, a:visited, a:active, a:focus, a:link { color: #ff64FF; }
         .accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
         .accountFacts { background: rgba(25, 27, 34, 0.7); padding: 10px; min-width: px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(1fr)); grid-gap: 10px; }
+        .grid { display: grid;}
         .toots-content { background: rgba(25, 27, 34, 0.7); padding: 10px; }
         .toots-toggle { cursor: pointer; color: #d9e1e8; background-color: #6364FF; padding: 0.7rem; }
         .toot { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
