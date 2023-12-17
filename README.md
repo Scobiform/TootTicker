@@ -54,6 +54,10 @@ python3 TootTicker.py
 
 The account informations will be saved to accounts/ folder
 
+Credits for the German media sites go to.
+https://pertsch.social/@Sebastian
+https://social.heise.de/@mho
+
 ## Contributing
 
 Contributions are welcome!
