@@ -9,6 +9,9 @@ from threading import Thread
 # Gathering account informations from Mastodon and make them available as pure json files
 # GPLv3 - 2023 - by scobiform.com
 # github.com/Scobiform/TootTicker
+
+# THe following libraries are used in this project:
+# Mastodon.py - GNU Affero General Public License v3.0
 # Chart.js - MIT License - https://www.chartjs.org/
 
 # Create Mastodon app and get user credentials
@@ -86,7 +89,7 @@ def saveAccountInfoToJSON(mastodon, category, urls):
                 "Bot": account[0]['bot'],
                 "Avatar": account[0]['avatar'],
                 "Header": account[0]['header'],
-                "Toots": toots
+                "TootsList": toots
             }
 
             # Save the JSON file to the folder
@@ -99,31 +102,6 @@ def saveAccountInfoToJSON(mastodon, category, urls):
 
         except Exception as e:
             print(f"Error processing {url}: {e}")
-
-# Function to generate the Chart.js data object
-def generateChart():
-    categories = ['Media', 'Creator', 'Government', 'NGO']
-    categories_data = {}
-
-    for category in categories:
-        category_path = f'accounts/{category}/'
-        category_data = {}
-
-        if os.path.exists(category_path):
-            for json_file in os.listdir(category_path):
-                if json_file.endswith('.json'):
-                    with open(os.path.join(category_path, json_file), 'r') as file:
-                        try:
-                            account_info = json.load(file)
-                            category_data[account_info["Display Name"]] = account_info["Followers"]
-                        except json.decoder.JSONDecodeError as e:
-                            print(f"Error decoding {json_file}: {e}")
-
-        categories_data[category] = category_data
-
-    # Convert the Python dictionary to a JavaScript object notation
-    js_data_object = json.dumps(categories_data, indent=4)
-    return js_data_object
 
 # Function to generate the HTML header
 def generateHTMLHeader():
@@ -158,6 +136,97 @@ def generateHTMLHeader():
     <div id="charts-container"></div>
     """
     return html_header
+
+    sideMenu = """
+    <div id="sideMenu">
+        <div id="blog">
+            <a href="" target="_blank" rel="noopener noreferrer">Blog</a>
+        </div>
+        <div id="about">
+            <a href="" target="_blank" rel="noopener noreferrer">About</a>
+        </div>
+        <div id="contact">
+            <a href="" target="_blank" rel="noopener noreferrer">Contact</a>
+        </div>
+        <div id="donate">
+            <a href="" target="_blank" rel="noopener noreferrer">Donate</a>
+        </div>
+        <div id="settings">
+            <a href="" target="_blank" rel="noopener noreferrer">Settings</a>
+        </div>
+        <div id="search">
+            <input type="text" id="search" name="search" placeholder="Search">
+        </div>
+    </div>
+    """
+    return sideMenu
+
+# Function to generate the Chart.js data object
+def generateChart():
+    categories = ['Media', 'Creator', 'Government', 'NGO']
+    categories_data = {}
+
+    for category in categories:
+        category_path = f'accounts/{category}/'
+        category_data = {}
+
+        if os.path.exists(category_path):
+            for json_file in os.listdir(category_path):
+                if json_file.endswith('.json'):
+                    with open(os.path.join(category_path, json_file), 'r') as file:
+                        try:
+                            account_info = json.load(file)
+                            account_name = account_info["Display Name"]
+
+                            # Initialize the data structure for this account
+                            if account_name not in category_data:
+                                category_data[account_name] = {'Followers': 0, 'Toots': 0, 'Following': 0}
+
+                            # Increment the metrics
+                            category_data[account_name]['Followers'] += account_info.get("Followers", 0)
+                            category_data[account_name]['Following'] += account_info.get("Following", 0)
+
+                            # Add the count of toots
+                            category_data[account_name]['Toots'] += account_info.get("Toots",0)
+
+                        except json.decoder.JSONDecodeError as e:
+                            print(f"Error decoding {json_file}: {e}")
+
+        categories_data[category] = category_data
+
+    # Convert the Python dictionary to a JavaScript object notation
+    js_data_object = json.dumps(categories_data, indent=4)
+
+    # Save the JavaScript object notation to a file with timestamp
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+    with open(f'public/data-{timestamp}.json', 'w') as file:
+        file.write(js_data_object)
+
+    # Return the JavaScript object notation
+    return js_data_object
+
+def compare_data():
+    data_files = sorted([f for f in os.listdir('public') if f.startswith('data-') and f.endswith('.json')])
+    if len(data_files) < 2:
+        print("Not enough data to compare.")
+        return
+
+    # Load data from the two most recent files
+    with open(f'public/{data_files[-2]}', 'r') as file:
+        previous_data = json.load(file)
+    
+    with open(f'public/{data_files[-1]}', 'r') as file:
+        latest_data = json.load(file)
+
+    # Calculate the increase for each account in each category
+    increase_data = {}
+    for category in latest_data:
+        increase_data[category] = {}
+        for account, followers in latest_data[category].items():
+            previous_followers = previous_data[category].get(account, 0)
+            increase_data[category][account] = followers - previous_followers
+
+    return increase_data
 
 # Function to generate HTML overview
 def generateAccountOverview():
@@ -234,7 +303,7 @@ def generateAccountOverview():
                     html_content += f'<p><strong>{key}:</strong> {value}</p>\n'
 
             # Write the Toots header
-            html_content += f'<h3 class="toots-toggle" onclick="toggleToots(\'toots-{account_id}\')">Toots</h3>\n'
+            #html_content += f'<h3 class="toots-toggle" onclick="toggleToots(\'toots-{account_id}\')">Toots</h3>\n'
 
             # # Write the Toots in a separate div
             # html_content += f'<div class="toots" id="toots-{account_id}" style="display:none;">\n'
@@ -279,35 +348,54 @@ def generateHTMLFooter():
         <script>
             const categoriesData = """ + generateChart() + """;
 
-            function createChart(containerId, category, data) {
+            function createChart(containerId, category, categoryData) {
                 const ctx = document.createElement('canvas');
                 document.getElementById(containerId).appendChild(ctx);
 
+                const datasets = [];
+                const labels = Object.keys(categoryData); // Account names
+
+                // Metrics to display (e.g., Followers, Toots, Following)
+                const metrics = ["Followers", "Toots", "Following"];
+
+                metrics.forEach(metric => {
+                    const data = labels.map(label => categoryData[label][metric] || 0);
+                    datasets.push({
+                        label: `${metric}`,
+                        data: data,
+                        backgroundColor: getRandomColor(),
+                        borderColor: 'rgba(0, 123, 255, 1)',
+                        borderWidth: 1
+                    });
+                });
+
                 new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: Object.keys(data),
-                            datasets: [{
-                                label: `${category} Followers`,
-                                data: Object.values(data),
-                                backgroundColor: 'rgba(0, 123, 255, 0.5)',
-                                borderColor: 'rgba(0, 123, 255, 1)',
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                y: { beginAtZero: true }
-                            }
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        scales: {
+                            y: { beginAtZero: true }
                         }
+                    }
                 });
             }
 
             window.onload = function() {
-                for (const [category, data] of Object.entries(categoriesData)) {
-                    createChart(`chart-container-${category}`, category, data);
+                for (const [category, categoryData] of Object.entries(categoriesData)) {
+                    createChart(`chart-container-${category}`, category, categoryData);
                 }
+            };
+
+            function getRandomColor() {
+                const r = Math.floor(Math.random() * 255);
+                const g = Math.floor(Math.random() * 255);
+                const b = Math.floor(Math.random() * 255);
+                return `rgba(${r}, ${g}, ${b}, 0.5)`;
             }
+
         </script>
     """)
     return html_footer
@@ -321,7 +409,7 @@ def generateCSSFile(output_file='public/style.css'):
         h2, p, a { color: #d9e1e8; }
         a:hover, a:visited, a:active, a:focus, a:link { color: #ff64FF; }
         .accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
-        .accountFacts { background: rgba(25, 27, 34, 0.7); padding: 10px; min-width: 160px; width: 70vw; }
+        .accountFacts { background: rgba(25, 27, 34, 0.7); padding: 10px; min-width: px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(1fr)); grid-gap: 10px; }
         .toots-content { background: rgba(25, 27, 34, 0.7); padding: 10px; }
         .toots-toggle { cursor: pointer; color: #d9e1e8; background-color: #6364FF; padding: 0.7rem; }
@@ -363,11 +451,9 @@ def generateIndexFile():
         # Define the output HTML file
         output_file = 'public/index.html'
 
-
         # Open the HTML file for writing
         with open(output_file, 'w', encoding='utf-8') as html_file:
-            # Write the HTML header
-            # Write the HTML header
+            # Write the components to the HTML file
             html_header = generateHTMLHeader()
             html_file.write(html_header)
             html_accountOverview = generateAccountOverview()
@@ -387,10 +473,10 @@ def worker(mastodon):
             threads = []
 
             # Iterate through each category and start a thread for each
-            # for category, urls in data.items():
-            #     # Create account gathering thread for each category
-            #     accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
-            #     threads.append(accountInfos)
+            for category, urls in data.items():
+                # Create account gathering thread for each category
+                accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
+                threads.append(accountInfos)
             
             # Create HTML overview thread
             htmlOverview = Thread(target=generateAccountOverview)
