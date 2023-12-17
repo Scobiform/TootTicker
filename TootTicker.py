@@ -205,6 +205,7 @@ def generateChart():
     # Return the JavaScript object notation
     return js_data_object
 
+# Function to compare data from the two most recent files
 def compare_data():
     data_files = sorted([f for f in os.listdir('public') if f.startswith('data-') and f.endswith('.json')])
     if len(data_files) < 2:
@@ -364,7 +365,7 @@ def generateHTMLFooter():
                         label: `${metric}`,
                         data: data,
                         backgroundColor: getRandomColor(),
-                        borderColor: 'rgba(0, 123, 255, 1)',
+                        borderColor: 'rgba(0, 123, 255, 0.7)',
                         borderWidth: 1
                     });
                 });
@@ -389,10 +390,20 @@ def generateHTMLFooter():
                 }
             };
 
-            function getRandomColor() {
-                const r = Math.floor(Math.random() * 255);
-                const g = Math.floor(Math.random() * 255);
-                const b = Math.floor(Math.random() * 255);
+           function getRandomColor() {
+                // Base color 99, 100, 255
+                const baseR = 99;
+                const baseG = 100;
+                const baseB = 255;
+
+                // Define a range for variation (+/- 42)
+                const range = 42;
+
+                // Generate random variations around the base color within the specified range
+                const r = Math.max(Math.min(baseR + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
+                const g = Math.max(Math.min(baseG + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
+                const b = Math.max(Math.min(baseB + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
+
                 return `rgba(${r}, ${g}, ${b}, 0.5)`;
             }
 
