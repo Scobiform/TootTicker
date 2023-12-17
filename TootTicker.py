@@ -106,8 +106,6 @@ def saveAccountInfoToJSON(mastodon, category, urls):
 
         except Exception as e:
             print(f"Error processing {url}: {e}")
-    # Generate index.html
-    generateIndexFile()
 
 # Function to generate the HTML header
 def generateHTMLHeader():
@@ -180,7 +178,7 @@ def generateChart():
     js_data_object = json.dumps(categories_data, indent=4)
 
     # Save the JavaScript object notation to a file with timestamp
-    timestamp = time.strftime("%Y%m%d-%H%M%S")
+    timestamp = time.strftime("%Y%m%d")
     with open(f'accounts/data-{timestamp}.json', 'w') as file:
         file.write(js_data_object)
 
@@ -534,8 +532,11 @@ def worker(mastodon):
             for thread in threads:
                 thread.join()
 
+            # Generate index.html
+            generateIndexFile()
+
             # Sleep for a period before restarting the process
-            print("Sleeping for 86400 seconds...")
+            print("Sleeping for 1 day...")
             time.sleep(86400)  # Sleep for 86400 seconds (adjust as needed)
             print("Restarting...")
 
