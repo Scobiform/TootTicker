@@ -100,6 +100,7 @@ def saveAccountInfoToJSON(mastodon, category, urls):
                 "Display Name": account[0]['display_name'],
                 "Instance": '@' + account[0]['url'].split('https://')[1].split('/')[0],
                 "Account ID": user_id,
+                "Note": account[0]['note'],
                 "Followers": account[0]['followers_count'],
                 "Following": account[0]['following_count'],
                 "Toots": account[0]['statuses_count'],
@@ -197,8 +198,6 @@ def generateChart():
     timestamp = time.strftime("%Y%m%d%H")
     with open(f'accounts/data-{timestamp}.json', 'w') as file:
         file.write(js_data_object)
-    with open(f'accounts/data-current.json', 'w') as file:
-        file.write(js_data_object)
 
     # Return the JavaScript object notation
     return js_data_object
@@ -261,64 +260,67 @@ def generateAccountOverview():
             header_image_url = account_info.get("Header", "")
 
             # Write a div for each account with class as the category
-            html_content += f'<div class="accountInfo {category}" style="background-image: url(\'{header_image_url}\'); display:none;">\n'
+            html_content += f'<div class="accountInfo {category}" style="display:none;">\n'
 
             # Write a div for the account facts
             html_content += '<div class="accountFacts">'
+
+            # Display the avatar using img tag
+            html_content += f'<img src="{account_info["Avatar"]}" alt="Avatar" style="max-width: 100px; max-height: 100px;">\n'
 
             # Write the account name as a header
             tempUrl = meUrl+'/@'+ account_info["Account Name"] + account_info["Instance"]
             html_content += f'<h2><a href="{tempUrl}" target="_blank" rel="noopener noreferrer">{account_info["Display Name"]}</a></h2>\n'
 
-            # Display the avatar using img tag
-            html_content += f'<img src="{account_info["Avatar"]}" alt="Avatar" style="max-width: 100px; max-height: 100px;">\n'
+            # Display note
+            html_content += f'<p>{account_info["Note"]}</p>\n'
 
             # Open account ul
             html_content += '<ul class="stats">\n'
 
             # Write the rest of the account information
             for key, value in account_info.items():
-                if key not in ["Account Name", "Avatar", "Header", "TootsList", "Account URL", "Display Name", "Instance", "Account ID", "Created", "Last Active"]:
+                if key not in ["Account Name", "Avatar", "Header", "TootsList", "Account URL", "Display Name", "Instance", "Account ID", "Created", "Last Active", "Note"]:
                     html_content += f'<ii><strong>{key}</strong> {value}</li>\n'
             
             # Close account ul
             html_content += '</ul>\n'
 
-            # Write the Toots header
-            html_content += f'<h3 class="toots-toggle" onclick="toggleToots(\'toots-{account_id}\')">Toots</h3>\n'
+            # # Write the Toots header
+            # html_content += f'<h3 class="toots-toggle" onclick="toggleToots(\'toots-{account_id}\')">Toots</h3>\n'
 
-            # Write the Toots in a separate div
-            html_content += f'<div class="toots" id="toots-{account_id}" style="display:none;">\n'
-            if "TootsList" in account_info:
-                for toot in account_info["TootsList"]:
-                    # Assuming 'Toot' is a dictionary and contains text in a 'content' key
-                    toot_content = toot.get("content", "No content")
-                    toot_media_attachments = toot.get("media_attachments", "")
-                    if toot["reblog"] is not None:
-                        toot_content = toot["reblog"].get("content", "No content")
-                        toot_media_attachments = toot["reblog"].get("media_attachments", "")
-                    toot_url = toot.get("url", "")
-                    toot_created_at = toot.get("created_at", "")
-                    toot_replies_count = toot.get("replies_count", "")
-                    toot_reblogs_count = toot.get("reblogs_count", "")
-                    toot_favourites_count = toot.get("favourites_count", "")
+            # # Write the Toots in a separate div
+            # html_content += f'<div class="toots" id="toots-{account_id}" style="display:none;">\n'
+            # if "TootsList" in account_info:
+            #     for toot in account_info["TootsList"]:
+            #         # Assuming 'Toot' is a dictionary and contains text in a 'content' key
+            #         toot_content = toot.get("content", "No content")
+            #         toot_media_attachments = toot.get("media_attachments", "")
+            #         if toot["reblog"] is not None:
+            #             toot_content = toot["reblog"].get("content", "No content")
+            #             toot_media_attachments = toot["reblog"].get("media_attachments", "")
+            #         toot_url = toot.get("url", "")
+            #         toot_created_at = toot.get("created_at", "")
+            #         toot_replies_count = toot.get("replies_count", "")
+            #         toot_reblogs_count = toot.get("reblogs_count", "")
+            #         toot_favourites_count = toot.get("favourites_count", "")
                     
-                        # Write the toot created at
-                    html_content += f'<div class="tootDate"><a href="{toot_url}" target="_blank" rel="noopener norefrrer">{toot_created_at}</a></div>\n'
-                    # Write the toot content
-                    html_content += f'<div class="toot">{toot_content}'
-                    # Write the toot media attachments
-                    for media_attachment in toot_media_attachments:
-                        html_content += f'<img src="{media_attachment["preview_url"]}" alt="{media_attachment["description"]}" title="{media_attachment["description"]}">'
-                    html_content += '</div>\n'
-                    # Write the toot replies count
-                    html_content += f'<div class="tootCounts"><strong>Replies:</strong> {toot_replies_count} <strong>Reblogs:</strong> {toot_reblogs_count} <strong>Favourites:</strong> {toot_favourites_count}</div>\n'
-                    # Write a horizontal rule
-                    html_content += ('<hr>\n')
-            else:
-                html_content += '<p>No toots found.</p>\n'
+            #             # Write the toot created at
+            #         html_content += f'<div class="tootDate"><a href="{toot_url}" target="_blank" rel="noopener norefrrer">{toot_created_at}</a></div>\n'
+            #         # Write the toot content
+            #         html_content += f'<div class="toot">{toot_content}'
+            #         # Write the toot media attachments
+            #         for media_attachment in toot_media_attachments:
+            #             html_content += f'<img src="{media_attachment["preview_url"]}" alt="{media_attachment["description"]}" title="{media_attachment["description"]}">'
+            #         html_content += '</div>\n'
+            #         # Write the toot replies count
+            #         html_content += f'<div class="tootCounts"><strong>Replies:</strong> {toot_replies_count} <strong>Reblogs:</strong> {toot_reblogs_count} <strong>Favourites:</strong> {toot_favourites_count}</div>\n'
+            #         # Write a horizontal rule
+            #         html_content += ('<hr>\n')
+            # else:
+            #     html_content += '<p>No toots found.</p>\n'
 
-            html_content += '</div>\n'  # Close the toots div
+            # html_content += '</div>\n'  # Close the toots div
 
             # Close the accountFacts div
             html_content += '</div>\n'
@@ -366,6 +368,8 @@ def generateHTMLFooter():
                             datasets: datasets
                         },
                         options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
                             scales: {
                                 y: { beginAtZero: true }
                             }
@@ -409,12 +413,19 @@ def generateCSSFile(output_file='public/style.css'):
                 --secondary-color: #ffffff;}
         body { font-family: sans-serif; background-color: #191b22; }
         h1 { color: #ffffff; background-color: var(--primary-color); padding: 2.1rem; cursor: pointer; }
-        h2, a { color: var(--secondary-color); text-align: right; }
+        h2, { color: var(--secondary-color); 
+                font-size: 1.4em;
+                margin-block-start: 0em;
+                margin-block-end: 0em;
+                margin-inline-start: 0px;
+                margin-inline-end: 0px;
+                font-weight: 420;}
         p { color: var(--secondary-color); text-align: start; }
-        a:hover, a:visited, a:active, a:focus, a:link { color: var(--secondary-color); }
-        ul { list-style-type: none; padding: 0; color: var(--secondary-color); text-align: end; }
+        a, a:hover, a:visited, a:active, a:focus, a:link { color: var(--secondary-color); }
+        ul { list-style-type: none; padding: 0; color: var(--secondary-color); }
         .accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
-        .accountFacts { background: rgba(25, 27, 34, 0.7); padding: 10px; min-width: px; }
+        .accountFacts { background: rgba(25, 27, 34, 0.7); padding: 10px; border-radius: 2vh;
+                        min-width: 320px; }
         .grid { display: unset;}
         .toots-content { background: rgba(25, 27, 34, 0.7); padding: 10px; }
         .toots-toggle { cursor: pointer; color: var(--secondary-color); 
@@ -433,13 +444,17 @@ def generateCSSFile(output_file='public/style.css'):
         .tootCounts {color: var(--secondary-color); padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
         hr { border: 0; height: 1px; background: #6364FF; }
         .chart { width: 100%; height: 42% !important; }
-        img { border-radius: 50%; float: left; padding: 9px;}
+        img { border-radius: 50%;}
         /* Dark Violet Scrollbar Styles */
         ::-webkit-scrollbar { width: 12px; display: none; }
         ::-webkit-scrollbar-thumb { background-color: #4B0082; border-radius: 6px; }
         ::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background-color: #1E1E1E; }
         ::-webkit-scrollbar-thumb:hover { background-color: #6A5ACD; }
         """
+
+        # Foreach key in data
+        for key in data:
+            css_content += f".{key} {{ min-height: 42vh;  }}\n"
 
         with open(output_file, 'w') as css_file:
             css_file.write(css_content)
@@ -477,21 +492,23 @@ def generateIndexFile():
         print(f"Error writing to {output_file}: {e}")
 
 # Function to start the worker threads
-def worker(mastodon):
+def worker(mastodon, on=True):
     try:
         while True:
             # Create a list of threads
             threads = []
 
-            # # Iterate through each category and start a thread for each
-            for category, urls in data.items():
-                # Create account gathering thread for each category
-                accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
-                threads.append(accountInfos)
+            if on:
+                # # Iterate through each category and start a thread for each
+                for category, urls in data.items():
+                    # Create account gathering thread for each category
+                    accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
+                    threads.append(accountInfos)
 
             # Thread for generating index.html
-            # indexFile = Thread(target=generateIndexFile)
-            # threads.append(indexFile)
+            if not on:
+                indexFile = Thread(target=generateIndexFile)
+                threads.append(indexFile)
             
             # Start all threads
             for thread in threads:
@@ -502,7 +519,8 @@ def worker(mastodon):
                 thread.join()
 
             # Generate index.html
-            generateIndexFile()
+            if on:
+                generateIndexFile()
 
             # Sleep for a period before restarting the process
             print("Sleeping for 1 hour...")
