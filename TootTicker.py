@@ -315,7 +315,7 @@ def generateAccountOverview():
 
             # Write the rest of the account information
             for key, value in account_info.items():
-                if key not in ["Account Name", "Avatar", "Header", "TootsList", "Account URL", "Display Name", "Instance", "Created", "Last Active"]:
+                if key not in ["Account Name", "Avatar", "Header", "TootsList", "Account URL", "Display Name", "Instance", "Account ID" "Created", "Last Active"]:
                     html_content += f'<ii><strong>{key}</strong> {value}</li>\n'
             
             # Close account ul
