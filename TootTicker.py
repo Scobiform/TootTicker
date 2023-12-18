@@ -255,8 +255,8 @@ def generateAccountOverview():
     html_content = '<div class="grid">\n'
 
     # Categories to iterate through
-    categories = ['Media', 'Creator', 'Government', 'NGO']
-
+    categories = list(data.keys())
+    
     # Iterate through each category
     for category in categories:
         # Get the list of JSON files in the 'accounts/' folder for the current category
