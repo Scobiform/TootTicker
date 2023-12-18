@@ -6,7 +6,8 @@ import time
 from threading import Thread
 
 # TootTicker - boost your bubble
-# Gathering account informations from Mastodon and make them available as pure json files
+# Gathering account informations from Mastodon 
+# and make them available as pure JSON
 # GPLv3 - 2023 - by scobiform.com
 # github.com/Scobiform/TootTicker
 
@@ -311,7 +312,7 @@ def generateAccountOverview():
 
             # Write the rest of the account information
             for key, value in account_info.items():
-                if key not in ["Account Name", "Avatar", "Header", "TootsList", "Account URL", "Display Name", "Instance", "Account ID"]:
+                if key not in ["Account Name", "Avatar", "Header", "TootsList", "Account URL", "Display Name", "Instance", "Account ID", "Created", "Last Active"]:
                     html_content += f'<p><strong>{key}:</strong> {value}</p>\n'
 
             # Write the Toots header
@@ -330,7 +331,7 @@ def generateAccountOverview():
                     toot_favourites_count = toot.get("favourites_count", "")
 
                         # Write the toot created at
-                    html_content += f'<div class="tootDate"><strong>Created At:</strong> <a href="{toot_url}" target="_blank" rel="noopener norefrrer">{toot_created_at}</a></div>\n'
+                    html_content += f'<div class="tootDate"><a href="{toot_url}" target="_blank" rel="noopener norefrrer">{toot_created_at}</a></div>\n'
                     # Write the toot content
                     html_content += f'<div class="toot">{toot_content}</div>\n'
                     # Write the toot replies count
@@ -472,19 +473,26 @@ def generateHTMLFooter():
 def generateCSSFile(output_file='public/style.css'):
     try:
         css_content = """
+        :root { --primary-color: #6364FF;
+                --secondary-color: #ffffff;}
         body { font-family: sans-serif; background-color: #191b22; }
-        h1 { color: #d9e1e8; background-color: #6364FF; padding: 2.1rem; cursor: pointer; }
-        h2, p, a { color: #d9e1e8; }
-        a:hover, a:visited, a:active, a:focus, a:link { color: #ff64FF; }
+        h1 { color: #ffffff; background-color: var(--primary-color); padding: 2.1rem; cursor: pointer; }
+        h2, p, a { color: var(--secondary-color); }
+        a:hover, a:visited, a:active, a:focus, a:link { color: var(--secondary-color); }
         .accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
         .accountFacts { background: rgba(25, 27, 34, 0.7); padding: 10px; min-width: px; }
         .grid { display: grid;}
         .toots-content { background: rgba(25, 27, 34, 0.7); padding: 10px; }
-        .toots-toggle { cursor: pointer; color: #d9e1e8; background-color: #6364FF; padding: 0.7rem; }
-        .toot { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
-        .tootDate { color:#ff64FF; padding: 10px; margin-bottom: 10px; font-size: 0.7rem; float: right;}
-        .tootUrl { color: #ff64FF; padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
-        .tootCounts {color: #ff64FF; padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
+        .toots-toggle { cursor: pointer; color: var(--secondary-color); 
+                        background-color: var(--primary-color); padding: 0.7rem; }
+        .toot { background-color: #191b22; padding: 10px; margin-bottom: 10px; border-radius: 1vh; max-width:91vw;}
+        .tootDate { background: var(--primary-color); color:var(--secondary-color); padding: 10px; 
+                    margin-bottom: 10px; 
+                    font-size: 0.7rem; 
+                    float: right;
+                    border-radius: 1vh;}
+        .tootUrl { color: var(--secondary-color); padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
+        .tootCounts {color: var(--secondary-color); padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
         hr { border: 0; height: 1px; background: #6364FF; }
         /* Dark Violet Scrollbar Styles */
         ::-webkit-scrollbar { width: 12px; display: none; }
@@ -541,9 +549,9 @@ def worker(mastodon):
                 accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
                 threads.append(accountInfos)
 
-            # Thread for gnerating index.html
-            #indexFile = Thread(target=generateIndexFile)
-            #threads.append(indexFile)
+            # Thread for generating index.html
+            # indexFile = Thread(target=generateIndexFile)
+            # threads.append(indexFile)
             
             # Start all threads
             for thread in threads:
