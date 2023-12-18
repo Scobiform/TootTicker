@@ -91,7 +91,7 @@ def saveAccountInfoToJSON(mastodon, category, urls):
             user_id = account[0]['id']
 
             # Get recent toots from the user's timeline
-            toots = mastodon.account_statuses(user_id)
+            toots = mastodon.account_statuses(user_id, limit=7)
 
             # Create a dictionary with account information
             account_info = {
@@ -158,7 +158,8 @@ def generateHTMLHeader():
 
 # Function to generate the Chart.js data object
 def generateChart():
-    categories = ['Media', 'Creator', 'Government', 'NGO']
+    # Get categories from the data dictionary
+    categories = list(data.keys())
     categories_data = {}
 
     for category in categories:
@@ -202,45 +203,6 @@ def generateChart():
     # Return the JavaScript object notation
     return js_data_object
 
-# Function to compare data from the two most recent files
-def compareData():
-    data_files = sorted([f for f in os.listdir('accounts') if f.startswith('data-') and f.endswith('.json')])
-    if len(data_files) < 2:
-        print("Not enough data to compare.")
-        return
-
-    aggregated_data = {}
-
-    # Iterate through each file and accumulate data
-    for data_file in data_files:
-        with open(f'accounts/{data_file}', 'r') as file:
-            data = json.load(file)
-            for category, accounts in data.items():
-                if category not in aggregated_data:
-                    aggregated_data[category] = {}
-                for account, metrics in accounts.items():
-                    if account not in aggregated_data[category]:
-                        aggregated_data[category][account] = []
-                    aggregated_data[category][account].append(metrics)
-
-    # Calculate the changes over time for each account
-    change_data = {}
-    for category, accounts in aggregated_data.items():
-        change_data[category] = {}
-        for account, metrics_list in accounts.items():
-            changes = []
-            for i in range(1, len(metrics_list)):
-                # Metric of interest is 'Followers'
-                previous = metrics_list[i-1].get('Followers', 0)
-                current = metrics_list[i].get('Followers', 0)
-                changes.append(current - previous)
-            change_data[category][account] = changes
-
-    # Convert the Python dictionary to JSON
-    js_data_object = json.dumps(change_data, indent=4)
-
-    return js_data_object
-
 # Function to generate HTML overview
 def generateAccountOverview():
 
@@ -252,11 +214,12 @@ def generateAccountOverview():
         # Helper function to sort accounts based on a given key
         return sorted(accounts, key=lambda x: x[key], reverse=True)
 
+    # Begin to write the HTML content
     html_content = '<div class="grid">\n'
 
     # Categories to iterate through
     categories = list(data.keys())
-    
+
     # Iterate through each category
     for category in categories:
         # Get the list of JSON files in the 'accounts/' folder for the current category
@@ -362,9 +325,6 @@ def generateAccountOverview():
 
             # Close the accountInfo div
             html_content += '</div>\n'
-    
-        # Write the chart container
-        html_content += f'<canvas id="chart-{category}" class="chart" width="400" height="400"></canvas>\n'
 
     # Close the grid wrapper
     html_content += '</div>\n'
@@ -435,48 +395,6 @@ def generateHTMLFooter():
 
                         return `rgba(${r}, ${g}, ${b}, 0.5)`;
                 }
-
-                const accountChanges = """ + compareData() + """;
-
-                function createLineChart(category, accountData) {
-                    const ctx = document.getElementById(`chart-${category}`).getContext('2d');
-                    const labels = [...Array(accountData[Object.keys(accountData)[0]].length).keys()]; // Assuming equal length arrays
-
-                    const datasets = Object.keys(accountData).map(account => {
-                        return {
-                            label: `${account}`,
-                            data: accountData[account],
-                            borderColor: getRandomColor(),
-                            fill: false,
-                            tension: 0.1 // Smooth the line
-                        };
-                    });
-
-                    new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: labels, // Representing each data point (time unit)
-                            datasets: datasets
-                        },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true
-                                }
-                            },
-                            plugins: {
-                                legend: {
-                                    display: false
-                                }
-                            }
-                        }
-                    });
-                }
-
-                // Creating a chart for each category
-                Object.keys(accountChanges).forEach(category => {
-                    createLineChart(category, accountChanges[category]);
-                });
             </script>
         </body>
     </html>
@@ -497,7 +415,7 @@ def generateCSSFile(output_file='public/style.css'):
         ul { list-style-type: none; padding: 0; color: var(--secondary-color); text-align: end; }
         .accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
         .accountFacts { background: rgba(25, 27, 34, 0.7); padding: 10px; min-width: px; }
-        .grid { display: grid;}
+        .grid { display: unset;}
         .toots-content { background: rgba(25, 27, 34, 0.7); padding: 10px; }
         .toots-toggle { cursor: pointer; color: var(--secondary-color); 
                         background-color: var(--primary-color); padding: 0.7rem;
@@ -514,7 +432,7 @@ def generateCSSFile(output_file='public/style.css'):
         .tootUrl { color: var(--secondary-color); padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
         .tootCounts {color: var(--secondary-color); padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
         hr { border: 0; height: 1px; background: #6364FF; }
-        .chart { width: 100%; height: 100%; }
+        .chart { width: 100%; height: 42% !important; }
         img { border-radius: 50%; float: left; padding: 9px;}
         /* Dark Violet Scrollbar Styles */
         ::-webkit-scrollbar { width: 12px; display: none; }
