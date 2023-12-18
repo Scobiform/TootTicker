@@ -64,8 +64,8 @@ def checkForSecrets():
         print("Secrets not found.")
         createSecrets()
 
-# Load Mastodon URLs from the provided JSON
-with open('mastodon_urls.json', 'r') as file:
+# Load configuration from JSON file
+with open('config.json', 'r') as file:
     data = json.load(file)
 
 # Function to get account information from Mastodon and save to JSON file
@@ -310,10 +310,16 @@ def generateAccountOverview():
             # Display the avatar using img tag
             html_content += f'<img src="{account_info["Avatar"]}" alt="Avatar" style="max-width: 100px; max-height: 100px;">\n'
 
+            # Open account ul
+            html_content += '<ul class="stats">\n'
+
             # Write the rest of the account information
             for key, value in account_info.items():
-                if key not in ["Account Name", "Avatar", "Header", "TootsList", "Account URL", "Display Name", "Instance", "Account ID", "Created", "Last Active"]:
-                    html_content += f'<p><strong>{key}:</strong> {value}</p>\n'
+                if key not in ["Account Name", "Avatar", "Header", "TootsList", "Account URL", "Display Name", "Instance", "Created", "Last Active"]:
+                    html_content += f'<ii><strong>{key}</strong> {value}</li>\n'
+            
+            # Close account ul
+            html_content += '</ul>\n'
 
             # Write the Toots header
             html_content += f'<h3 class="toots-toggle" onclick="toggleToots(\'toots-{account_id}\')">Toots</h3>\n'
@@ -324,16 +330,24 @@ def generateAccountOverview():
                 for toot in account_info["TootsList"]:
                     # Assuming 'Toot' is a dictionary and contains text in a 'content' key
                     toot_content = toot.get("content", "No content")
+                    toot_media_attachments = toot.get("media_attachments", "")
+                    if toot["reblog"] is not None:
+                        toot_content = toot["reblog"].get("content", "No content")
+                        toot_media_attachments = toot["reblog"].get("media_attachments", "")
                     toot_url = toot.get("url", "")
                     toot_created_at = toot.get("created_at", "")
                     toot_replies_count = toot.get("replies_count", "")
                     toot_reblogs_count = toot.get("reblogs_count", "")
                     toot_favourites_count = toot.get("favourites_count", "")
-
+                    
                         # Write the toot created at
                     html_content += f'<div class="tootDate"><a href="{toot_url}" target="_blank" rel="noopener norefrrer">{toot_created_at}</a></div>\n'
                     # Write the toot content
-                    html_content += f'<div class="toot">{toot_content}</div>\n'
+                    html_content += f'<div class="toot">{toot_content}'
+                    # Write the toot media attachments
+                    for media_attachment in toot_media_attachments:
+                        html_content += f'<img src="{media_attachment["preview_url"]}" alt="{media_attachment["description"]}" title="{media_attachment["description"]}">'
+                    html_content += '</div>\n'
                     # Write the toot replies count
                     html_content += f'<div class="tootCounts"><strong>Replies:</strong> {toot_replies_count} <strong>Reblogs:</strong> {toot_reblogs_count} <strong>Favourites:</strong> {toot_favourites_count}</div>\n'
                     # Write a horizontal rule
@@ -477,15 +491,21 @@ def generateCSSFile(output_file='public/style.css'):
                 --secondary-color: #ffffff;}
         body { font-family: sans-serif; background-color: #191b22; }
         h1 { color: #ffffff; background-color: var(--primary-color); padding: 2.1rem; cursor: pointer; }
-        h2, p, a { color: var(--secondary-color); }
+        h2, a { color: var(--secondary-color); text-align: right; }
+        p { color: var(--secondary-color); text-align: start; }
         a:hover, a:visited, a:active, a:focus, a:link { color: var(--secondary-color); }
+        ul { list-style-type: none; padding: 0; color: var(--secondary-color); text-align: end; }
         .accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
         .accountFacts { background: rgba(25, 27, 34, 0.7); padding: 10px; min-width: px; }
         .grid { display: grid;}
         .toots-content { background: rgba(25, 27, 34, 0.7); padding: 10px; }
         .toots-toggle { cursor: pointer; color: var(--secondary-color); 
-                        background-color: var(--primary-color); padding: 0.7rem; }
+                        background-color: var(--primary-color); padding: 0.7rem;
+                        text-align: right; }
         .toot { background-color: #191b22; padding: 10px; margin-bottom: 10px; border-radius: 1vh; max-width:91vw;}
+        .toot img { border-radius: 1vh; 
+                    float: none;
+                    display: block; margin-left: auto; margin-right: auto; max-width: 100%; max-height: 100%; }
         .tootDate { background: var(--primary-color); color:var(--secondary-color); padding: 10px; 
                     margin-bottom: 10px; 
                     font-size: 0.7rem; 
@@ -494,6 +514,8 @@ def generateCSSFile(output_file='public/style.css'):
         .tootUrl { color: var(--secondary-color); padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
         .tootCounts {color: var(--secondary-color); padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
         hr { border: 0; height: 1px; background: #6364FF; }
+        .chart { width: 100%; height: 100%; }
+        img { border-radius: 50%; float: left; padding: 9px;}
         /* Dark Violet Scrollbar Styles */
         ::-webkit-scrollbar { width: 12px; display: none; }
         ::-webkit-scrollbar-thumb { background-color: #4B0082; border-radius: 6px; }
