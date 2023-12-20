@@ -155,7 +155,9 @@
     "@sri@mastodon.social",
     "@glyph@mastodon.social",
     "@Lorenanicole@mastodon.social",
-    "@lawrenceabrams@infosec.exchange"
+    "@lawrenceabrams@infosec.exchange",
+    "@ricmac@mastodon.social",
+    "@Daojoan@mastodon.social"
   ],
   "Government": [
     "@bsi@social.bund.de",
@@ -195,7 +197,8 @@
     "@fragdenstaat@chaos.social",
     "@zerforschung@chaos.social",
     "@algorithmwatch@chaos.social",
-    "@ThePSF@fosstodon.org"
+    "@ThePSF@fosstodon.org",
+    "@w3c@w3c.social"
   ],
   "Science": [
     "@KIT_Karlsruhe@mastodon.social",
