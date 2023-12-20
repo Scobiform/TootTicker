@@ -399,6 +399,8 @@ def generateHTMLFooter():
 
                         return `rgba(${r}, ${g}, ${b}, 0.5)`;
                 }
+
+                
             </script>
         </body>
     </html>
