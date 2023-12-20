@@ -96,7 +96,7 @@ def saveAccountInfoToJSON(mastodon, category, urls):
             user_id = account[0]['id']
 
             # Get recent toots from the user's timeline
-            toots = mastodon.account_statuses(user_id, limit=7)
+            toots = mastodon.account_statuses(user_id, limit=1)
 
             # Create a dictionary with account information
             account_info = {
@@ -289,43 +289,7 @@ def generateAccountOverview():
                     html_content += f'<ii><strong>{key}</strong> {value}</li>\n'
             
             # Close account ul
-            html_content += '</ul>\n'
-
-            # # Write the Toots header
-            # html_content += f'<h3 class="toots-toggle" onclick="toggleToots(\'toots-{account_id}\')">Toots</h3>\n'
-
-            # # Write the Toots in a separate div
-            # html_content += f'<div class="toots" id="toots-{account_id}" style="display:none;">\n'
-            # if "TootsList" in account_info:
-            #     for toot in account_info["TootsList"]:
-            #         # Assuming 'Toot' is a dictionary and contains text in a 'content' key
-            #         toot_content = toot.get("content", "No content")
-            #         toot_media_attachments = toot.get("media_attachments", "")
-            #         if toot["reblog"] is not None:
-            #             toot_content = toot["reblog"].get("content", "No content")
-            #             toot_media_attachments = toot["reblog"].get("media_attachments", "")
-            #         toot_url = toot.get("url", "")
-            #         toot_created_at = toot.get("created_at", "")
-            #         toot_replies_count = toot.get("replies_count", "")
-            #         toot_reblogs_count = toot.get("reblogs_count", "")
-            #         toot_favourites_count = toot.get("favourites_count", "")
-                    
-            #             # Write the toot created at
-            #         html_content += f'<div class="tootDate"><a href="{toot_url}" target="_blank" rel="noopener norefrrer">{toot_created_at}</a></div>\n'
-            #         # Write the toot content
-            #         html_content += f'<div class="toot">{toot_content}'
-            #         # Write the toot media attachments
-            #         for media_attachment in toot_media_attachments:
-            #             html_content += f'<img src="{media_attachment["preview_url"]}" alt="{media_attachment["description"]}" title="{media_attachment["description"]}">'
-            #         html_content += '</div>\n'
-            #         # Write the toot replies count
-            #         html_content += f'<div class="tootCounts"><strong>Replies:</strong> {toot_replies_count} <strong>Reblogs:</strong> {toot_reblogs_count} <strong>Favourites:</strong> {toot_favourites_count}</div>\n'
-            #         # Write a horizontal rule
-            #         html_content += ('<hr>\n')
-            # else:
-            #     html_content += '<p>No toots found.</p>\n'
-
-            # html_content += '</div>\n'  # Close the toots div
+            html_content += '</ul>\n'      
 
             # Close the accountFacts div
             html_content += '</div>\n'
