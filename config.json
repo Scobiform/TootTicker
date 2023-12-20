@@ -105,7 +105,8 @@
     "@Deskmodder@mastodontech.de",
     "@ps_now@mastodon.social",
     "@apfelfunknews@social.apfelfunk.com",
-    "@republica@berlin.social"
+    "@republica@berlin.social",
+    "@tazvorgelesen@mastodon.social"
     ],
   "Creator": [
     "@rikefranke@bagarrosphere.fr",
@@ -149,7 +150,11 @@
     "@Sebastian@Pertsch.social",
     "@s_hentzschel@mozilla.social",
     "@briankrebs@infosec.exchange",
-    "@SheDrivesMobility@norden.social"
+    "@SheDrivesMobility@norden.social",
+    "@webology@mastodon.social",
+    "@sri@mastodon.social",
+    "@glyph@mastodon.social",
+    "@Lorenanicole@mastodon.social"
   ],
   "Government": [
     "@bsi@social.bund.de",
@@ -188,7 +193,8 @@
     "@a_watch@bewegung.social",
     "@fragdenstaat@chaos.social",
     "@zerforschung@chaos.social",
-    "@algorithmwatch@chaos.social"
+    "@algorithmwatch@chaos.social",
+    "@ThePSF@fosstodon.org"
   ],
   "Science": [
     "@KIT_Karlsruhe@mastodon.social",

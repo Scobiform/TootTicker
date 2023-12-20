@@ -15,7 +15,12 @@ from threading import Thread
 # Mastodon.py - GNU Affero General Public License v3.0
 # Chart.js - MIT License - https://www.chartjs.org/
 
+# You can see a demo of this project here: https://tootticker.scobiform.com/
+# This project is still in development and will be updated frequently.
+# If you have any suggestions or ideas, please let me know.
+
 # Configuration
+# You can remove your credentials after the first run
 app_name = 'TootTicker - boost your bubble'  # Replace with your desired app name
 instance_url = 'mastodon.social'  # Replace with your Mastodon instance URL
 email = ''  # Replace with your Mastodon account email
@@ -153,11 +158,11 @@ def generateHTMLHeader():
         </script>
     </head>
     <body>
-        <div id="charts-container"></div>
     """
     return html_header
 
 # Function to generate the Chart.js data object
+# Will save the data to a JSON file with timestamp
 def generateChart():
     # Get categories from the data dictionary
     categories = list(data.keys())
