@@ -524,7 +524,7 @@ def generateIndexFile():
         print(f"Error writing to {output_file}: {e}")
 
 # Function to start the worker threads
-def worker(mastodon, on=False):
+def worker(mastodon, on=True):
     try:
         while True:
             # Create a list of threads
