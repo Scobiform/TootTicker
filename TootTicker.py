@@ -330,7 +330,9 @@ def generateAccountOverview():
 
                 # Write the toot URL if not none
                 if toot_url is not None:
-                    html_content += f'<p class="tootUrl"><a href="{toot_url}" target="_blank" rel="noopener noreferrer">View on Mastodon</a></p>\n'
+                    url = meUrl+'/@'+ account_info["Account Name"] + account_info["Instance"]+'/'+str(+toot_id)
+                    html_content += f'<p class="tootUrl"><a href="{url}" target="_blank" rel="noopener noreferrer">View on Mastodon</a></p>\n'
+                    
 
                 # Write the toot media attachments
                 if len(toot_media_attachments) > 0:
@@ -522,7 +524,7 @@ def generateIndexFile():
         print(f"Error writing to {output_file}: {e}")
 
 # Function to start the worker threads
-def worker(mastodon, on=True):
+def worker(mastodon, on=False):
     try:
         while True:
             # Create a list of threads
