@@ -138,6 +138,7 @@ def generateHTMLHeader():
         <meta charset="utf-8">
         <title>TootTicker - boost your bubble</title>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://mastodon.social/embed.js" async="async"></script>
         <link rel="stylesheet" href="style.css">
         <script>
 
@@ -287,7 +288,61 @@ def generateAccountOverview():
             for key, value in account_info.items():
                 if key not in ["Account Name", "Avatar", "Header", "TootsList", "Account URL", "Display Name", "Instance", "Account ID", "Created", "Last Active", "Note"]:
                     html_content += f'<ii><strong>{key}</strong> {value}</li>\n'
-            
+
+            for toot in account_info["TootsList"]:
+                # Get the toot ID
+                toot_id = toot["id"]
+
+                # Get the toot date
+                toot_date = toot["created_at"]
+
+                # Get the toot URL
+                toot_url = toot["url"]
+
+                # Get the toot content
+                toot_content = toot["content"]
+
+                # Get the toot media attachments
+                toot_media_attachments = toot["media_attachments"]
+                
+                if toot["reblog"] is not None:
+                    toot_content = toot["reblog"].get("content", "No content")
+                    toot_media_attachments = toot["reblog"].get("media_attachments", "")
+                    toot_url = toot["reblog"].get("url", "")
+
+                # Get the toot replies count
+                toot_replies_count = toot["replies_count"]
+
+                # Get the toot reblogs count
+                toot_reblogs_count = toot["reblogs_count"]
+
+                # Get the toot favourites count
+                toot_favourites_count = toot["favourites_count"]
+
+                # Write the toot date
+                html_content += f'<p class="tootDate">{toot_date}</p>\n'
+
+                # Write the toot content
+                html_content += f'<div class="toot" id="{toot_id}">\n'
+
+                # Write the toot content
+                html_content += f'{toot_content}'
+
+                # Write the toot URL if not none
+                if toot_url is not None:
+                    html_content += f'<p class="tootUrl"><a href="{toot_url}" target="_blank" rel="noopener noreferrer">View on Mastodon</a></p>\n'
+
+                # Write the toot media attachments
+                if len(toot_media_attachments) > 0:
+                    for media_attachment in toot_media_attachments:
+                        html_content += f'<img src="{media_attachment["preview_url"]}" alt="Media Attachment">\n'
+
+                # Write the toot counts
+                html_content += f'<p class="tootCounts">Replies: {toot_replies_count} | Reblogs: {toot_reblogs_count} | Favourites: {toot_favourites_count}</p>\n'
+
+                # Close the toot div
+                html_content += '</div>\n'
+
             # Close account ul
             html_content += '</ul>\n'      
 
@@ -402,17 +457,21 @@ def generateCSSFile(output_file='public/style.css'):
         .toots-toggle { cursor: pointer; color: var(--secondary-color); 
                         background-color: var(--primary-color); padding: 0.7rem;
                         text-align: right; }
-        .toot { background-color: #191b22; padding: 10px; margin-bottom: 10px; border-radius: 1vh; max-width:91vw;}
+        .toot { background-color: #191b22; padding: 10px; 
+                margin-bottom: 10px; border-radius: 1vh; max-width:91vw;
+                margin-top: -6.3vh;}
         .toot img { border-radius: 1vh; 
                     float: none;
-                    display: block; margin-left: auto; margin-right: auto; max-width: 100%; max-height: 100%; }
+                    display: block; margin-left: auto; margin-right: auto; 
+                    max-width: 100%; 
+                    max-height: 100%; }
         .tootDate { background: var(--primary-color); color:var(--secondary-color); padding: 10px; 
                     margin-bottom: 10px; 
                     font-size: 0.7rem; 
-                    float: right;
                     border-radius: 1vh;}
         .tootUrl { color: var(--secondary-color); padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
         .tootCounts {color: var(--secondary-color); padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
+        .stats { display: flex; flex-wrap: wrap; }
         hr { border: 0; height: 1px; background: #6364FF; }
         .chart { width: 100%; height: 42% !important; }
         img { border-radius: 50%;}
@@ -494,8 +553,8 @@ def worker(mastodon, on=True):
                 generateIndexFile()
 
             # Sleep for a period before restarting the process
-            print("Sleeping for 1 hour...")
-            time.sleep(3600)  # Sleep for 3600 seconds (adjust as needed)
+            print("Sleeping for 5 minutes...")
+            time.sleep(300)  # Sleep for 300 seconds (adjust as needed)
             print("Restarting...")
 
     except Exception as errorcode:
