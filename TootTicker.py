@@ -201,7 +201,7 @@ def generateChart():
     js_data_object = json.dumps(categories_data, indent=4)
 
     # Save the JavaScript object notation to a file with timestamp
-    timestamp = time.strftime("%Y%m%d%H")
+    timestamp = time.strftime("%Y%m%d%H%M")
     with open(f'accounts/data-{timestamp}.json', 'w') as file:
         file.write(js_data_object)
 
