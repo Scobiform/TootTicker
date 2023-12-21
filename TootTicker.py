@@ -1,4 +1,3 @@
-import tracemalloc
 from mastodon import Mastodon
 import os
 import json
@@ -564,9 +563,6 @@ def worker(mastodon, on=True):
 
 # Main function
 def main():
-
-    # Enable tracemalloc
-    tracemalloc.start()
 
     # Check for secrets
     checkForSecrets()
