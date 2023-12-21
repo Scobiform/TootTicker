@@ -11,7 +11,7 @@ from threading import Thread
 # github.com/Scobiform/TootTicker
 
 # THe following libraries are used in this project:
-# Mastodon.py - MIT license - https://github.com/halcy/Mastodon.py
+# Mastodon.py - MIT License - https://github.com/halcy/Mastodon.py
 # Chart.js - MIT License - https://www.chartjs.org/
 
 # You can see a demo of this project here: https://tootticker.scobiform.com/
