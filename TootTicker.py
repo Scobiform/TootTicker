@@ -31,7 +31,6 @@ password = ''  # Replace with your Mastodon account password
 # Global variables
 seen_toot_ids = set()  # A set to keep track of seen toot IDs for fast lookup
 
-
 # Create Mastodon app and get user credentials
 def createSecrets():
     # Create the secrets files if they don't exist
@@ -92,7 +91,7 @@ def getOrCreateList(mastodon, list_name):
     return new_list['id']
 
 # Function to add accounts to Mastodon lists
-def addAccountsToMastodonLists(mastodon, category, stop_token):
+def addAccountsToMastodonLists(mastodon, accounts_by_category, stop_token):
     """
     Adds accounts to Mastodon lists based on their category.
 
@@ -102,30 +101,34 @@ def addAccountsToMastodonLists(mastodon, category, stop_token):
     """
     try:
         # Iterate through each category and its accounts
-        for category, accounts in category.items():
-            # Get or create the list
-            list_id = getOrCreateList(mastodon, category)
+        for category_name, accounts in accounts_by_category.items():
+            # Get or create the list for the current category
+            list_id = getOrCreateList(mastodon, category_name)
 
-            # Iterate through each account
+            # Iterate through each account in the current category
             for account_name in accounts:
+                try:
                     # Resolve the account name to get the account ID
                     search_result = mastodon.account_search(account_name)
                     if search_result:
                         account_id = search_result[0]['id']
                         print(f"Resolved account {account_name} to ID {account_id}")
 
-                        # Follow the account if not already following
+                        # Follow the account if not already following (optional based on your requirements)
                         mastodon.account_follow(account_id)
 
                         # Add the account to the list
                         added = mastodon.list_accounts_add(list_id, account_id)
                         if added:
-                            print(f"Added account {account_id} to list '{category}'")
+                            print(f"Added account {account_id} to list '{category_name}'")
                     else:
                         print(f"No account found for {account_name}")
-
-    except Exception as e:
-        print(f"Error processing account {account_name} in '{category}': {e}")
+                except Mastodon.RateLimitError as e:  # Replace with the actual exception
+                    print(f"Rate limit exceeded: {e}")
+                    # Sleep for 42 seconds to avoid rate limiting
+                    time.sleep(42)
+                except Exception as account_error:
+                    print(f"Error processing account {account_name} in '{category_name}': {account_error}")
 
     except Exception as e:
         print(f"Error adding accounts to lists: {e}")
@@ -580,7 +583,7 @@ def StreamMastodonList(mastodon, list_id, stop_token):
         print(f"Error streaming list {list_id}: {e}")
 
 # Worker function
-def worker(addAccounts, saveAccountInfo, mastodonListStreams, stop_token, mastodon):
+def worker(addAccounts, saveAccountInfo, mastodonListStreams, stop_token, mastodon, app):
     """Your worker function, which does something in the background."""
     print("Worker is running...")
     try:
@@ -620,6 +623,9 @@ def worker(addAccounts, saveAccountInfo, mastodonListStreams, stop_token, mastod
     except Exception as errorcode:
         print("ERROR: " + str(errorcode))
 
+# Flask app
+app = Flask(__name__)
+
 # Initialize the app
 def initialize_app():
     """Initialize the Mastodon API and any global variables."""
@@ -642,12 +648,11 @@ def initialize_app():
     print(me.id)
     print(me.url+'\n')
 
+    # Create a stop token for the worker
     stop_token = Event()  # Create a stop token for the worker
-    # addAccounts, saveAccountInfo, mastodonListStreams
-    worker(0, 1, 1, stop_token, mastodon)  # Start the worker
-
-# Flask app
-app = Flask(__name__)
+    # Start the worker
+    # Parameters: addAccounts, saveAccountInfo, mastodonListStreams, stop_token, mastodon, app  
+    worker(0, 0, 1, stop_token, mastodon, app)  # Start the worker
 
 # Route for the index page
 @app.route('/')
@@ -681,25 +686,9 @@ def latest_toots():
     toots = getLiveTootsJSON()
     return toots
 
-# Run the app
+def create_app():
+    initialize_app()
+    return app
+
 if __name__ == '__main__':
-    try:
-        # Create a list of threads
-        threads = []
-        # App thread
-        appThread = threading.Thread(target=app.run, args=('0.0.0.0', 5000, False))
-        threads.append(appThread)
-        # Initialize the app
-        iniThread = threading.Thread(target=initialize_app)
-        threads.append(iniThread)
-
-        # Start all threads
-        for threat in threads:
-            threat.start()
-
-        # Wait for all threads to finish
-        for threat in threads:
-            threat.join()
-
-    except Exception as errorcode:
-        print("ERROR: " + str(errorcode))
+    create_app()
