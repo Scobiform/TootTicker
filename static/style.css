@@ -6,18 +6,20 @@
         --kah: #191b22;
         --font: 'Mukta', sans-serif;
 }
-body {  font-family: sans-serif; background-color: #191b22; 
+body {  font-family: sans-serif; background-color: var(--kah);
         font-family: var(--font);
         line-height: 0.7em; 
         color: #333; /* High-contrast text color */
 }
-h1 {    color: var(--secondary-color);
-        background-color: var(--primary);
+h1 {    color: var(--secondary);
+        background-color: var(--kah);
         padding: 0.42rem;
         cursor: pointer;
         text-transform: capitalize;
         font-size: smaller;
         font-family: var(--font);
+        font-weight: 100;
+        text-transform: lowercase;
 }
 h2 { color: var(--secondary-color); 
         font-size: 1.4em;
@@ -84,10 +86,14 @@ ul { list-style-type: none; padding: 0; color: var(--secondary); }
                 overflow-y: scroll;
                 display: flex;
                 flex-direction: column-reverse;}
-.tootAvatar { width: 7vh; float: right; }
+.tootAvatar { 
+                width: 7vh; 
+                float: right; }
 hr { border: 0; height: 1px; background: #6364FF; }
-.chart { width: 100%; height: 42% !important; }
-.mention hashtag { color: #6364FF; display: inline-flex; font-size: smaller;}
+.chart { 
+        width: 100%; 
+        height: 42% !important; }
+.mention { color: #6364FF; display: inline-flex; font-size: smaller;}
 .invisible { display: none; }
 img { border-radius: 50%;}
 .mediaAttachments { display: flex; flex-wrap: wrap;}
