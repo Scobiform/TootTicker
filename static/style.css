@@ -1,10 +1,10 @@
 /* Font import Open Dyslexic */
-@import url('https://fonts.googleapis.com/css?family=Open+Dyslexic&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Work+Sans&display=swap');
 :root { --primary: #6364FF;
         --secondary: #ffffff;
         --tertiary: #6364ff0d;
         --kah: #191b22;
-        --font: 'Open Dyslexic';
+        --font: 'Work Sans', sans-serif;
 }
 body {  font-family: sans-serif; background-color: #191b22; 
         font-family: var(--font);
