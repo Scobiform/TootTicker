@@ -1,8 +1,23 @@
-:root { --primary-color: #6364FF;
-        --secondary-color: #ffffff;
+/* Font import Open Dyslexic */
+@import url('https://fonts.googleapis.com/css?family=Open+Dyslexic&display=swap');
+:root { --primary: #6364FF;
+        --secondary: #ffffff;
+        --tertiary: #6364ff0d;
+        --kah: #191b22;
+        --font: 'Open Dyslexic';
 }
-body { font-family: sans-serif; background-color: #191b22; }
-h1 { color: #ffffff; background-color: var(--primary-color); padding: 2.1rem; cursor: pointer; }
+body {  font-family: sans-serif; background-color: #191b22; 
+        font-family: var(--font);
+        line-height: 0.7em; 
+        color: #333; /* High-contrast text color */
+}
+h1 {    color: #ffffff;
+        background-color: var(--primary);
+        padding: 0.42rem;
+        cursor: pointer;
+        border-radius: 1vh;
+        font-size: large;
+}
 h2 { color: var(--secondary-color); 
         font-size: 1.4em;
         margin-block-start: 0em;
@@ -10,43 +25,70 @@ h2 { color: var(--secondary-color);
         margin-inline-start: 0px;
         margin-inline-end: 0px;
         font-weight: 420;}
-p { color: var(--secondary-color); text-align: start; }
-a, a:hover, a:visited, a:active, a:focus, a:link { color: var(--secondary-color); }
-ul { list-style-type: none; padding: 0; color: var(--secondary-color); }
+p { color: var(--secondary); text-align: start; }
+a, a:hover, a:visited, a:active, a:focus, a:link { color: var(--secondary); }
+ul { list-style-type: none; padding: 0; color: var(--secondary); }
 .accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
 .accountFacts { background: rgba(25, 27, 34, 0.7); padding: 10px; border-radius: 2vh;
                 min-width: 320px; }
 .grid { display: unset;}
 .toots-content { background: rgba(25, 27, 34, 0.7); }
+.toots-content  p {   
+        color: var(--secondary);
+        text-align: center;
+}
 .toots-toggle { cursor: pointer; color: var(--secondary-color); 
-                background-color: var(--primary-color); padding: 0.7rem;
+                background-color: var(--primary); padding: 0.7rem;
                 text-align: right; }
-.toot { background-color: #191b22; }
-.toot img { border-radius: 1vh; 
-                float: none;
-                display: block; margin-left: auto; margin-right: auto; 
-                max-width: 100%; 
-                max-height: 100%; }
-.tootDate { background: var(--primary-color); color:var(--secondary-color); padding: 10px; 
-                margin-bottom: 10px; 
-                font-size: 0.7rem; 
-                border-radius: 1vh;}
-.tootUrl { color: var(--secondary-color); padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
+.toot {
+        background: var(--kah);
+        margin: 0.42rem;
+ }
+.tootName { 
+        color: var(--secondary);
+        padding: 10px;
+        font-size: 0.7rem;
+        float: right;
+}
+.toot img { 
+        border-radius: 1vh;
+        float: inline-start;
+        max-width: 49px;
+ }
+.tootDate { 
+        color: var(--secondary);
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 0.7rem;
+        border-radius: 1vh;
+        display: table-caption;
+}
+.tootUrl {
+        color: var(--secondary-color);
+        background: var(--primary-color);
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 0.7rem;
+        border-radius: 1vh;
+        width: fit-content;
+        float: inline-end;
+ }
 .tootCounts {color: var(--secondary-color); padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
 .stats { display: flex; flex-wrap: wrap; }
-#liveToots { 
-        background-color: #191b22;
-        padding: 7vh;
-        height: 28vh;
-        overflow-y: scroll;
-        flex-flow: column;
-        display: inline-flex;
-        width: 77vw;
-}
+#liveToots {    background-color: var(--tertiary);
+                padding: 0.42rem;
+                height: 42vh;
+                overflow-y: scroll;
+                display: flex;
+                flex-direction: column-reverse;}
 .tootAvatar { width: 7vh; float: right; }
 hr { border: 0; height: 1px; background: #6364FF; }
 .chart { width: 100%; height: 42% !important; }
+.mention hashtag { color: #6364FF; display: inline-flex; font-size: smaller;}
+.invisible { display: none; }
 img { border-radius: 50%;}
+.mediaAttachments { display: flex; flex-wrap: wrap;}
+.mediaAttachments img { max-width: 100%; max-height: 100%; }
 /* Dark Violet Scrollbar Styles */
 ::-webkit-scrollbar { width: 12px; display: none; }
 ::-webkit-scrollbar-thumb { background-color: #4B0082; border-radius: 6px; }
