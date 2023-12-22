@@ -13,13 +13,21 @@ body {  font-family: sans-serif; background-color: var(--kah);
 }
 h1 {    color: var(--secondary);
         background-color: var(--kah);
-        padding: 0.42rem;
+        padding: 0.7rem;
         cursor: pointer;
-        text-transform: capitalize;
         font-size: smaller;
         font-family: var(--font);
         font-weight: 100;
         text-transform: lowercase;
+        text-align: right;
+        margin-block: auto;
+        display: grid;
+        justify-content: end;
+        align-items: baseline;
+        align-content: stretch;
+        justify-items: center;
+        margin-inline-start: auto;
+        margin-inline-end: auto;
 }
 h2 { color: var(--secondary-color); 
         font-size: 1.4em;

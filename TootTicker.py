@@ -31,40 +31,6 @@ password = ''  # Replace with your Mastodon account password
 # Global variables
 seen_toot_ids = set()  # A set to keep track of seen toot IDs for fast lookup
 
-# Flask app
-app = Flask(__name__)
-
-# Route for the index page
-@app.route('/')
-def index():
-    # Get the live toots JSON
-    live_toots_html = generateLiveTootsHTML()  # Assume this function returns HTML for live toots
-    # Get the account overview HTML
-    account_overview_html = generateAccountOverview()  # And this returns HTML for account overview
-    # Get the HTML header
-    html_header = generateHTMLHeader()
-    # Get the header scripts
-    header_scripts = headerScripts()
-    # Get the HTML footer
-    html_footer = generateHTMLFooter()
-    # Get the footer scripts
-    footer_scripts = footerScripts()
-
-    # Render the template with the JSON string
-    return render_template('index.html', 
-        live_toots_html=live_toots_html, 
-        account_overview_html=account_overview_html, 
-        html_header=html_header, 
-        header_scripts=header_scripts,
-        html_footer=html_footer,
-        footer_scripts=footer_scripts
-    )
-
-# Route for the latest toots
-@app.route('/get_latest_toots')
-def latest_toots():
-    toots = getLiveTootsJSON()
-    return toots
 
 # Create Mastodon app and get user credentials
 def createSecrets():
@@ -678,7 +644,42 @@ def initialize_app():
 
     stop_token = Event()  # Create a stop token for the worker
     # addAccounts, saveAccountInfo, mastodonListStreams
-    worker(0, 0, 1, stop_token, mastodon)  # Start the worker
+    worker(0, 1, 1, stop_token, mastodon)  # Start the worker
+
+# Flask app
+app = Flask(__name__)
+
+# Route for the index page
+@app.route('/')
+def index():
+    # Get the live toots JSON
+    live_toots_html = generateLiveTootsHTML()  # Assume this function returns HTML for live toots
+    # Get the account overview HTML
+    account_overview_html = generateAccountOverview()  # And this returns HTML for account overview
+    # Get the HTML header
+    html_header = generateHTMLHeader()
+    # Get the header scripts
+    header_scripts = headerScripts()
+    # Get the HTML footer
+    html_footer = generateHTMLFooter()
+    # Get the footer scripts
+    footer_scripts = footerScripts()
+
+    # Render the template with the JSON string
+    return render_template('index.html', 
+        live_toots_html=live_toots_html, 
+        account_overview_html=account_overview_html, 
+        html_header=html_header, 
+        header_scripts=header_scripts,
+        html_footer=html_footer,
+        footer_scripts=footer_scripts
+    )
+
+# Route for the latest toots
+@app.route('/get_latest_toots')
+def latest_toots():
+    toots = getLiveTootsJSON()
+    return toots
 
 # Run the app
 if __name__ == '__main__':
@@ -686,7 +687,7 @@ if __name__ == '__main__':
         # Create a list of threads
         threads = []
         # App thread
-        appThread = threading.Thread(target=app.run, args=('127.0.0.1', 5000, False))
+        appThread = threading.Thread(target=app.run, args=('0.0.0.0', 5000, False))
         threads.append(appThread)
         # Initialize the app
         iniThread = threading.Thread(target=initialize_app)
