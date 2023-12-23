@@ -90,7 +90,7 @@ ul { list-style-type: none; padding: 0; color: var(--secondary); }
 .stats { display: flex; flex-wrap: wrap; }
 #liveToots {    background-color: var(--tertiary);
                 padding: 0.42rem;
-                height: 42vh;
+                height: 63vh;
                 overflow-y: scroll;
                 display: flex;
                 flex-direction: column-reverse;}

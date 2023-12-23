@@ -3,7 +3,7 @@ import json
 import threading
 import time
 from threading import Event, Thread
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from mastodon import Mastodon, StreamListener
 
 # TootTicker - boost your bubble
@@ -30,6 +30,11 @@ password = ''  # Replace with your Mastodon account password
 
 # Global variables
 seen_toot_ids = set()  # A set to keep track of seen toot IDs for fast lookup
+data = {}  # A dictionary to store the data from config.json
+
+# Get data from config.json and save to data
+with open('config.json', 'r') as file:
+    data = json.load(file)
 
 # Create Mastodon app and get user credentials
 def createSecrets():
@@ -64,10 +69,6 @@ def checkForSecrets():
     else:
         print("Secrets not found.")
         createSecrets()
-
-# Load configuration from JSON file
-with open('config.json', 'r') as file:
-    data = json.load(file)
 
 # Function to get or create a list
 def getOrCreateList(mastodon, list_name):
@@ -233,9 +234,12 @@ def saveAccountInfoToJSON(mastodon, category, urls):
                 json.dump(account_info, file, indent=4, default=str)
             print(f"Saved account info for {account[0]['username']}")
 
-            # Sleep for 2.1 seconds to avoid rate limiting
-            time.sleep(2.1)
-
+            # Sleep for 14 seconds to avoid rate limiting
+            time.sleep(14)
+        except Mastodon.RateLimitError as e:  # Replace with the actual exception
+            print(f"Rate limit exceeded: {e}")
+            # Sleep for 42 seconds to avoid rate limiting
+            time.sleep(42)
         except Exception as e:
             print(f"Error processing {url}: {e}")
 
@@ -530,35 +534,10 @@ class ListStreamer(StreamListener):
     def __init__(self):
         super().__init__()
 
-    # Mock toot every 42 seconds
-    mockToot = {
-        "id": "42",
-        "created_at": "2021-07-14T15:42:42.000Z",
-        "account": {
-            "id": "42",
-            "username": "tootticker",
-            "display_name": "TootTicker",
-            "url": "https://mastodon.social/@tootticker",
-            "avatar": "https://files.mastodon.social/accounts/avatars/000/000/042/original/42.png",
-            "header": "https://files.mastodon.social/accounts/headers/000/000/042/original/42.png",
-            "note": "TootTicker - boost your bubble",
-            "locked": False,
-            "bot": False,
-            "discoverable": True,
-            "group": False,
-            "created_at": "2021-07-14T15:42:42.000Z",
-            "followers_count": 42,
-            "following_count": 42,
-            "statuses_count": 42,
-            "last_status_at": "2021-07-14T15:42:42.000Z"
-        },
-    }
-
     # Override the on_update method
     def on_update(self, status):
         if status['reblog']:
             print(f"New boost from list: {status['reblog']['content']}")
-            saveJson(status)
         else:
             print(f"New status from list: {status['content']}")
             saveJson(status)
@@ -572,53 +551,55 @@ class ListStreamer(StreamListener):
     def handle_heartbeat(self):
         print("Heartbeat received")
     
-def StreamMastodonList(mastodon, list_id, stop_token):
+def StreamMastodonList(mastodon, list_id):
     try:
+        # Create a listener
         listener = ListStreamer()
         stream = mastodon.stream_list(list_id, listener)
-        while not stream:
-            print("Waiting for stream...")
-            time.sleep(420)
+        stream.run()           
     except Exception as e:
-        print(f"Error streaming list {list_id}: {e}")
+        print(f"Error streaming list {list_id}")
+        time.sleep(42)
 
 # Worker function
-def worker(addAccounts, saveAccountInfo, mastodonListStreams, stop_token, mastodon, app):
-    """Your worker function, which does something in the background."""
+def worker(addAccounts, saveAccountInfo, mastodonListStreams, mastodon):
+    """     Your worker function, which does something in the background.
+    Arguments:
+        addAccounts {int} -- Add accounts to Mastodon lists (0 = no, 1 = yes)
+        saveAccountInfo {int} -- Save account information to JSON (0 = no, 1 = yes)
+        mastodonListStreams {int} -- Stream Mastodon lists (0 = no, 1 = yes)
+        mastodon {object} -- Mastodon object
+        data {dict} -- Data from config.json
+    """
     print("Worker is running...")
     try:
-        while not stop_token.is_set():
-            # Create a list of threads
-            threads = []     
+        # Create a list of threads
+        threads = []     
 
-            #Create add accounts to Mastodon lists thread for each category
-            if addAccounts:
-                addAccounts = Thread(target=addAccountsToMastodonLists, args=(mastodon, data, stop_token))
-                threads.append(addAccounts)
+        #Create add accounts to Mastodon lists thread for each category
+        if addAccounts:
+            addAccounts = Thread(target=addAccountsToMastodonLists, args=(mastodon))
+            threads.append(addAccounts)
 
-            if mastodonListStreams:
-                # Create stream Mastodon list thread for each category
-                for category in data.keys():
-                    listId = getOrCreateList(mastodon, category)
-                    if listId:
-                        print(f"Streaming list '{category}' with ID {listId}")
-                        streamList = Thread(target=StreamMastodonList, args=(mastodon, listId, stop_token))
-                        threads.append(streamList)
+        # Create a thread for each category
+        if mastodonListStreams:
+            # Iterate through each category and start a thread for each
+            for category, urls in data.items():
+                # Create list stream thread for each category
+                listStreams = Thread(target=StreamMastodonList, args=(mastodon, category))
+                threads.append(listStreams)
 
-            if saveAccountInfo:
-                # Iterate through each category and start a thread for each
-                for category, urls in data.items():
-                    # Create account gathering thread for each category
-                    accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
-                    threads.append(accountInfos)
+        # Create thread to save account information to JSON
+        if saveAccountInfo:
+            # Iterate through each category and start a thread for each
+            for category, urls in data.items():
+                # Create account gathering thread for each category
+                accountInfos = Thread(target=saveAccountInfoToJSON, args=(mastodon, category, urls))
+                threads.append(accountInfos)
 
-            # Start all threads
-            for thread in threads:
-                thread.start()
-            
-            # Wait for all threads to finish
-            for thread in threads:
-                thread.join()
+        # Start all threads
+        for thread in threads:
+            thread.start()
             
     except Exception as errorcode:
         print("ERROR: " + str(errorcode))
@@ -629,17 +610,12 @@ app = Flask(__name__)
 # Initialize the app
 def initialize_app():
     """Initialize the Mastodon API and any global variables."""
-    global mastodon
-    global data
 
     # Check for secrets
     checkForSecrets()  # Ensure this function sets necessary secrets
 
     # Authenticate the app
     mastodon = Mastodon(access_token='usercred.secret')
-
-    # Define the global data variable
-    global data 
 
     # Who Am I (logging information about the authenticated user)
     me = mastodon.me()
@@ -648,11 +624,9 @@ def initialize_app():
     print(me.id)
     print(me.url+'\n')
 
-    # Create a stop token for the worker
-    stop_token = Event()  # Create a stop token for the worker
     # Start the worker
     # Parameters: addAccounts, saveAccountInfo, mastodonListStreams, stop_token, mastodon, app  
-    worker(0, 0, 1, stop_token, mastodon, app)  # Start the worker
+    worker(0, 0, 1, mastodon)  # Start the worker
 
 # Route for the index page
 @app.route('/')
@@ -686,9 +660,14 @@ def latest_toots():
     toots = getLiveTootsJSON()
     return toots
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error.html', 
+                           error_code=404, 
+                           error_message='The requested URL was not found on the server.', 
+                           request=request), 404
+
 def create_app():
     initialize_app()
     return app
 
-if __name__ == '__main__':
-    create_app()
