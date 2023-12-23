@@ -3,8 +3,9 @@ import json
 import threading
 import time
 from threading import Event, Thread
+import traceback
 from flask import Flask, render_template, request
-from mastodon import Mastodon, StreamListener
+from mastodon import Mastodon, MastodonAPIError, MastodonFileNotFoundError, MastodonIllegalArgumentError, MastodonMalformedEventError, MastodonRatelimitError, MastodonServerError, MastodonVersionError, StreamListener
 
 # TootTicker - boost your bubble
 # Gathering account informations from Mastodon 
@@ -93,7 +94,7 @@ def getOrCreateList(mastodon, list_name):
     return new_list['id']
 
 # Function to add accounts to Mastodon lists
-def addAccountsToMastodonLists(mastodon, accounts_by_category, stop_token):
+def addAccountsToMastodonLists(mastodon, data):
     """
     Adds accounts to Mastodon lists based on their category.
 
@@ -103,7 +104,7 @@ def addAccountsToMastodonLists(mastodon, accounts_by_category, stop_token):
     """
     try:
         # Iterate through each category and its accounts
-        for category_name, accounts in accounts_by_category.items():
+        for category_name, accounts in data.items():
             # Get or create the list for the current category
             list_id = getOrCreateList(mastodon, category_name)
 
@@ -121,9 +122,25 @@ def addAccountsToMastodonLists(mastodon, accounts_by_category, stop_token):
                     # Add the account to the list
                     added = mastodon.list_accounts_add(list_id, account_id)
                     if added:
-                        print(f"Added account {account_id} to list '{category_name}'")
+                        print(f"Added {account_name} to {category_name}")
+                    else:
+                        print(f"Failed to add {account_name} to {category_name}")
                 else:
                     print(f"No account found for {account_name}")
+    # Handle exceptions - Mastodon.py
+        '''https://mastodonpy.readthedocs.io/en/latest/03_errors.html'''
+    except MastodonAPIError as e:
+        print(f"MastodonAPIError: {e}")
+    except MastodonIllegalArgumentError as e:
+        print(f"MastodonIllegalArgumentError: {e}")
+    except MastodonFileNotFoundError as e:
+        print(f"MastodonFileNotFoundError: {e}")
+    except MastodonMalformedEventError as e:
+        print(f"MastodonMalformedEventError: {e}")
+    except MastodonRatelimitError as e:
+        print(f"MastodonRatelimitError: {e}")
+    except MastodonVersionError as e:
+        print(f"MastodonVersionError: {e}")
     except Exception as e:
         print(f"Error adding accounts to lists: {e}")
 
@@ -143,7 +160,7 @@ def saveJson(toot):
         print(errorCode)
 
 # Function to get live toots
-def getLiveTootsJSON(numberOfToots=42):
+def getLiveTootsJSON(numberOfToots=420):
     global seen_toot_ids # A set to keep track of seen toot IDs for fast lookup
     toots = []
 
@@ -553,7 +570,7 @@ def StreamMastodonList(mastodon, list_id):
         time.sleep(42)
 
 # Worker function
-def worker(addAccounts, saveAccountInfo, mastodonListStreams, mastodon):
+def worker(add, save, stream, mastodon):
     """     Your worker function, which does something in the background.
     Arguments:
         addAccounts {int} -- Add accounts to Mastodon lists (0 = no, 1 = yes)
@@ -567,21 +584,22 @@ def worker(addAccounts, saveAccountInfo, mastodonListStreams, mastodon):
         # Create a list of threads
         threads = []     
 
-        #Create add accounts to Mastodon lists thread for each category
-        if addAccounts:
-            addAccounts = Thread(target=addAccountsToMastodonLists, args=(mastodon))
-            threads.append(addAccounts)
-
         # Create a thread for each category
-        if mastodonListStreams:
+        if stream:
             # Iterate through each category and start a thread for each
-            for category in data.keys():
+            for category in data:
+                print(category)
+                listIdFromCategoryName = getOrCreateList(mastodon, category)
+                #Create add accounts to Mastodon lists thread for each category
+                if add:
+                    addThread = Thread(target=addAccountsToMastodonLists, args=(mastodon, data[0]))
+                    threads.append(addThread)
                 # Create list stream thread for each category
-                listStreams = Thread(target=StreamMastodonList, args=(mastodon, category))
+                listStreams = Thread(target=StreamMastodonList, args=(mastodon, listIdFromCategoryName))
                 threads.append(listStreams)
 
         # Create thread to save account information to JSON
-        if saveAccountInfo:
+        if save:
             # Iterate through each category and start a thread for each
             for category, urls in data.items():
                 # Create account gathering thread for each category
@@ -599,7 +617,7 @@ def worker(addAccounts, saveAccountInfo, mastodonListStreams, mastodon):
 app = Flask(__name__)
 
 # Initialize the app
-def initialize_app():
+def initialize_app(add, save, stream):
     """Initialize the Mastodon API and any global variables."""
 
     # Check for secrets
@@ -617,7 +635,7 @@ def initialize_app():
 
     # Start the worker
     ''' Parameters: addAccounts, saveAccountInfo, mastodonListStreams, mastodon  '''
-    worker(0, 1, 1, mastodon) 
+    worker(add, save, stream, mastodon) 
 
 # Route for the index page
 @app.route('/')
@@ -645,6 +663,9 @@ def index():
         footer_scripts=footer_scripts
     )
 
+# Mock Toot
+MockToot = type('MockToot', (object,), {'id': 1, 'content': 'Hello, World!', 'account': {'username': 'scobiform', 'display_name': 'Scobiform', 'avatar': 'https://files.mastodon.social/accounts/avatars/000/000/001/original/6c3f0d5a6d5c5f9f.png', 'url': 'https://mastodon.social/@scobiform'}})
+
 # Route for the latest toots
 @app.route('/get_latest_toots')
 def latest_toots():
@@ -661,5 +682,5 @@ def page_not_found(e):
 
 # Create the app
 def create_app():
-    initialize_app()
+    initialize_app(0,0,1)
     return app
