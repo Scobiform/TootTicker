@@ -664,4 +664,3 @@ def page_not_found(e):
 def create_app():
     initialize_app()
     return app
-
