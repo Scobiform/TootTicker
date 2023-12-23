@@ -22,7 +22,7 @@ from mastodon import Mastodon, StreamListener
 # This project is still in development and will be updated frequently.
 # If you have any suggestions or ideas, please let me know.
 
-# Configuration
+# Configuration (#Todo Refactor => config.json)
 # You can remove your credentials after the first run
 app_name = 'TootTicker - boost your bubble'  # Replace with your desired app name
 instance_url = 'mastodon.social'  # Replace with your Mastodon instance URL
@@ -230,9 +230,8 @@ def saveAccountInfoToJSON(mastodon, category, urls):
             with open(os.path.join(accounts_directory, f"{user_id}.json"), 'w') as file:
                 json.dump(account_info, file, indent=4, default=str)
             print(f"Saved account info for {account[0]['username']}")
-
             # Sleep for 14 seconds to avoid rate limiting
-            time.sleep(14)
+            time.sleep(42)
         except Exception as e:
             print(f"Error processing {url}: {e}")
 
@@ -618,7 +617,7 @@ def initialize_app():
 
     # Start the worker
     ''' Parameters: addAccounts, saveAccountInfo, mastodonListStreams, mastodon  '''
-    worker(0, 0, 1, mastodon)  # Start the worker
+    worker(0, 1, 1, mastodon) 
 
 # Route for the index page
 @app.route('/')
