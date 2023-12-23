@@ -3,3 +3,7 @@ account_info.json
 accounts/*
 public/*
 account_overview.html
+toots/*
+.env
+env/*
+venv/*

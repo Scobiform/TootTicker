@@ -1,5 +1,3 @@
-![TootTicker Header](https://files.mastodon.social/accounts/headers/111/505/407/593/832/846/original/fdbeaeee174c3375.png)
-
 # TootTicker
 
 [![Python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
@@ -80,4 +78,16 @@ Special thanks to the contributors from German media sites:
 Contributions are welcome!
 
 ## License
-TootTicker is licensed under the GNU General Public License v3.0.
+**TootTicker** is licensed under the **GNU General Public License v3.0**.
+
+### Libraries Used:
+The following libraries are used in this project, each with its respective license:
+
+- **Mastodon.py**: MIT License - [View License](https://github.com/halcy/Mastodon.py)
+- **Chart.js**: MIT License - [View License](https://www.chartjs.org/)
+- **Flask**: BSD License - [View License](https://flask.palletsprojects.com/en/2.0.x/)
+- **Gunicorn**: Multiple Licenses (MIT and others) - [View License Details](https://github.com/benoitc/gunicorn?tab=License-1-ov-file#readme)
+
+### Note:
+Please ensure to adhere to the licensing terms of each library and tool used in your project.
+

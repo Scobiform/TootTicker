@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TootTicker - Error</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css"> <!-- Adjust if you have a stylesheet -->
+</head>
+<body>
+    <div class="error-container">
+        <h1>404 Error: Page Not Found</h1>
+        <p>Sorry, the page you are looking for doesn't exist or may have been moved.</p>
+        <p>Please go back to the <a href="/">homepage</a> or contact support if the problem persists.</p>
+        <div class="error-details">
+            <p>Your IP: {{ request.remote_addr }}</p>
+            <p>Error code: {{ error_code }}</p>
+            <p>Message: {{ error_message }}</p>
+        </div>
+    </div>
+</body>
+</html>

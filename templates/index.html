@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Your header content -->
+    {{ html_header|safe }}
+    {{ header_scripts|safe }}
+</head>
+<body>
+    <!-- Here's where the live toots will be rendered -->
+    {{ live_toots_html|safe }}
+    
+    <!-- And the account overview -->
+    {{ account_overview_html|safe }}
+    
+    <!-- Footer content -->
+    {{ html_footer|safe }}
+    {{ footer_scripts|safe }}
+</body>

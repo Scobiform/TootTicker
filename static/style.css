@@ -1,0 +1,118 @@
+/* Font import Open Dyslexic */
+@import url('https://fonts.googleapis.com/css2?family=Mukta:wght@200&family=Work+Sans:wght@100&display=swap');
+:root { --primary: #6364FF;
+        --secondary: #f5e7ffd7;
+        --tertiary: #6364ff0d;
+        --kah: #191b22;
+        --font: 'Mukta', sans-serif;
+}
+body {  font-family: sans-serif; background-color: var(--kah);
+        font-family: var(--font);
+        line-height: 0.7em; 
+        color: #333; /* High-contrast text color */
+}
+h1 {    color: var(--secondary);
+        background-color: var(--kah);
+        padding: 0.7rem;
+        cursor: pointer;
+        font-size: smaller;
+        font-family: var(--font);
+        font-weight: 100;
+        text-transform: lowercase;
+        text-align: right;
+        margin-block: auto;
+        display: grid;
+        justify-content: end;
+        align-items: baseline;
+        align-content: stretch;
+        justify-items: center;
+        margin-inline-start: auto;
+        margin-inline-end: auto;
+}
+h2 { color: var(--secondary-color); 
+        font-size: 1.4em;
+        margin-block-start: 0em;
+        margin-block-end: 0em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: 420;}
+p { color: var(--secondary); text-align: start; }
+a, a:hover, a:visited, a:active, a:focus, a:link { color: var(--secondary); }
+ul { list-style-type: none; padding: 0; color: var(--secondary); }
+.accountInfo { background-color: #282c37; padding: 10px; margin-bottom: 10px; }
+.accountFacts { background: rgba(25, 27, 34, 0.7); padding: 10px; border-radius: 2vh;
+                min-width: 320px; }
+.grid { display: unset;}
+.toots-content { background: rgba(25, 27, 34, 0.7); }
+.toots-content  p {   
+        color: var(--secondary);
+        text-align: center;
+        padding: 0.7rem;
+        line-height: 1.4rem;
+}
+.toots-toggle { cursor: pointer; color: var(--secondary-color); 
+                background-color: var(--primary); padding: 0.7rem;
+                text-align: right; }
+.toot {
+        background: var(--kah);
+        margin: 0.42rem;
+ }
+.tootName { 
+        color: var(--secondary);
+        padding: 10px;
+        font-size: 0.7rem;
+        float: right;
+}
+.toot img { 
+        border-radius: 1vh;
+        float: inline-start;
+        max-width: 49px;
+ }
+.tootDate { 
+        color: var(--secondary);
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 0.7rem;
+        border-radius: 1vh;
+        display: table-caption;
+}
+.tootUrl {
+        color: var(--secondary-color);
+        background: var(--primary-color);
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 0.7rem;
+        border-radius: 1vh;
+        width: fit-content;
+        float: inline-end;
+ }
+.tootCounts {color: var(--secondary-color); padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
+.stats { display: flex; flex-wrap: wrap; }
+#liveToots {    background-color: var(--tertiary);
+                padding: 0.42rem;
+                height: 63vh;
+                overflow-y: scroll;
+                display: flex;
+                flex-direction: column-reverse;}
+.tootAvatar { 
+                width: 7vh; 
+                float: right; }
+hr { border: 0; height: 1px; background: #6364FF; }
+.chart { 
+        width: 100%; 
+        height: 42% !important; }
+.mention { color: #6364FF; display: inline-flex; font-size: smaller;}
+.invisible { display: none; }
+img { border-radius: 50%;}
+.mediaAttachments { display: flex; flex-wrap: wrap;}
+.mediaAttachments img { max-width: 100%; max-height: 100%; }
+/* Dark Violet Scrollbar Styles */
+::-webkit-scrollbar { width: 12px; display: none; }
+::-webkit-scrollbar-thumb { background-color: #4B0082; border-radius: 6px; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background-color: #1E1E1E; }
+::-webkit-scrollbar-thumb:hover { background-color: #6A5ACD; }
+.Media { min-height: 42vh;  }
+.Creator { min-height: 42vh;  }
+.Government { min-height: 42vh;  }
+.NGO { min-height: 42vh;  }
+.Science { min-height: 42vh;  }
