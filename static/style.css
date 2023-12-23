@@ -15,7 +15,7 @@ h1 {    color: var(--secondary);
         background-color: var(--kah);
         padding: 0.7rem;
         cursor: pointer;
-        font-size: smaller;
+        font-size: medium;
         font-family: var(--font);
         font-weight: 100;
         text-transform: lowercase;

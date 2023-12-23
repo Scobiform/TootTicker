@@ -147,13 +147,20 @@ def addAccountsToMastodonLists(mastodon, data):
 # Save toot to folder toots/
 def saveJson(toot):
     ''' 
-        
+        Save toot to folder toots/
+        toot {dict} -- Toot object
     '''
     try:
         # Create the 'toots/' directory if it doesn't exist
-        if not os.path.exists('toots/'):
-            # Create the directory 
-            os.makedirs('toots/')
+        toots_directory = 'toots/'
+        # Check if the 'toots/' directory exists
+        if not os.path.exists(toots_directory):
+            # If the directory doesn't exist, create it
+            os.makedirs(toots_directory)
+            print(f"Directory '{toots_directory}' was created.")
+        else:
+            # If the directory exists, print that it already exists
+            print(f"Directory '{toots_directory}' already exists.")
         with open(f"toots/{toot['id']}.json", encoding='utf-8', mode='w') as file:
             json.dump(toot, file, indent=4, default=str)
     except Exception as errorCode:
@@ -590,9 +597,10 @@ def worker(add, save, stream, mastodon):
             for category in data:
                 print(category)
                 listIdFromCategoryName = getOrCreateList(mastodon, category)
+                print(listIdFromCategoryName)
                 #Create add accounts to Mastodon lists thread for each category
                 if add:
-                    addThread = Thread(target=addAccountsToMastodonLists, args=(mastodon, data[0]))
+                    addThread = Thread(target=addAccountsToMastodonLists, args=(mastodon, data))
                     threads.append(addThread)
                 # Create list stream thread for each category
                 listStreams = Thread(target=StreamMastodonList, args=(mastodon, listIdFromCategoryName))
