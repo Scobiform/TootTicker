@@ -34,38 +34,27 @@ pip install Mastodon.py
 ```
 ## Usage
 
-### 1. Edit TootTicker.py
+**TootTicker** is currently under heavy development, and its features and commands are subject to change. Below are the basic steps to get started with it, but please refer to the latest documentation for the most up-to-date information.
 
-First, you need to configure `TootTicker.py` with your details:
+### Getting Started
 
-```python
-# Configuration
-app_name = 'TootTicker - boost your bubble'  # Replace with your desired app name
-instance_url = 'mastodon.social'  # Replace with your Mastodon instance URL
-email = ''  # Replace with your Mastodon account email
-password = ''  # Replace with your Mastodon account password
-```
+1. **Installation**: 
+   - Describe how to install your application, including any prerequisites like Python, Node.js, etc.
+   - Provide any commands needed to install the project or its dependencies.
 
-### 2. Run the Script
+2. **Configuration**: 
+   - Guide users through setting up any necessary configuration files, environment variables, or secrets.
 
-Execute the script by running the following command in your terminal:
+3. **Running the Application**: 
+   - Give instructions on how to start the application and any necessary services.
+   - Include examples of command-line usage if applicable.
 
-```bash
-python3 TootTicker.py
-```
+### Common Tasks
 
-### 3. Wait for Data Gathering
-
-Allow some time for the script to gather the necessary data.
-
-### 4. Access the Results
-
-After the data gathering is complete:
-
-- Open `index.html` located in the `public` folder.
-
-The account information will be saved in the `accounts/` folder.
-
+- **Adding a Category**: Describe how users can add a category for list streaming.
+  ```bash
+  command_or_steps_here
+  
 ### Credits
 
 Special thanks to the contributors from German media sites:
