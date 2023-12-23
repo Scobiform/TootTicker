@@ -115,7 +115,6 @@ def checkIfAlreadyInList(mastodon, list_id, account_id):
     except Exception as errorCode:
         print(errorCode)
 
-# Function to add accounts to Mastodon lists
 def followAndAddAccountsToMastodonLists(mastodon, data, category, me):
     """
     Adds accounts to Mastodon lists based on their category.
@@ -125,6 +124,7 @@ def followAndAddAccountsToMastodonLists(mastodon, data, category, me):
     :param stop_token: A threading.Event() object used to stop the thread safely.
     """
     print(f"Starting account gathering for {category}...")
+    list_id = getOrCreateList(mastodon, category)  # Moved outside the inner loop
 
     try:
         # Iterate through each category and its accounts
@@ -158,7 +158,6 @@ def followAndAddAccountsToMastodonLists(mastodon, data, category, me):
                         print(f"{account_name} is already in {category}")
 
                 except MastodonAPIError as e:
-                    # Example of handling specific messages (adjust based on actual attributes)
                     message = str(e)
                     if "Account has already been taken" in message:
                         print("The account already exists.")
@@ -167,22 +166,6 @@ def followAndAddAccountsToMastodonLists(mastodon, data, category, me):
                         time.sleep(300)  # Back off for 5 minutes
                     else:
                         print(f"An error occurred: {e}")
-    # Handle exceptions - Mastodon.py
-        '''https://mastodonpy.readthedocs.io/en/latest/03_errors.html'''
-    except MastodonAPIError as e:
-        if e.status_code == 429 and "Too Many Requests" in str(e):
-            print("Too many requests. Please try again later.")
-            time.sleep(300)  # Back off for 5 minutes
-    except MastodonIllegalArgumentError as e:
-        print(f"MastodonIllegalArgumentError: {e}")
-    except MastodonFileNotFoundError as e:
-        print(f"MastodonFileNotFoundError: {e}")
-    except MastodonMalformedEventError as e:
-        print(f"MastodonMalformedEventError: {e}")
-    except MastodonRatelimitError as e:
-        print(f"MastodonRatelimitError: {e}")
-    except MastodonVersionError as e:
-        print(f"MastodonVersionError: {e}")
     except Exception as e:
         print(f"Error adding accounts to lists: {e}")
 
@@ -460,6 +443,9 @@ def generateLiveTootsHTML():
     except Exception as errorCode:
         print(errorCode)
 
+# Add function that will follow all accounts from config.json and add them to lists named after the category
+def
+
 # List Streamer class
 class ListStreamer(StreamListener):
     '''
@@ -620,7 +606,8 @@ def create_app():
         app -- Flask app
     '''
     # add, save, stream
-    initializeApp(1,0,1)
+    ''' Parameters: addAccounts, saveAccountInfo, mastodonListStreams... '''
+    initializeApp(1,1,0)
     return app
 
 # Run the app (for development)
