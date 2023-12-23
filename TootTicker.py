@@ -109,34 +109,29 @@ def addAccountsToMastodonLists(mastodon, accounts_by_category, stop_token):
 
             # Iterate through each account in the current category
             for account_name in accounts:
-                try:
-                    # Resolve the account name to get the account ID
-                    search_result = mastodon.account_search(account_name)
-                    if search_result:
-                        account_id = search_result[0]['id']
-                        print(f"Resolved account {account_name} to ID {account_id}")
+                # Resolve the account name to get the account ID
+                search_result = mastodon.account_search(account_name)
+                if search_result:
+                    account_id = search_result[0]['id']
+                    print(f"Resolved account {account_name} to ID {account_id}")
 
-                        # Follow the account if not already following (optional based on your requirements)
-                        mastodon.account_follow(account_id)
+                    # Follow the account if not already following (optional based on your requirements)
+                    mastodon.account_follow(account_id)
 
-                        # Add the account to the list
-                        added = mastodon.list_accounts_add(list_id, account_id)
-                        if added:
-                            print(f"Added account {account_id} to list '{category_name}'")
-                    else:
-                        print(f"No account found for {account_name}")
-                except Mastodon.RateLimitError as e:  # Replace with the actual exception
-                    print(f"Rate limit exceeded: {e}")
-                    # Sleep for 42 seconds to avoid rate limiting
-                    time.sleep(42)
-                except Exception as account_error:
-                    print(f"Error processing account {account_name} in '{category_name}': {account_error}")
-
+                    # Add the account to the list
+                    added = mastodon.list_accounts_add(list_id, account_id)
+                    if added:
+                        print(f"Added account {account_id} to list '{category_name}'")
+                else:
+                    print(f"No account found for {account_name}")
     except Exception as e:
         print(f"Error adding accounts to lists: {e}")
 
 # Save toot to folder toots/
 def saveJson(toot):
+    ''' 
+        
+    '''
     try:
         # Create the 'toots/' directory if it doesn't exist
         if not os.path.exists('toots/'):
@@ -147,7 +142,8 @@ def saveJson(toot):
     except Exception as errorCode:
         print(errorCode)
 
-def getLiveTootsJSON(numberOfToots=7):
+# Function to get live toots
+def getLiveTootsJSON(numberOfToots=42):
     global seen_toot_ids # A set to keep track of seen toot IDs for fast lookup
     toots = []
 
@@ -155,8 +151,8 @@ def getLiveTootsJSON(numberOfToots=7):
         if filename.endswith('.json'):
             file_path = os.path.join('toots/', filename)
 
-            # Check if the file was modified within the last 42 seconds
-            if os.path.getmtime(file_path) > time.time() - 42:
+            # Check if the file was modified within the last 24 hours
+            if os.path.getmtime(file_path) > time.time() - 86400:
                 with open(file_path, 'r') as file:
                     try:
                         toot = json.load(file)
@@ -237,10 +233,6 @@ def saveAccountInfoToJSON(mastodon, category, urls):
 
             # Sleep for 14 seconds to avoid rate limiting
             time.sleep(14)
-        except Mastodon.RateLimitError as e:  # Replace with the actual exception
-            print(f"Rate limit exceeded: {e}")
-            # Sleep for 42 seconds to avoid rate limiting
-            time.sleep(42)
         except Exception as e:
             print(f"Error processing {url}: {e}")
 
@@ -556,8 +548,7 @@ def StreamMastodonList(mastodon, list_id):
     try:
         # Create a listener
         listener = ListStreamer()
-        stream = mastodon.stream_list(list_id, listener)
-        stream.run()           
+        mastodon.stream_list(list_id, listener) 
     except Exception as e:
         print(f"Error streaming list {list_id}")
         time.sleep(42)
@@ -585,7 +576,7 @@ def worker(addAccounts, saveAccountInfo, mastodonListStreams, mastodon):
         # Create a thread for each category
         if mastodonListStreams:
             # Iterate through each category and start a thread for each
-            for category, urls in data.items():
+            for category in data.keys():
                 # Create list stream thread for each category
                 listStreams = Thread(target=StreamMastodonList, args=(mastodon, category))
                 threads.append(listStreams)
@@ -626,7 +617,7 @@ def initialize_app():
     print(me.url+'\n')
 
     # Start the worker
-    # Parameters: addAccounts, saveAccountInfo, mastodonListStreams, stop_token, mastodon, app  
+    ''' Parameters: addAccounts, saveAccountInfo, mastodonListStreams, mastodon  '''
     worker(0, 0, 1, mastodon)  # Start the worker
 
 # Route for the index page
@@ -661,6 +652,7 @@ def latest_toots():
     toots = getLiveTootsJSON()
     return toots
 
+# Route for the error page
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('error.html', 
@@ -668,6 +660,7 @@ def page_not_found(e):
                            error_message='The requested URL was not found on the server.', 
                            request=request), 404
 
+# Create the app
 def create_app():
     initialize_app()
     return app
