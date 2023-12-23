@@ -16,6 +16,7 @@ from mastodon import Mastodon, StreamListener
 # Mastodon.py - MIT License - https://github.com/halcy/Mastodon.py
 # Chart.js - MIT License - https://www.chartjs.org/
 # Flask - BSD License - https://flask.palletsprojects.com/en/2.0.x/
+# Gunicorn - https://gunicorn.org/
 
 # You can see a demo of this project here: https://tootticker.scobiform.com/
 # This project is still in development and will be updated frequently.
