@@ -35,25 +35,6 @@ pip install Mastodon.py
 ## Usage
 
 **TootTicker** is currently under heavy development, and its features and commands are subject to change. Below are the basic steps to get started with it, but please refer to the latest documentation for the most up-to-date information.
-
-### Getting Started
-
-1. **Installation**: 
-   - Describe how to install your application, including any prerequisites like Python, Node.js, etc.
-   - Provide any commands needed to install the project or its dependencies.
-
-2. **Configuration**: 
-   - Guide users through setting up any necessary configuration files, environment variables, or secrets.
-
-3. **Running the Application**: 
-   - Give instructions on how to start the application and any necessary services.
-   - Include examples of command-line usage if applicable.
-
-### Common Tasks
-
-- **Adding a Category**: Describe how users can add a category for list streaming.
-  ```bash
-  command_or_steps_here
   
 ### Credits
 
