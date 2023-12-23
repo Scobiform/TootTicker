@@ -34,7 +34,7 @@ pip install Mastodon.py
 ```
 ## Usage
 
-**TootTicker** is currently under heavy development, and its features and commands are subject to change. Below are the basic steps to get started with it, but please refer to the latest documentation for the most up-to-date information.
+**TootTicker** is currently under heavy development, and its features and commands are subject to change. 
   
 ### Credits
 
@@ -49,6 +49,8 @@ Contributions are welcome!
 
 ## License
 **TootTicker** is licensed under the **GNU General Public License v3.0**.
+
+**TootTicker** ![Under Development](https://img.shields.io/badge/development-under%20heavy%20development-orange)
 
 ### Libraries Used:
 The following libraries are used in this project, each with its respective license:
