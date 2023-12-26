@@ -115,57 +115,70 @@ def checkIfAlreadyInList(mastodon, list_id, account_id):
     except Exception as errorCode:
         print(errorCode)
 
-def followAndAddAccountsToMastodonLists(mastodon, data, category, me):
-    """
-    Adds accounts to Mastodon lists based on their category.
-
+def followAndAddAccountsToMastodonLists(mastodon, data, category, me, processed_accounts=None, myFollowings=None, stop_token=None):
+    """ Adds accounts to Mastodon lists based on their category.
     :param mastodon: An authenticated instance of the Mastodon API.
-    :param accounts_by_category: A dictionary with category names as keys and lists of account handles as values.
+    :param data: A dictionary with category names as keys and lists of account handles as values.
+    :param category: The category to process.
+    :param me: The authenticated user's account object.
+    :param processed_accounts: Set of accounts already processed.
+    :param myFollowings: Set of account IDs the user is following.
     :param stop_token: A threading.Event() object used to stop the thread safely.
     """
+
+    # Initialize the sets if they are not passed in
+    if processed_accounts is None:
+        processed_accounts = set()
+    if myFollowings is None:
+        myFollowings = set()
+
     print(f"Starting account gathering for {category}...")
-    list_id = getOrCreateList(mastodon, category)  # Moved outside the inner loop
+    list_id = getOrCreateList(mastodon, category)  # Get or create the list once
 
     try:
-        # Iterate through each category and its accounts
-        for accounts in data[category]:
-            list_id = getOrCreateList(mastodon, category)
+        # Iterate through accounts in the specified category
+        for account_name in data[category]:
+            print(f'Accounts: {account_name} for: {category}')
             
-            for account_name in accounts:
-                # Skip accounts that have already been processed
-                if account_name in processed_accounts:
-                    print(f"Already processed account {account_name}")
-                    continue
-                
-                search_result = mastodon.account_search(account_name)
-                if not search_result:
-                    print(f"No account found for {account_name}")
-                    continue
-                
-                account_id = search_result[0]['id']
-                processed_accounts.add(account_name)  # Mark this account as processed
-                
-                # Follow the account and add to the list if not already there
-                try:
-                    if account_id not in myFollowings:
-                        mastodon.account_follow(account_id)
-                        myFollowings.add(account_id)  # Update myFollowings set if you're keeping track
-                        
-                    if not checkIfAlreadyInList(mastodon, list_id, account_id):
-                        mastodon.list_accounts_add(list_id, account_id)
-                        print(f"Added {account_name} to {category}")
-                    else:
-                        print(f"{account_name} is already in {category}")
+            if stop_token and stop_token.is_set():
+                print("Stopping as stop token received.")
+                break
 
-                except MastodonAPIError as e:
-                    message = str(e)
-                    if "Account has already been taken" in message:
-                        print("The account already exists.")
-                    elif "Too Many Requests" in message:
-                        print("Too many requests. Please try again later.")
-                        time.sleep(300)  # Back off for 5 minutes
-                    else:
-                        print(f"An error occurred: {e}")
+            # Skip accounts that have already been processed
+            if account_name in processed_accounts:
+                print(f"Already processed account {account_name}")
+                continue
+            
+            search_result = mastodon.account_search(account_name)
+            if not search_result:
+                print(f"No account found for {account_name}")
+                continue
+            
+            account_id = search_result[0]['id']
+            processed_accounts.add(account_name)  # Mark this account as processed
+            
+            # Follow the account and add to the list if not already there
+            try:
+                if account_id not in myFollowings:
+                    mastodon.account_follow(account_id)
+                    myFollowings.add(account_id)
+                    print(f"Followed {account_name}")
+                    
+                if not checkIfAlreadyInList(mastodon, list_id, account_id):
+                    mastodon.list_accounts_add(list_id, account_id)
+                    print(f"Added {account_name} to {category}")
+                else:
+                    print(f"{account_name} is already in {category}")
+
+            except MastodonAPIError as e:
+                message = str(e)
+                if "Account has already been taken" in message:
+                    print("The account already exists.")
+                elif "Too Many Requests" in message:
+                    print("Too many requests. Please try again later.")
+                    time.sleep(420)  # Back off for 7 minutes
+                else:
+                    print(f"An error occurred: {e}")
     except Exception as e:
         print(f"Error adding accounts to lists: {e}")
 
@@ -604,7 +617,7 @@ def create_app():
     '''
     # add, save, stream
     ''' Parameters: addAccounts, saveAccountInfo, mastodonListStreams... '''
-    initializeApp(1,1,0)
+    initializeApp(1,0,1)
     return app
 
 # Run the app (for development)
