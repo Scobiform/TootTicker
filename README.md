@@ -50,8 +50,6 @@ Contributions are welcome!
 ## License
 **TootTicker** is licensed under the **GNU General Public License v3.0**.
 
-![Under Development](https://img.shields.io/badge/development-under%20heavy%20development-orange)
-
 ### Libraries Used:
 The following libraries are used in this project, each with its respective license:
 
