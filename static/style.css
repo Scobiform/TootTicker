@@ -60,7 +60,7 @@ ul { list-style-type: none; padding: 0; color: var(--secondary); }
 .tootName { 
         color: var(--secondary);
         padding: 10px;
-        font-size: 0.7rem;
+        font-size: 1.05em;
         float: right;
 }
 .toot img { 

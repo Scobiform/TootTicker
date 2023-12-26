@@ -32,6 +32,8 @@ password = ''  # Replace with your Mastodon account password
 
 # Global variables
 seen_toot_ids = set()  # A set to keep track of seen toot IDs for fast lookup
+myFollowings = set() # A set to keep track of my followings for fast lookup
+processed_accounts = set()  # A set to keep track of processed accounts for fast lookup
 data = {}  # A dictionary to store the data from config.json
 
 # Get data from config.json and save to data
@@ -93,54 +95,100 @@ def getOrCreateList(mastodon, list_name):
     new_list = mastodon.list_create(list_name)
     return new_list['id']
 
-# Function to add accounts to Mastodon lists
-def addAccountsToMastodonLists(mastodon, data):
-    """
-    Adds accounts to Mastodon lists based on their category.
+def getMyFollowings(mastodon, me):
+    try:
+        # Get my followings
+        myFollowings = mastodon.account_following(me.id)
+        # Extract and return only the IDs from the followings
+        followingIds = [following.id for following in myFollowings]
+        return followingIds
+    except Exception as errorCode:
+        print(errorCode)
 
+def checkIfAlreadyInList(mastodon, list_id, account_id):
+    try:
+        # Get accounts in list
+        accountsInList = mastodon.list_accounts(list_id)
+        # Check if account is in list
+        for account in accountsInList:
+            if account['id'] == account_id:
+                return True
+        return False
+    except Exception as errorCode:
+        print(errorCode)
+
+def followAndAddAccountsToMastodonLists(mastodon, data, category, me, processed_accounts=None, myFollowings=None, stop_token=None):
+    """ Adds accounts to Mastodon lists based on their category.
     :param mastodon: An authenticated instance of the Mastodon API.
-    :param accounts_by_category: A dictionary with category names as keys and lists of account handles as values.
+    :param data: A dictionary with category names as keys and lists of account handles as values.
+    :param category: The category to process.
+    :param me: The authenticated user's account object.
+    :param processed_accounts: Set of accounts already processed.
+    :param myFollowings: Set of account IDs the user is following.
     :param stop_token: A threading.Event() object used to stop the thread safely.
     """
+
+    # Initialize the sets if they are not passed in
+    if processed_accounts is None:
+        processed_accounts = set()
+    if myFollowings is None:
+        myFollowings = set(getMyFollowings(mastodon, me))
+
+    print(f"Starting account gathering for {category}...")
+    list_id = getOrCreateList(mastodon, category)  # Get or create the list once
+
+    # debugFollowings = getMyFollowings(mastodon, me)
+    # print(f"Debug: {debugFollowings}")
+
     try:
-        # Iterate through each category and its accounts
-        for category_name, accounts in data.items():
-            # Get or create the list for the current category
-            list_id = getOrCreateList(mastodon, category_name)
+        # Iterate through accounts in the specified category
+        for account_name in data[category]:
+            print(f'Accounts: {account_name} for: {category}')
+            
+            if stop_token and stop_token.is_set():
+                print("Stopping as stop token received.")
+                break
 
-            # Iterate through each account in the current category
-            for account_name in accounts:
-                # Resolve the account name to get the account ID
-                search_result = mastodon.account_search(account_name)
-                if search_result:
-                    account_id = search_result[0]['id']
-                    print(f"Resolved account {account_name} to ID {account_id}")
-
-                    # Follow the account if not already following (optional based on your requirements)
+            # Skip accounts that have already been processed
+            if account_name in processed_accounts:
+                print(f"Already processed account {account_name}")
+                continue
+            
+            # Search for the account
+            search_result = mastodon.account_search(account_name)
+            if not search_result:
+                print(f"No account found for {account_name}")
+                continue
+            
+            # Get the account ID
+            account_id = search_result[0]['id']
+            processed_accounts.add(account_name)  # Mark this account as processed
+            
+            # Follow the account and add to the list if not already there
+            try:
+                if account_id not in myFollowings:
                     mastodon.account_follow(account_id)
-
-                    # Add the account to the list
-                    added = mastodon.list_accounts_add(list_id, account_id)
-                    if added:
-                        print(f"Added {account_name} to {category_name}")
-                    else:
-                        print(f"Failed to add {account_name} to {category_name}")
+                    myFollowings.add(account_id)
+                    print(f"Followed {account_name}")
                 else:
-                    print(f"No account found for {account_name}")
-    # Handle exceptions - Mastodon.py
-        '''https://mastodonpy.readthedocs.io/en/latest/03_errors.html'''
-    except MastodonAPIError as e:
-        print(f"MastodonAPIError: {e}")
-    except MastodonIllegalArgumentError as e:
-        print(f"MastodonIllegalArgumentError: {e}")
-    except MastodonFileNotFoundError as e:
-        print(f"MastodonFileNotFoundError: {e}")
-    except MastodonMalformedEventError as e:
-        print(f"MastodonMalformedEventError: {e}")
-    except MastodonRatelimitError as e:
-        print(f"MastodonRatelimitError: {e}")
-    except MastodonVersionError as e:
-        print(f"MastodonVersionError: {e}")
+                    print(f"Already following {account_name}")
+                
+                # Add the account to the list if not already there
+                if not checkIfAlreadyInList(mastodon, list_id, account_id):
+                    mastodon.list_accounts_add(list_id, account_id)
+                    print(f"Added {account_name} to {category}")
+                else:
+                    print(f"{account_name} is already in {category}")
+
+            except MastodonAPIError as e:
+                message = str(e)
+                if "Account has already been taken" in message:
+                    print("The account already exists.")
+                elif "Too Many Requests" in message:
+                    print("Too many requests. Please try again later.")
+                    time.sleep(420)  # Back off for 7 minutes
+                else:
+                    print(f"An error occurred: {e}")
     except Exception as e:
         print(f"Error adding accounts to lists: {e}")
 
@@ -175,8 +223,8 @@ def getLiveTootsJSON(numberOfToots=420):
         if filename.endswith('.json'):
             file_path = os.path.join('toots/', filename)
 
-            # Check if the file was modified within the last 24 hours
-            if os.path.getmtime(file_path) > time.time() - 86400:
+            # Check if the file was modified within the last 1 hour
+            if os.path.getmtime(file_path) > time.time() - 43200:
                 with open(file_path, 'r') as file:
                     try:
                         toot = json.load(file)
@@ -255,9 +303,12 @@ def saveAccountInfoToJSON(mastodon, category, urls):
                 json.dump(account_info, file, indent=4, default=str)
             print(f"Saved account info for {account[0]['username']}")
             # Sleep for 14 seconds to avoid rate limiting
-            time.sleep(42)
+            time.sleep(7)
         except Exception as e:
             print(f"Error processing {url}: {e}")
+    # Sleep for 1 hour to avoid rate limiting
+    print(f"Sleeping for 1 hour to avoid rate limiting...")
+    time.sleep(3600)
 
 # Function to generate the HTML header
 def generateHTMLHeader():
@@ -389,141 +440,17 @@ def footerScripts():
         [type] -- [description]
         
     '''
-
-    #TODO: Refactor this is smaller bits
     scripts = """<script>
                 const categoriesData = """ + generateChart() + """;
 
-                function createChart(containerId, category, categoryData) {
-                    const ctx = document.createElement('canvas');
-                    document.getElementById(containerId).appendChild(ctx);
+                // Import footer scripts from static folder
+                const footerScripts = document.createElement('script');
+                footerScripts.src = 'static/footerScripts.js';
+                // Set the async flag
+                footerScripts.async = true;
+                // Append the script to the body
+                document.body.appendChild(footerScripts);
 
-                    const datasets = [];
-                    const labels = Object.keys(categoryData); // Account names
-
-                    // Metrics to display (e.g., Followers, Toots, Following)
-                    const metrics = ["Followers", "Toots", "Following"];
-
-                    metrics.forEach(metric => {
-                        const data = labels.map(label => categoryData[label][metric] || 0);
-                        datasets.push({
-                            label: `${metric}`,
-                            data: data,
-                            backgroundColor: getRandomColor(),
-                            borderColor: 'rgba(0, 123, 255, 0.7)',
-                            borderWidth: 1
-                        });
-                    });
-
-                    new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: labels,
-                            datasets: datasets
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                y: { beginAtZero: true }
-                            }
-                        }
-                    });
-                }
-
-                window.onload = function() {
-                    for (const [category, categoryData] of Object.entries(categoriesData)) {
-                        createChart(`chart-container-${category}`, category, categoryData);
-                    }
-                };
-
-                function getRandomColor() {
-                        // Base color 99, 100, 255
-                        const baseR = 99;
-                        const baseG = 100;
-                        const baseB = 255;
-
-                        // Define a range for variation (+/- 42)
-                        const range = 42;
-
-                        // Generate random variations around the base color within the specified range
-                        const r = Math.max(Math.min(baseR + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
-                        const g = Math.max(Math.min(baseG + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
-                        const b = Math.max(Math.min(baseB + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
-
-                        return `rgba(${r}, ${g}, ${b}, 0.5)`;
-                }
-
-                function fetchAndUpdateToots() {
-                    fetch('/get_latest_toots')
-                        .then(response => response.json())
-                        .then(newToots => {
-                            const container = document.getElementById('liveToots');
-                            const meUrl = 'https://mastodon.social/';
-                            // Clear the container before appending new toots if necessary
-                            // container.innerHTML = ''; // Uncomment this if you want to remove old toots when new ones arrive
-                            
-                            newToots.forEach(toot => {      
-                                const mastodonHandle = `${toot.account.username}@${toot.url.split("https://")[1].split("/")[0]}`;
-                                const tootElement = document.createElement('div'); // Moved inside the loop
-                                tootElement.classList.add('toot');  // Add a 'toot' class to the div
-                                            
-                                tootElement.innerHTML = `
-                                    <div class="tootAvatar">
-                                        <a href="${meUrl}@${mastodonHandle}" alt="${toot.account.display_name}" 
-                                        nofollow="true" 
-                                        target="_blank" 
-                                        rel="noopener noreferrer">
-                                            <img src="${toot.account.avatar}">
-                                        </a>
-                                    </div>
-                                    <div class="tootName">
-                                        <a href="${meUrl}@${mastodonHandle}" alt="${toot.account.display_name}"
-                                        nofollow="true"
-                                        target="_blank"
-                                        rel="noopener noreferrer">
-                                            ${toot.account.display_name}
-                                        </a>
-                                    </div>
-                                    <div class="tootDate">
-                                        ${new Date(toot.created_at).toLocaleString('en-US', { hour12: false })}
-                                    </div>
-                                    <div class="toots-content">
-                                        ${toot.content}
-                                        <div class="mediaAttachments">
-                                            ${toot.reblog ? toot.reblog.media_attachments.map(media => {
-                                                if (media.type === 'image') {
-                                                    return `<img src="${media.preview_url}" alt="${toot.account.display_name}">`;
-                                                } else if (media.type === 'video') {
-                                                    return `<video controls src="${media.preview_url}" alt="${toot.account.display_name}"></video>`;
-                                                } else {
-                                                    return `<a href="${media.url}" alt="${toot.account.display_name}">Attachment</a>`;
-                                                }
-                                            }).join('') : ''}
-                                        </div>
-                                        <div class="tootUrl">
-                                            <a href="${meUrl}@${mastodonHandle}/${toot.id}"
-                                            alt="View on Mastodon"
-                                            aria-label="View on Mastodon"
-                                            nofollow="true"
-                                            target="_blank"
-                                            rel="noopener noreferrer">
-                                                 View on Mastodon
-                                            </a>
-                                        </div>
-                                    </div>
-                                `;
-                                // Add the new toot to the container
-                                container.appendChild(tootElement);  
-
-                                // Scroll to the Bottom of the container
-                                container.scrollTop = container.scrollHeight;
-                            });
-                        })
-                        .catch(error => console.error('Error fetching new toots:', error));
-                }
-                // Poll for new toots every n seconds
-                setInterval(fetchAndUpdateToots, 21000);
             </script>"""
     return scripts
 
@@ -565,7 +492,7 @@ class ListStreamer(StreamListener):
         print(f"Status deleted: {status_id}")
 
     def handle_heartbeat(self):
-        print("Heartbeat received")
+        print("🐘")
     
 def StreamMastodonList(mastodon, list_id):
     try:
@@ -577,7 +504,7 @@ def StreamMastodonList(mastodon, list_id):
         time.sleep(42)
 
 # Worker function
-def worker(add, save, stream, mastodon):
+def worker(add, save, stream, mastodon, me):
     """     Your worker function, which does something in the background.
     Arguments:
         addAccounts {int} -- Add accounts to Mastodon lists (0 = no, 1 = yes)
@@ -595,12 +522,11 @@ def worker(add, save, stream, mastodon):
         if stream:
             # Iterate through each category and start a thread for each
             for category in data:
-                print(category)
                 listIdFromCategoryName = getOrCreateList(mastodon, category)
                 print(listIdFromCategoryName)
                 #Create add accounts to Mastodon lists thread for each category
                 if add:
-                    addThread = Thread(target=addAccountsToMastodonLists, args=(mastodon, data))
+                    addThread = Thread(target=followAndAddAccountsToMastodonLists, args=(mastodon, data, category, me))
                     threads.append(addThread)
                 # Create list stream thread for each category
                 listStreams = Thread(target=StreamMastodonList, args=(mastodon, listIdFromCategoryName))
@@ -625,9 +551,14 @@ def worker(add, save, stream, mastodon):
 app = Flask(__name__)
 
 # Initialize the app
-def initialize_app(add, save, stream):
-    """Initialize the Mastodon API and any global variables."""
-
+def initializeApp(add, save, stream):
+    """ Initialize the Mastodon API and any global variables.
+    Arguments:  
+        addAccounts {int} -- Follow and add accounts to Mastodon lists (0 = no, 1 = yes)
+        saveAccountInfo {int} -- Save account information to JSON (0 = no, 1 = yes)
+        mastodonListStreams {int} -- Stream Mastodon lists (0 = no, 1 = yes)
+        mastodon {object} -- Mastodon object     
+    """
     # Check for secrets
     checkForSecrets()  # Ensure this function sets necessary secrets
 
@@ -643,7 +574,7 @@ def initialize_app(add, save, stream):
 
     # Start the worker
     ''' Parameters: addAccounts, saveAccountInfo, mastodonListStreams, mastodon  '''
-    worker(add, save, stream, mastodon) 
+    worker(add, save, stream, mastodon, me) 
 
 # Route for the index page
 @app.route('/')
@@ -690,5 +621,16 @@ def page_not_found(e):
 
 # Create the app
 def create_app():
-    initialize_app(0,0,1)
+    ''' Create the app
+    Returns:
+        app -- Flask app
+    '''
+    # add, save, stream
+    ''' Parameters: addAccounts, saveAccountInfo, mastodonListStreams... '''
+    initializeApp(1,1,1)
     return app
+
+# Run the app (development)
+if __name__ == '__main__':
+    create_app()
+    app.run(host='0.0.0.0', port=5000, debug=True)
