@@ -95,11 +95,13 @@ def getOrCreateList(mastodon, list_name):
     new_list = mastodon.list_create(list_name)
     return new_list['id']
 
-def getMyFollwings(mastodon, me):
+def getMyFollowings(mastodon, me):
     try:
         # Get my followings
         myFollowings = mastodon.account_following(me.id)
-        return myFollowings
+        # Extract and return only the IDs from the followings
+        followingIds = [following.id for following in myFollowings]
+        return followingIds
     except Exception as errorCode:
         print(errorCode)
 
@@ -130,10 +132,13 @@ def followAndAddAccountsToMastodonLists(mastodon, data, category, me, processed_
     if processed_accounts is None:
         processed_accounts = set()
     if myFollowings is None:
-        myFollowings = set()
+        myFollowings = set(getMyFollowings(mastodon, me))
 
     print(f"Starting account gathering for {category}...")
     list_id = getOrCreateList(mastodon, category)  # Get or create the list once
+
+    # debugFollowings = getMyFollowings(mastodon, me)
+    # print(f"Debug: {debugFollowings}")
 
     try:
         # Iterate through accounts in the specified category
@@ -163,6 +168,8 @@ def followAndAddAccountsToMastodonLists(mastodon, data, category, me, processed_
                     mastodon.account_follow(account_id)
                     myFollowings.add(account_id)
                     print(f"Followed {account_name}")
+                else:
+                    print(f"Already following {account_name}")
                     
                 if not checkIfAlreadyInList(mastodon, list_id, account_id):
                     mastodon.list_accounts_add(list_id, account_id)
