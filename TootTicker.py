@@ -443,9 +443,6 @@ def generateLiveTootsHTML():
     except Exception as errorCode:
         print(errorCode)
 
-# Add function that will follow all accounts from config.json and add them to lists named after the category
-def
-
 # List Streamer class
 class ListStreamer(StreamListener):
     '''
