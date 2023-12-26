@@ -154,11 +154,13 @@ def followAndAddAccountsToMastodonLists(mastodon, data, category, me, processed_
                 print(f"Already processed account {account_name}")
                 continue
             
+            # Search for the account
             search_result = mastodon.account_search(account_name)
             if not search_result:
                 print(f"No account found for {account_name}")
                 continue
             
+            # Get the account ID
             account_id = search_result[0]['id']
             processed_accounts.add(account_name)  # Mark this account as processed
             
@@ -170,7 +172,8 @@ def followAndAddAccountsToMastodonLists(mastodon, data, category, me, processed_
                     print(f"Followed {account_name}")
                 else:
                     print(f"Already following {account_name}")
-                    
+                
+                # Add the account to the list if not already there
                 if not checkIfAlreadyInList(mastodon, list_id, account_id):
                     mastodon.list_accounts_add(list_id, account_id)
                     print(f"Added {account_name} to {category}")
@@ -627,7 +630,7 @@ def create_app():
     initializeApp(1,0,1)
     return app
 
-# Run the app (for development)
+# Run the app (development)
 if __name__ == '__main__':
     create_app()
     app.run(host='0.0.0.0', port=5000, debug=True)
