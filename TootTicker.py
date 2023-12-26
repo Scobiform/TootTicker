@@ -627,7 +627,7 @@ def create_app():
     '''
     # add, save, stream
     ''' Parameters: addAccounts, saveAccountInfo, mastodonListStreams... '''
-    initializeApp(1,0,1)
+    initializeApp(1,1,1)
     return app
 
 # Run the app (development)
