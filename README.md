@@ -35,9 +35,9 @@ pip install Mastodon.py
 ## Usage
 
 **TootTicker** is currently under heavy development, and its features and commands are subject to change. 
-
-Open localhost:5000 to see the html overview.
-  
+```
+Open localhost:5000 in your browser
+```
 ### Credits
 
 Special thanks to the contributors from German media sites:
