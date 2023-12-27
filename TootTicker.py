@@ -321,7 +321,6 @@ def generateHTMLHeader():
         <script src="https://mastodon.social/embed.js" async="async"></script>
         <link rel="stylesheet" type="text/css" href="static/style.css">  
         <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
-        <link rel="alternate icon" href="static/favicon.ico">
     </head>
     <body>
     """
