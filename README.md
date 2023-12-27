@@ -46,8 +46,10 @@ pip install Mastodon.py
 pip install flask
 ```
 ## Usage
-
 **TootTicker** is currently under heavy development, and its features and commands are subject to change. 
+
+Run ``` python3 TootTicker.py ```
+
 Open ``` localhost:5000 ``` in your browser
 
 ### Credits
