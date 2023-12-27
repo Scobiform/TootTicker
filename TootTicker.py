@@ -95,7 +95,13 @@ def getOrCreateList(mastodon, list_name):
     new_list = mastodon.list_create(list_name)
     return new_list['id']
 
+# Function to get 'my' followings
 def getMyFollowings(mastodon, me):
+    ''' Get my followings from Mastodon
+    :param mastodon: An authenticated instance of the Mastodon API.
+    :param me: The authenticated user's account object.
+    :return: A list of account IDs the user is following.
+    '''
     try:
         # Get my followings
         myFollowings = mastodon.account_following(me.id)
@@ -105,7 +111,14 @@ def getMyFollowings(mastodon, me):
     except Exception as errorCode:
         print(errorCode)
 
+# Function to check if account is already in list
 def checkIfAlreadyInList(mastodon, list_id, account_id):
+    ''' Check if account is already in list
+    :param mastodon: An authenticated instance of the Mastodon API.
+    :param list_id: The ID of the list to check.
+    :param account_id: The ID of the account to check.
+    :return: True if the account is in the list, False otherwise.
+    '''
     try:
         # Get accounts in list
         accountsInList = mastodon.list_accounts(list_id)
@@ -117,6 +130,7 @@ def checkIfAlreadyInList(mastodon, list_id, account_id):
     except Exception as errorCode:
         print(errorCode)
 
+# Function to follow and add accounts to Mastodon lists
 def followAndAddAccountsToMastodonLists(mastodon, data, category, me, processed_accounts=None, myFollowings=None, stop_token=None):
     """ Adds accounts to Mastodon lists based on their category.
     :param mastodon: An authenticated instance of the Mastodon API.
