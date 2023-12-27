@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="#606060">
+  <!-- Body of the Elephant -->
+  <path d="M50,150 Q25,100 50,50 Q75,25 125,25 Q175,50 150,150z" />
+  <!-- Leg -->
+  <rect x="65" y="150" width="30" height="50" />
+  <rect x="105" y="150" width="30" height="50" />
+  <!-- Trunk -->
+  <path d="M105,50 Q110,75 95,100" stroke="#606060" stroke-width="10" fill="none" />
+  <!-- Eye -->
+  <circle cx="130" cy="75" r="5" fill="#fff" />
+  <!-- Ear -->
+  <path d="M155,75 Q125,50 155,125z" fill="#808080" />
+</svg>

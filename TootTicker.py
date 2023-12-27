@@ -319,7 +319,9 @@ def generateHTMLHeader():
         <title>TootTicker - boost your bubble</title>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://mastodon.social/embed.js" async="async"></script>
-        <link rel="stylesheet" type="text/css" href="static/style.css">    
+        <link rel="stylesheet" type="text/css" href="static/style.css">  
+        <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
+        <link rel="alternate icon" href="static/favicon.ico">
     </head>
     <body>
     """
