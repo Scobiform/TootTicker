@@ -628,6 +628,7 @@ def create_app():
     return app
 
 # Run the app (development)
+# Comment out for production
 if __name__ == '__main__':
     create_app()
     app.run(host='0.0.0.0', port=5000, debug=True)
