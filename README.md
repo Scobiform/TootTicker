@@ -27,7 +27,7 @@ TootTicker is a Python script that fetches account information from provided Mas
 
 * Will save all toots to the toots/ folder as JSON
 
-![image](https://github.com/Scobiform/TootTicker/assets/9046630/b1dfbdec-088b-481f-ae60-dc54fbfad881)
+![image](https://github.com/Scobiform/TootTicker/assets/9046630/df24ebb3-2d89-409e-9f12-269c901f45da)
 
 ## Install
 # Clone the repository
