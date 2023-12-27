@@ -3,7 +3,7 @@
 [![Python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL%203.0-blue.svg)](https://opensource.org/licenses/GPL-3.0)
 
-> Requesting account information via Mastodon API and saving it as pure JSON.
+> Requesting account information via Mastodon API and saving it as JSON.
 
 ## Table of Contents
 
@@ -25,6 +25,8 @@ TootTicker is a Python script that fetches account information from provided Mas
 
 * Will stream all lists to the #LIveToots section of the HTML body.
 
+* Will save all toots to the toots/ folder as JSON
+
 ![image](https://github.com/Scobiform/TootTicker/assets/9046630/b1dfbdec-088b-481f-ae60-dc54fbfad881)
 
 ## Install
@@ -40,12 +42,14 @@ cd TootTicker
 ```
 pip install Mastodon.py
 ```
+```
+pip install flask
+```
 ## Usage
 
 **TootTicker** is currently under heavy development, and its features and commands are subject to change. 
-```
-Open localhost:5000 in your browser
-```
+Open ``` localhost:5000 ``` in your browser
+
 ### Credits
 
 Special thanks to the contributors from German media sites:
