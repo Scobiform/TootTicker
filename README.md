@@ -25,7 +25,7 @@ TootTicker is a Python script that fetches account information from provided Mas
 
 * Will stream all lists to the #LIveToots section of the HTML body.
 
-![image](https://github.com/Scobiform/TootTicker/assets/9046630/c5b96cb0-8b1f-4255-953f-e68ee9e85cac)
+![image](https://github.com/Scobiform/TootTicker/assets/9046630/6a4f3062-6ae3-4824-9dc8-d4d9a6a00360)
 
 ## Install
 # Clone the repository
