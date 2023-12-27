@@ -112,7 +112,7 @@ function populateToots(toots) {
                     }).join('') : ''}
                 </div>
                 <div class="tootUrl">
-                    <a href="${meUrl}@${mastodonHandle}/${toot.id}"
+                    <a href="${toot.url}"
                     alt="View on Mastodon"
                     aria-label="View on Mastodon"
                     nofollow="true"

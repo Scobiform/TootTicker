@@ -302,13 +302,11 @@ def saveAccountInfoToJSON(mastodon, category, urls):
             with open(os.path.join(accounts_directory, f"{user_id}.json"), 'w') as file:
                 json.dump(account_info, file, indent=4, default=str)
             print(f"Saved account info for {account[0]['username']}")
-            # Sleep for 14 seconds to avoid rate limiting
-            time.sleep(7)
         except Exception as e:
             print(f"Error processing {url}: {e}")
     # Sleep for 1 hour to avoid rate limiting
-    print(f"Sleeping for 1 hour to avoid rate limiting...")
-    time.sleep(3600)
+    print(f"Sleeping for 5 minutes to avoid rate limiting...")
+    time.sleep(300)
 
 # Function to generate the HTML header
 def generateHTMLHeader():
@@ -432,7 +430,6 @@ def generateHTMLFooter():
     return html_footer
 
 # Returns footer scripts
-# TODO: Refactor this is smaller bits
 def footerScripts():
     '''Returns footer scripts
     
