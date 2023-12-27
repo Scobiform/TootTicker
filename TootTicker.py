@@ -23,7 +23,7 @@ from mastodon import Mastodon, MastodonAPIError, MastodonFileNotFoundError, Mast
 # This project is still in development and will be updated frequently.
 # If you have any suggestions or ideas, please let me know.
 
-# Configuration (#Todo Refactor => config.json)
+# Configuration
 # You can remove your credentials after the first run
 app_name = 'TootTicker - boost your bubble'  # Replace with your desired app name
 instance_url = 'mastodon.social'  # Replace with your Mastodon instance URL
@@ -598,9 +598,6 @@ def index():
         html_footer=html_footer,
         footer_scripts=footer_scripts
     )
-
-# Mock Toot
-MockToot = type('MockToot', (object,), {'id': 1, 'content': 'Hello, World!', 'account': {'username': 'scobiform', 'display_name': 'Scobiform', 'avatar': 'https://files.mastodon.social/accounts/avatars/000/000/001/original/6c3f0d5a6d5c5f9f.png', 'url': 'https://mastodon.social/@scobiform'}})
 
 # Route for the latest toots
 @app.route('/get_latest_toots')

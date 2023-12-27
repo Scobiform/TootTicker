@@ -87,12 +87,18 @@ ul { list-style-type: none; padding: 0; color: var(--secondary); }
  }
 .tootCounts {color: var(--secondary-color); padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
 .stats { display: flex; flex-wrap: wrap; }
-#liveToots {    background-color: var(--tertiary);
-                padding: 0.42rem;
-                height: 56vh;
-                overflow-y: scroll;
-                display: flex;
-                flex-direction: column-reverse;}
+#liveToots {    
+        background-color: var(--tertiary);
+        padding: 0.42rem;
+        height: 56vh;
+        overflow-y: scroll;
+        display: flex;
+        flex-direction: column-reverse;
+        scrollbar-width: none;
+}
+#liveToots::-webkit-scrollbar {
+        display: none; /* Hide scrollbar for Webkit browsers */
+}
 .tootAvatar { 
                 width: 7vh; 
                 float: right; }
