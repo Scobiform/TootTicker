@@ -29,7 +29,23 @@ function createChart(containerId, category, categoryData) {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                y: { beginAtZero: true }
+                y: { beginAtZero: true,
+                },
+                x: { stacked: true,
+                    ticks: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: false,
+                    text: `${category} Stats`
+                },
+                legend: {
+                    display: true,
+                    position: 'bottom'
+                }          
             }
         }
     });
