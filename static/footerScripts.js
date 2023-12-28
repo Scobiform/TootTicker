@@ -1,3 +1,4 @@
+// Create category charts
 function createChart(containerId, category, categoryData) {
     const ctx = document.createElement('canvas');
     document.getElementById(containerId).appendChild(ctx);
@@ -63,6 +64,7 @@ window.onload = function() {
     createAllTimeChart('allTimeFollowerChart', allTimeFollowerChart);
 };
 
+// All time follower chart
 function createAllTimeChart(containerId, allTimeFollowerChart) {
     const ctx = document.createElement('canvas');
     document.getElementById(containerId).appendChild(ctx);
@@ -96,6 +98,7 @@ function createAllTimeChart(containerId, allTimeFollowerChart) {
     });
 }
 
+// Obvious function name is obvious
 function getRandomColor() {
         // Base color 99, 100, 255
         const baseR = 99;
@@ -121,6 +124,7 @@ function loadInitialToots() {
         .catch(error => console.error('Error loading initial toots:', error));
 }
 
+// Function to populate toots
 function populateToots(toots) {
     const container = document.getElementById('liveToots');
     const meUrl = 'https://mastodon.social/';
@@ -180,6 +184,7 @@ function populateToots(toots) {
     });
 }      
 
+// Function to fetch and update toots
 function fetchAndUpdateToots() {
     fetch('/get_latest_toots')
         .then(response => response.json())
