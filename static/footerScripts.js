@@ -51,6 +51,7 @@ function createChart(containerId, category, categoryData) {
     });
 }
 
+// Window onload function
 window.onload = function() {
     // Load initial toots when the page loads
     loadInitialToots();
@@ -58,7 +59,42 @@ window.onload = function() {
     for (const [category, categoryData] of Object.entries(categoriesData)) {
         createChart(`chart-container-${category}`, category, categoryData);
     }
+
+    createAllTimeChart('allTimeFollowerChart', allTimeFollowerChart);
 };
+
+function createAllTimeChart(containerId, allTimeFollowerChart) {
+    const ctx = document.createElement('canvas');
+    document.getElementById(containerId).appendChild(ctx);
+
+    new Chart(ctx, {
+        type: 'line',
+        data: allTimeFollowerChart,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true,
+                },
+                x: { stacked: true,
+                    ticks: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: false,
+                    text: 'All Time Followers'
+                },
+                legend: {
+                    display: false,
+                    position: 'bottom'
+                }          
+            }
+        }
+    });
+}
 
 function getRandomColor() {
         // Base color 99, 100, 255

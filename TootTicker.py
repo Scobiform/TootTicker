@@ -6,6 +6,8 @@ from threading import Event, Thread
 import traceback
 from flask import Flask, render_template, request
 from mastodon import Mastodon, MastodonAPIError, MastodonFileNotFoundError, MastodonIllegalArgumentError, MastodonMalformedEventError, MastodonRatelimitError, MastodonServerError, MastodonVersionError, StreamListener
+from collections import defaultdict
+import glob
 
 # TootTicker - boost your bubble
 # Gathering account informations from Mastodon 
@@ -73,6 +75,15 @@ def checkForSecrets():
     else:
         print("Secrets not found.")
         createSecrets()
+
+# Create a file if it doesn't exist
+def createFile(file_name):
+    try:
+        with open(file_name, 'a'):
+            pass
+        print(f"File '{file_name}' created successfully.")
+    except Exception as e:
+        print(f"Error creating '{file_name}': {e}")
 
 # Function to get or create a list
 def getOrCreateList(mastodon, list_name):
@@ -230,6 +241,10 @@ def saveJson(toot):
 
 # Function to get live toots
 def getLiveTootsJSON(numberOfToots=420):
+    ''' Get live toots from folder toots/
+    :param numberOfToots: The number of toots to return.
+    :return: A JSON string with the toots.
+    '''
     global seen_toot_ids # A set to keep track of seen toot IDs for fast lookup
     toots = []
 
@@ -259,17 +274,13 @@ def getLiveTootsJSON(numberOfToots=420):
     # Return the toots as a JSON string
     return json.dumps(limited_toots)
 
-# Create a file if it doesn't exist
-def createFile(file_name):
-    try:
-        with open(file_name, 'a'):
-            pass
-        print(f"File '{file_name}' created successfully.")
-    except Exception as e:
-        print(f"Error creating '{file_name}': {e}")
-
 # Function to get account information from Mastodon and save to JSON file
 def saveAccountInfoToJSON(mastodon, category, urls):
+    ''' Get account information from Mastodon and save to JSON file
+    :param mastodon: An authenticated instance of the Mastodon API.
+    :param category: The category to process.
+    :param urls: A list of account URLs to process.
+    '''
     print(f"Starting account gathering for {category}...")
 
     # Create the 'accounts/' directory if it doesn't exist
@@ -324,6 +335,7 @@ def saveAccountInfoToJSON(mastodon, category, urls):
 
 # Function to generate the HTML header
 def generateHTMLHeader():
+    '''Returns HTML header'''
     # Write the HTML header
     html_header = """
     <!DOCTYPE html>
@@ -342,6 +354,7 @@ def generateHTMLHeader():
 
 # Header scripts
 def headerScripts():
+    '''Returns header scripts'''
     scripts = """<script>
 
             function toggleVisibility(category) {
@@ -408,6 +421,48 @@ def generateChart():
     # Return the JavaScript object notation
     return js_data_object
 
+# Function to generate a alltime follower chart for each account 
+# The files are located in the accounts/ directory and are named data-YYYYMMDDHHMM.json, 
+# where YYYYMMDDHHMM is the timestamp when the file was generated. The data structure is a dictionary 
+# with category names as keys and dictionaries of account names and metrics as values. 
+# For example, the following is a snippet of the data structure for the Media category:
+# data[category][account_name][metric]
+# Return Charts.js data object
+def generateAlltimeFollowerChart():
+    '''Returns Charts.js data object'''
+    path = 'accounts/'
+    files = sorted(glob.glob(path + 'data-*.json'), key=lambda x: x.split('-')[1])
+    alltime_data = defaultdict(list)
+
+    for file in files:
+        with open(file, 'r') as f:
+            data = json.load(f)
+            for accounts in data.values():
+                for account, metrics in accounts.items():
+                    alltime_data[account].append(metrics['Followers'])
+
+    chart_data = {
+        'labels': [file.split('-')[1].split('.')[0] for file in files],
+        'datasets': [{'label': account, 'data': followers} for account, followers in alltime_data.items()]
+    }
+
+    # Convert the Python dictionary to a JavaScript object notation
+    js_data_object = json.dumps(chart_data, indent=4)
+
+    return js_data_object
+
+# Function to generate HTML for all-time follower chart
+def generateAlltimeFollowerCHartHTML():
+    try:
+        # Generate LiveToots HTML
+        follower_chart_html = f"""
+            <div id="allTimeFollowerChart">              
+        """
+        follower_chart_html += "</div>"
+        return follower_chart_html
+    except Exception as errorCode:
+        print(errorCode)
+
 # Function to generate HTML overview
 def generateAccountOverview():
 
@@ -454,6 +509,8 @@ def footerScripts():
     '''
     scripts = """<script>
                 const categoriesData = """ + generateChart() + """;
+
+                const allTimeFollowerChart = """ + generateAlltimeFollowerChart() + """;
 
                 // Import footer scripts from static folder
                 const footerScripts = document.createElement('script');
@@ -591,27 +648,30 @@ def initializeApp(add, save, stream):
 # Route for the index page
 @app.route('/')
 def index():
-    # Get the live toots JSON
-    live_toots_html = generateLiveTootsHTML()  # Assume this function returns HTML for live toots
-    # Get the account overview HTML
-    account_overview_html = generateAccountOverview()  # And this returns HTML for account overview
     # Get the HTML header
     html_header = generateHTMLHeader()
     # Get the header scripts
     header_scripts = headerScripts()
-    # Get the HTML footer
-    html_footer = generateHTMLFooter()
+    # Get the live toots JSON
+    live_toots_html = generateLiveTootsHTML()  # Assume this function returns HTML for live toots
+    # Get the account overview HTML
+    account_overview_html = generateAccountOverview()  # And this returns HTML for account overview
+    # Get the all-time follower chart HTML
+    follower_chart_html = generateAlltimeFollowerCHartHTML()
     # Get the footer scripts
     footer_scripts = footerScripts()
+    # Get the HTML footer
+    html_footer = generateHTMLFooter()
 
     # Render the template with the JSON string
     return render_template('index.html', 
-        live_toots_html=live_toots_html, 
-        account_overview_html=account_overview_html, 
         html_header=html_header, 
         header_scripts=header_scripts,
-        html_footer=html_footer,
-        footer_scripts=footer_scripts
+        live_toots_html=live_toots_html, 
+        account_overview_html=account_overview_html, 
+        follower_chart_html=follower_chart_html,
+        footer_scripts=footer_scripts,
+        html_footer=html_footer
     )
 
 # Route for the latest toots
@@ -636,7 +696,7 @@ def create_app():
     '''
     # add, save, stream
     ''' Parameters: addAccounts, saveAccountInfo, mastodonListStreams... '''
-    initializeApp(1,1,1)
+    initializeApp(0,0,1)
     return app
 
 # Run the app (development)
