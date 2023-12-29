@@ -414,16 +414,19 @@ def generateChart():
     js_data_object = json.dumps(categories_data, indent=4)
 
     # Save the JavaScript object notation to a file with timestamp
-    timestamp = time.strftime("%Y%m%d%H%M")
-    with open(f'accounts/data-{timestamp}.json', 'w') as file:
-        file.write(js_data_object)
-
+    timestamp = time.strftime("%Y%m%d%H")
+    # Check if file exists
+    if os.path.exists(f'accounts/data-{timestamp}.json'):
+        return js_data_object
+    else:
+        with open(f'accounts/data-{timestamp}.json', 'w') as file:
+            file.write(js_data_object)
     # Return the JavaScript object notation
     return js_data_object
 
 # Function to generate a alltime follower chart for each account 
-# The files are located in the accounts/ directory and are named data-YYYYMMDDHHMM.json, 
-# where YYYYMMDDHHMM is the timestamp when the file was generated. The data structure is a dictionary 
+# The files are located in the accounts/ directory and are named data-YYYYMMDDHH.json, 
+# where YYYYMMDDHH is the timestamp when the file was generated. The data structure is a dictionary 
 # with category names as keys and dictionaries of account names and metrics as values. 
 # For example, the following is a snippet of the data structure for the Media category:
 # data[category][account_name][metric]

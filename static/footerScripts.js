@@ -1,120 +1,88 @@
+// Constants
+const BASE_COLOR = { r: 99, g: 100, b: 255 };
+const COLOR_VARIATION_RANGE = 42;
+const METRICS = ["Followers", "Toots", "Following"];
+const POLL_INTERVAL_MS = 21000; // 21 seconds
+
 // Create category charts
 function createChart(containerId, category, categoryData) {
-    const ctx = document.createElement('canvas');
-    document.getElementById(containerId).appendChild(ctx);
-
-    const datasets = [];
+    const ctx = appendCanvasToContainer(containerId);
+    const datasets = buildDatasets(categoryData);
     const labels = Object.keys(categoryData); // Account names
 
-    // Metrics to display (e.g., Followers, Toots, Following)
-    const metrics = ["Followers", "Toots", "Following"];
+    const chartConfig = buildChartConfig('bar', labels, datasets, `${category} Stats`, true);
+    if (ctx) {
+        new Chart(ctx, chartConfig);
+    }
+}
 
-    metrics.forEach(metric => {
-        const data = labels.map(label => categoryData[label][metric] || 0);
-        datasets.push({
-            label: `${metric}`,
-            data: data,
-            backgroundColor: getRandomColor(),
-            borderColor: 'rgba(0, 123, 255, 0.7)',
-            borderWidth: 1
-        });
-    });
+// Append canvas to container
+function appendCanvasToContainer(containerId) {
+    const canvas = document.createElement('canvas');
+    const container = document.getElementById(containerId);
+    container.appendChild(canvas);
+    return canvas.getContext('2d');
+}
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: datasets
-        },
+// Build datasets
+function buildDatasets(categoryData) {
+    return METRICS.map(metric => ({
+        label: metric,
+        data: Object.values(categoryData).map(data => data[metric] || 0),
+        backgroundColor: getRandomColor(),
+        borderColor: 'rgba(0, 123, 255, 0.7)',
+        borderWidth: 1
+    }));
+}
+
+// Build chart config
+function buildChartConfig(type, labels, datasets, titleText, legend) {
+    return {
+        type: type,
+        data: { labels, datasets },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                y: { beginAtZero: true,
-                },
-                x: { stacked: true,
-                    ticks: {
-                        display: false
-                    }
+                y: { beginAtZero: true },
+                x: { 
+                    stacked: true, 
+                    ticks: { display: false },
+                    grid: { display: false }
                 }
             },
             plugins: {
-                title: {
-                    display: false,
-                    text: `${category} Stats`
-                },
-                legend: {
-                    display: true,
-                    position: 'bottom'
-                }          
+                title: { display: false, text: titleText },
+                legend: { display: legend, position: 'bottom' }
             }
         }
-    });
+    };
 }
-
-// Window onload function
-window.onload = function() {
-    // Load initial toots when the page loads
-    loadInitialToots();
-
-    for (const [category, categoryData] of Object.entries(categoriesData)) {
-        createChart(`chart-container-${category}`, category, categoryData);
-    }
-
-    createAllTimeChart('allTimeFollowerChart', allTimeFollowerChart);
-};
 
 // All time follower chart
 function createAllTimeChart(containerId, allTimeFollowerChart) {
-    const ctx = document.createElement('canvas');
-    document.getElementById(containerId).appendChild(ctx);
+    const ctx = appendCanvasToContainer(containerId);
+    const chartConfig = buildChartConfig('line', allTimeFollowerChart.labels, allTimeFollowerChart.datasets, 'All Time Followers', false);
 
-    new Chart(ctx, {
-        type: 'line',
-        data: allTimeFollowerChart,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true,
-                },
-                x: { stacked: true,
-                    ticks: {
-                        display: false
-                    }
-                }
-            },
-            plugins: {
-                title: {
-                    display: false,
-                    text: 'All Time Followers'
-                },
-                legend: {
-                    display: false,
-                    position: 'bottom'
-                }          
-            }
-        }
-    });
+    if (ctx) {
+        new Chart(ctx, chartConfig);
+    }
 }
 
-// Obvious function name is obvious
+// Utility function to generate random colors
 function getRandomColor() {
-        // Base color 99, 100, 255
-        const baseR = 99;
-        const baseG = 100;
-        const baseB = 255;
-
-        // Define a range for variation (+/- 42)
-        const range = 42;
-
-        // Generate random variations around the base color within the specified range
-        const r = Math.max(Math.min(baseR + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
-        const g = Math.max(Math.min(baseG + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
-        const b = Math.max(Math.min(baseB + Math.floor(Math.random() * (range * 2 + 1)) - range, 255), 0);
-
-        return `rgba(${r}, ${g}, ${b}, 0.5)`;
+    const randomVariation = () => Math.floor(Math.random() * (COLOR_VARIATION_RANGE * 2 + 1)) - COLOR_VARIATION_RANGE;
+    return `rgba(${BASE_COLOR.r + randomVariation()}, ${BASE_COLOR.g + randomVariation()}, ${BASE_COLOR.b + randomVariation()}, 0.5)`;
 }
+
+// Initialize charts and toots on window load
+window.onload = function() {
+    loadInitialToots();
+    Object.entries(categoriesData).forEach(([category, categoryData]) => {
+        createChart(`chart-container-${category}`, category, categoryData);
+    });
+    createAllTimeChart('allTimeFollowerChart', allTimeFollowerChart);
+};
 
 // Function to load initial toots
 function loadInitialToots() {
@@ -194,7 +162,5 @@ function fetchAndUpdateToots() {
         .catch(error => console.error('Error fetching new toots:', error));
 }
 
-// Load initial toots when the page loads
-document.addEventListener('DOMContentLoaded', loadInitialToots);
 // Poll for new toots every n seconds
-setInterval(fetchAndUpdateToots, 21000);
+setInterval(fetchAndUpdateToots, POLL_INTERVAL_MS);
