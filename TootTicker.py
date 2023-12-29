@@ -252,7 +252,7 @@ def getLiveTootsJSON(numberOfToots=420):
         if filename.endswith('.json'):
             file_path = os.path.join('toots/', filename)
 
-            # Check if the file was modified within the last 1 hour
+            # Check if the file was modified within the last 12 hours
             if os.path.getmtime(file_path) > time.time() - 43200:
                 with open(file_path, 'r') as file:
                     try:
