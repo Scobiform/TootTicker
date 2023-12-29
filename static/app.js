@@ -1,3 +1,4 @@
+//import { Chart, ChartConfiguration, ChartData, ChartType } from 'chart.js';
 // Constants
 const BASE_COLOR = { r: 99, g: 100, b: 255 };
 const COLOR_VARIATION_RANGE = 42;
@@ -6,20 +7,22 @@ const POLL_INTERVAL_MS = 21000; // 21 seconds
 // Create category charts
 function createChart(containerId, category, categoryData) {
     const ctx = appendCanvasToContainer(containerId);
+    if (!ctx)
+        return;
     const datasets = buildDatasets(categoryData);
     const labels = Object.keys(categoryData); // Account names
     const chartConfig = buildChartConfig('bar', labels, datasets, `${category} Stats`, true);
-    if (ctx) {
-        // @ts-ignore
-        new Chart(ctx, chartConfig);
-    }
+    new Chart(ctx, chartConfig);
 }
 // Append canvas to container
 function appendCanvasToContainer(containerId) {
     const canvas = document.createElement('canvas');
     const container = document.getElementById(containerId);
-    container.appendChild(canvas);
-    return canvas.getContext('2d');
+    if (container) {
+        container.appendChild(canvas);
+        return canvas.getContext('2d');
+    }
+    return null;
 }
 // Build datasets
 function buildDatasets(categoryData) {
@@ -40,18 +43,20 @@ function buildChartConfig(type, labels, datasets, titleText, legend) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            font: {
+                family: 'Mukta, sans-serif',
+                size: 10
+            },
             scales: {
                 y: {
                     beginAtZero: true,
                     ticks: { display: false },
                     grid: { display: false },
-                    stepped: true,
                 },
                 x: {
                     stacked: true,
                     ticks: { display: false },
                     grid: { display: false },
-                    stepped: true
                 }
             },
             plugins: {
@@ -64,11 +69,10 @@ function buildChartConfig(type, labels, datasets, titleText, legend) {
 // All time follower chart
 function createAllTimeChart(containerId, allTimeFollowerChart) {
     const ctx = appendCanvasToContainer(containerId);
-    const chartConfig = buildChartConfig('line', allTimeFollowerChart.labels, allTimeFollowerChart.datasets, 'All Time Followers', false);
-    if (ctx) {
-        // @ts-ignore
-        new Chart(ctx, chartConfig);
-    }
+    if (!ctx)
+        return;
+    const chartConfig = buildChartConfig('line', allTimeFollowerChart.labels, allTimeFollowerChart.datasets, 'All Time Followers', false, 'Media');
+    new Chart(ctx, chartConfig);
 }
 // Utility function to generate random colors
 function getRandomColor() {
@@ -85,16 +89,17 @@ window.onload = function () {
     // @ts-ignore
     createAllTimeChart('allTimeFollowerChart', allTimeFollowerChart);
 };
-// Function to load initial toots
+// Functions related to toots loading and updating
 function loadInitialToots() {
     fetch('/get_latest_toots')
         .then(response => response.json())
         .then(toots => populateToots(toots))
         .catch(error => console.error('Error loading initial toots:', error));
 }
-// Function to populate toots
 function populateToots(toots) {
     const container = document.getElementById('liveToots');
+    if (!container)
+        return;
     const meUrl = 'https://mastodon.social/';
     toots.forEach(toot => {
         const mastodonHandle = `${toot.account.username}@${toot.url.split("https://")[1].split("/")[0]}`;
@@ -147,9 +152,7 @@ function populateToots(toots) {
                 </div>
             </div>
         `;
-        // Add the new toot to the container
-        if (container !== null)
-            container.appendChild(tootElement);
+        container.appendChild(tootElement);
     });
 }
 // Function to fetch and update toots

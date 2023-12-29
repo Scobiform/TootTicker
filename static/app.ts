@@ -1,3 +1,4 @@
+//import { Chart, ChartConfiguration, ChartData, ChartType } from 'chart.js';
 
 // Constants
 const BASE_COLOR = { r: 99, g: 100, b: 255 };
@@ -5,33 +6,38 @@ const COLOR_VARIATION_RANGE = 42;
 const METRICS = ["Followers", "Toots", "Following"];
 const POLL_INTERVAL_MS = 21000; // 21 seconds
 
+type CategoryData = Record<string, { [metric: string]: number }>;
+type ChartMetric = 'Followers' | 'Toots' | 'Following';
+
 // Create category charts
-function createChart(containerId: string, category: string, categoryData: []) {
+function createChart(containerId: string, category: string, categoryData: CategoryData): void {
     const ctx = appendCanvasToContainer(containerId);
+    if (!ctx) return;
+
     const datasets = buildDatasets(categoryData);
     const labels = Object.keys(categoryData); // Account names
 
     const chartConfig = buildChartConfig('bar', labels, datasets, `${category} Stats`, true);
-    if (ctx) {
-        // @ts-ignore
-        new Chart(ctx, chartConfig);
-    }
+    new Chart(ctx, chartConfig);
 }
 
 // Append canvas to container
-function appendCanvasToContainer(containerId: string) {
+function appendCanvasToContainer(containerId: string): CanvasRenderingContext2D | null {
     const canvas = document.createElement('canvas');
     const container = document.getElementById(containerId);
-    container.appendChild(canvas);
-    return canvas.getContext('2d');
+    if (container) {
+        container.appendChild(canvas);
+        return canvas.getContext('2d');
+    }
+    return null;
 }
 
 // Build datasets
-function buildDatasets(categoryData: []) {
+function buildDatasets(categoryData: CategoryData) {
     return METRICS.map(metric => ({
         label: metric,
         // @ts-ignore
-        data: Object.values(categoryData).map(data => data[metric] || 0),
+        data: Object.values(categoryData).map(data => data[metric as ChartMetric] || 0),
         backgroundColor: getRandomColor(),
         borderColor: 'rgba(0, 123, 255, 0.7)',
         borderWidth: 1
@@ -39,25 +45,27 @@ function buildDatasets(categoryData: []) {
 }
 
 // Build chart config
-function buildChartConfig(type: string, labels: string[], datasets: any, titleText: string, legend: boolean) {
+function buildChartConfig(type: ChartType, labels: string[], datasets: [], titleText: string, legend: boolean): ChartConfiguration {
     return {
         type: type,
         data: { labels, datasets },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            font: { 
+                family: 'Mukta, sans-serif',
+                size: 10
+            },
             scales: {
-                y: { 
-                    beginAtZero: true, 
+                y: {
+                    beginAtZero: true,
                     ticks: { display: false },
                     grid: { display: false },
-                    stepped: true,
                 },
-                x: { 
-                    stacked: true, 
+                x: {
+                    stacked: true,
                     ticks: { display: false },
                     grid: { display: false },
-                    stepped: true
                 }
             },
             plugins: {
@@ -69,26 +77,16 @@ function buildChartConfig(type: string, labels: string[], datasets: any, titleTe
 }
 
 // All time follower chart
-function createAllTimeChart(containerId: string, allTimeFollowerChart: { labels: []; datasets: [] }) {
+function createAllTimeChart(containerId: string, allTimeFollowerChart: ChartData) {
     const ctx = appendCanvasToContainer(containerId);
-    const chartConfig = buildChartConfig(
-        'line', 
-        allTimeFollowerChart.labels, 
-        allTimeFollowerChart.datasets, 
-        'All Time Followers', 
-        false,
+    if (!ctx) return;
 
-        
-    );
-
-    if (ctx) {
-        // @ts-ignore
-        new Chart(ctx, chartConfig);
-    }
+    const chartConfig = buildChartConfig('line', allTimeFollowerChart.labels as string[], allTimeFollowerChart.datasets, 'All Time Followers', false, 'Media');
+    new Chart(ctx, chartConfig);
 }
 
 // Utility function to generate random colors
-function getRandomColor() {
+function getRandomColor(): string {
     const randomVariation = () => Math.floor(Math.random() * (COLOR_VARIATION_RANGE * 2 + 1)) - COLOR_VARIATION_RANGE;
     return `rgba(${BASE_COLOR.r + randomVariation()}, ${BASE_COLOR.g + randomVariation()}, ${BASE_COLOR.b + randomVariation()}, 0.5)`;
 }
@@ -97,14 +95,14 @@ function getRandomColor() {
 window.onload = function() {
     loadInitialToots();
     // @ts-ignore
-    Object.entries(categoriesData).forEach(([category, categoryData]) => {
+    Object.entries(categoriesData as Record<string, CategoryData>).forEach(([category, categoryData]) => {
         createChart(`chart-container-${category}`, category, categoryData);
     });
     // @ts-ignore
-    createAllTimeChart('allTimeFollowerChart', allTimeFollowerChart);
+    createAllTimeChart('allTimeFollowerChart', allTimeFollowerChart as ChartData<'radar'>);
 };
 
-// Function to load initial toots
+// Functions related to toots loading and updating
 function loadInitialToots() {
     fetch('/get_latest_toots')
         .then(response => response.json())
@@ -112,21 +110,10 @@ function loadInitialToots() {
         .catch(error => console.error('Error loading initial toots:', error));
 }
 
-// Function to populate toots
-function populateToots(toots: { 
-        account: { 
-            username: string; display_name: 
-            string; avatar: string; }; 
-        url: string; 
-        created_at: string; 
-        content: string; 
-        reblog: { 
-            media_attachments: { 
-                type: string; 
-                preview_url: string; 
-                url: string; }[]; 
-        }; }[]) {
+function populateToots(toots: any[]) {
     const container = document.getElementById('liveToots');
+    if (!container) return;
+
     const meUrl = 'https://mastodon.social/';
 
     toots.forEach(toot => {      
@@ -179,8 +166,6 @@ function populateToots(toots: {
                 </div>
             </div>
         `;
-        // Add the new toot to the container
-        if (container !== null)
         container.appendChild(tootElement);
     });
 }      
