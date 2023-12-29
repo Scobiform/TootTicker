@@ -1,3 +1,4 @@
+
 // Constants
 const BASE_COLOR = { r: 99, g: 100, b: 255 };
 const COLOR_VARIATION_RANGE = 42;
@@ -5,19 +6,20 @@ const METRICS = ["Followers", "Toots", "Following"];
 const POLL_INTERVAL_MS = 21000; // 21 seconds
 
 // Create category charts
-function createChart(containerId, category, categoryData) {
+function createChart(containerId: string, category: string, categoryData: []) {
     const ctx = appendCanvasToContainer(containerId);
     const datasets = buildDatasets(categoryData);
     const labels = Object.keys(categoryData); // Account names
 
     const chartConfig = buildChartConfig('bar', labels, datasets, `${category} Stats`, true);
     if (ctx) {
+        // @ts-ignore
         new Chart(ctx, chartConfig);
     }
 }
 
 // Append canvas to container
-function appendCanvasToContainer(containerId) {
+function appendCanvasToContainer(containerId: string) {
     const canvas = document.createElement('canvas');
     const container = document.getElementById(containerId);
     container.appendChild(canvas);
@@ -25,9 +27,10 @@ function appendCanvasToContainer(containerId) {
 }
 
 // Build datasets
-function buildDatasets(categoryData) {
+function buildDatasets(categoryData: []) {
     return METRICS.map(metric => ({
         label: metric,
+        // @ts-ignore
         data: Object.values(categoryData).map(data => data[metric] || 0),
         backgroundColor: getRandomColor(),
         borderColor: 'rgba(0, 123, 255, 0.7)',
@@ -36,7 +39,7 @@ function buildDatasets(categoryData) {
 }
 
 // Build chart config
-function buildChartConfig(type, labels, datasets, titleText, legend) {
+function buildChartConfig(type: string, labels: string[], datasets: any, titleText: string, legend: boolean) {
     return {
         type: type,
         data: { labels, datasets },
@@ -44,11 +47,17 @@ function buildChartConfig(type, labels, datasets, titleText, legend) {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                y: { beginAtZero: true },
+                y: { 
+                    beginAtZero: true, 
+                    ticks: { display: false },
+                    grid: { display: false },
+                    stepped: true,
+                },
                 x: { 
                     stacked: true, 
                     ticks: { display: false },
-                    grid: { display: false }
+                    grid: { display: false },
+                    stepped: true
                 }
             },
             plugins: {
@@ -60,11 +69,20 @@ function buildChartConfig(type, labels, datasets, titleText, legend) {
 }
 
 // All time follower chart
-function createAllTimeChart(containerId, allTimeFollowerChart) {
+function createAllTimeChart(containerId: string, allTimeFollowerChart: { labels: []; datasets: [] }) {
     const ctx = appendCanvasToContainer(containerId);
-    const chartConfig = buildChartConfig('line', allTimeFollowerChart.labels, allTimeFollowerChart.datasets, 'All Time Followers', false);
+    const chartConfig = buildChartConfig(
+        'line', 
+        allTimeFollowerChart.labels, 
+        allTimeFollowerChart.datasets, 
+        'All Time Followers', 
+        false,
+
+        
+    );
 
     if (ctx) {
+        // @ts-ignore
         new Chart(ctx, chartConfig);
     }
 }
@@ -78,9 +96,11 @@ function getRandomColor() {
 // Initialize charts and toots on window load
 window.onload = function() {
     loadInitialToots();
+    // @ts-ignore
     Object.entries(categoriesData).forEach(([category, categoryData]) => {
         createChart(`chart-container-${category}`, category, categoryData);
     });
+    // @ts-ignore
     createAllTimeChart('allTimeFollowerChart', allTimeFollowerChart);
 };
 
@@ -93,7 +113,19 @@ function loadInitialToots() {
 }
 
 // Function to populate toots
-function populateToots(toots) {
+function populateToots(toots: { 
+        account: { 
+            username: string; display_name: 
+            string; avatar: string; }; 
+        url: string; 
+        created_at: string; 
+        content: string; 
+        reblog: { 
+            media_attachments: { 
+                type: string; 
+                preview_url: string; 
+                url: string; }[]; 
+        }; }[]) {
     const container = document.getElementById('liveToots');
     const meUrl = 'https://mastodon.social/';
 
@@ -148,6 +180,7 @@ function populateToots(toots) {
             </div>
         `;
         // Add the new toot to the container
+        if (container !== null)
         container.appendChild(tootElement);
     });
 }      

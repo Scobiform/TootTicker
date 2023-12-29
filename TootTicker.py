@@ -514,15 +514,6 @@ def footerScripts():
                 const categoriesData = """ + generateChart() + """;
 
                 const allTimeFollowerChart = """ + generateAlltimeFollowerChart() + """;
-
-                // Import footer scripts from static folder
-                const footerScripts = document.createElement('script');
-                footerScripts.src = 'static/footerScripts.js';
-                // Set the async flag
-                footerScripts.async = true;
-                // Append the script to the body
-                document.body.appendChild(footerScripts);
-
             </script>"""
     return scripts
 
