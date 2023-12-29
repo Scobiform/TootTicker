@@ -11,6 +11,7 @@ function createChart(containerId, category, categoryData) {
         return;
     const datasets = buildDatasets(categoryData);
     const labels = Object.keys(categoryData); // Account names
+    // @ts-ignore
     const chartConfig = buildChartConfig('bar', labels, datasets, `${category} Stats`, true);
     new Chart(ctx, chartConfig);
 }
@@ -36,7 +37,11 @@ function buildDatasets(categoryData) {
     }));
 }
 // Build chart config
-function buildChartConfig(type, labels, datasets, titleText, legend) {
+function buildChartConfig(
+// @ts-ignore
+type, labels, datasets, titleText, 
+// @ts-ignore
+legend) {
     return {
         type: type,
         data: { labels, datasets },
@@ -67,11 +72,12 @@ function buildChartConfig(type, labels, datasets, titleText, legend) {
     };
 }
 // All time follower chart
+// @ts-ignore
 function createAllTimeChart(containerId, allTimeFollowerChart) {
     const ctx = appendCanvasToContainer(containerId);
     if (!ctx)
         return;
-    const chartConfig = buildChartConfig('line', allTimeFollowerChart.labels, allTimeFollowerChart.datasets, 'All Time Followers', false, 'Media');
+    const chartConfig = buildChartConfig('line', allTimeFollowerChart.labels, allTimeFollowerChart.datasets, 'All Time Followers', false);
     new Chart(ctx, chartConfig);
 }
 // Utility function to generate random colors

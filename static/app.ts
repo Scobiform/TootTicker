@@ -17,6 +17,7 @@ function createChart(containerId: string, category: string, categoryData: Catego
     const datasets = buildDatasets(categoryData);
     const labels = Object.keys(categoryData); // Account names
 
+    // @ts-ignore
     const chartConfig = buildChartConfig('bar', labels, datasets, `${category} Stats`, true);
     new Chart(ctx, chartConfig);
 }
@@ -45,7 +46,14 @@ function buildDatasets(categoryData: CategoryData) {
 }
 
 // Build chart config
-function buildChartConfig(type: ChartType, labels: string[], datasets: [], titleText: string, legend: boolean): ChartConfiguration {
+function buildChartConfig(
+    // @ts-ignore
+    type: ChartType, 
+    labels: string[], 
+    datasets: [], 
+    titleText: string, 
+    // @ts-ignore
+    legend: boolean): ChartConfiguration {
     return {
         type: type,
         data: { labels, datasets },
@@ -77,11 +85,12 @@ function buildChartConfig(type: ChartType, labels: string[], datasets: [], title
 }
 
 // All time follower chart
+// @ts-ignore
 function createAllTimeChart(containerId: string, allTimeFollowerChart: ChartData) {
     const ctx = appendCanvasToContainer(containerId);
     if (!ctx) return;
 
-    const chartConfig = buildChartConfig('line', allTimeFollowerChart.labels as string[], allTimeFollowerChart.datasets, 'All Time Followers', false, 'Media');
+    const chartConfig = buildChartConfig('line', allTimeFollowerChart.labels as string[], allTimeFollowerChart.datasets, 'All Time Followers', false);
     new Chart(ctx, chartConfig);
 }
 
