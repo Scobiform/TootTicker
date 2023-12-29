@@ -6,7 +6,7 @@ const COLOR_VARIATION_RANGE = 42;
 const METRICS = ["Followers", "Toots", "Following"];
 const POLL_INTERVAL_MS = 21000; // 21 seconds
 
-type CategoryData = Record<string, { [metric: string]: number }>;
+type CategoryData = Record<string, Record<string, Record<string, number>>>;
 type ChartMetric = 'Followers' | 'Toots' | 'Following';
 
 // Create category charts
