@@ -225,10 +225,15 @@
     "@ooni@mastodon.social",
     "@riseup@mastodon.social",
     "@Mastodon@mastodon.social",
-    "@privacyint@mastodon.xyz"
+    "@privacyint@mastodon.xyz",
+    "@fff@chaos.social"
   ],
   "Political Party": [
-    "@spdbt@mastodon.social"
+    "@spdbt@mastodon.social",
+    "@GrueneBundestag@gruene.social",
+    "@gruene_md@gruene.social",
+    "@grueneltbb@gruene.social",
+    "@GruenePankow@gruene.social"
   ],
   "Politician": [
     "@drkarambadiaby@mastodon.social",
