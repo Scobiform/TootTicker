@@ -16,6 +16,7 @@
     {{ follower_chart_html|safe }}
     
     <!-- Footer content -->
-    {{ html_footer|safe }}
+    <script type="module" src="{{ url_for('static', filename='app.js') }}"></script>
     {{ footer_scripts|safe }}
+    {{ html_footer|safe }}
 </body>

@@ -159,7 +159,20 @@
     "@ricmac@mastodon.social",
     "@Daojoan@mastodon.social",
     "@Monique_Hofmann@dju.social",
-    "@ankedb@social.linksfraktion.de"
+    "@ankedb@social.linksfraktion.de",
+    "@AndreasSebayang@chaos.social",
+    "@GuidoKuehn@mastodon.social",
+    "@evacide@hachyderm.io",
+    "@patrickcmiller@infosec.exchange",
+    "@johas@mastodon.social",
+    "@leibi@social.bau-ha.us",
+    "@anildash@me.dm"
+  ],
+  "Company": [
+    "@hisolutions@infosec.exchange",
+    "@fission@fission.social",
+    "@protonmail@mastodon.social",
+    "@nextcloud@mastodon.xyz"
   ],
   "Government": [
     "@bsi@social.bund.de",
@@ -180,7 +193,8 @@
     "@bmbf_bund@social.bund.de",
     "@bmi@social.bund.de",
     "@bfdi@social.bund.de",
-    "@aa_stabilisiert@social.bund.de"
+    "@aa_stabilisiert@social.bund.de",
+    "@bundestag@social.bund.de"
   ],
   "NGO": [
     "@DJV@federated.press",
@@ -202,7 +216,35 @@
     "@ThePSF@fosstodon.org",
     "@w3c@w3c.social",
     "@CCC@social.bau-ha.us",
-    "@Freiheitsrechte@chaos.social"
+    "@Freiheitsrechte@chaos.social",
+    "@chadkoh@indieweb.social",
+    "@artikel10ev@chaos.social",
+    "@edri@eupolicy.social",
+    "@calyxinstitute@mastodon.social",
+    "@PrototypeFund@mastodon.social",
+    "@ooni@mastodon.social",
+    "@riseup@mastodon.social",
+    "@Mastodon@mastodon.social",
+    "@privacyint@mastodon.xyz",
+    "@fff@chaos.social"
+  ],
+  "Political Party": [
+    "@spdbt@mastodon.social",
+    "@GrueneBundestag@gruene.social",
+    "@gruene_md@gruene.social",
+    "@grueneltbb@gruene.social",
+    "@GruenePankow@gruene.social",
+    "@gruene_tk@gruene.social",
+    "@gruene_michendorf@gruene.social"
+  ],
+  "Politician": [
+    "@drkarambadiaby@mastodon.social",
+    "@KuehniKev@mastodon.social",
+    "@JensZSPD@mastodon.social!",
+    "@AntjeTillmann@mastodon.social",
+    "@annaluehrmann@mastodon.social",
+    "@saathoff@mastodon.social",
+    "@eskensaskia@mastodon.social"
   ],
   "Science": [
     "@KIT_Karlsruhe@mastodon.social",
@@ -230,6 +272,7 @@
     "@uniheidelberg@bawü.social",
     "@zfk_mr@hessen.social",
     "@unikoeln_it@wisskomm.social",
-    "@SLUBDresden@wisskomm.social"
+    "@SLUBDresden@wisskomm.social",
+    "@privacylab@mastodon.social"
   ]
 }

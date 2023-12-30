@@ -252,7 +252,7 @@ def getLiveTootsJSON(numberOfToots=420):
         if filename.endswith('.json'):
             file_path = os.path.join('toots/', filename)
 
-            # Check if the file was modified within the last 1 hour
+            # Check if the file was modified within the last 12 hours
             if os.path.getmtime(file_path) > time.time() - 43200:
                 with open(file_path, 'r') as file:
                     try:
@@ -414,16 +414,19 @@ def generateChart():
     js_data_object = json.dumps(categories_data, indent=4)
 
     # Save the JavaScript object notation to a file with timestamp
-    timestamp = time.strftime("%Y%m%d%H%M")
-    with open(f'accounts/data-{timestamp}.json', 'w') as file:
-        file.write(js_data_object)
-
+    timestamp = time.strftime("%Y%m%d%H")
+    # Check if file exists
+    if os.path.exists(f'accounts/data-{timestamp}.json'):
+        return js_data_object
+    else:
+        with open(f'accounts/data-{timestamp}.json', 'w') as file:
+            file.write(js_data_object)
     # Return the JavaScript object notation
     return js_data_object
 
 # Function to generate a alltime follower chart for each account 
-# The files are located in the accounts/ directory and are named data-YYYYMMDDHHMM.json, 
-# where YYYYMMDDHHMM is the timestamp when the file was generated. The data structure is a dictionary 
+# The files are located in the accounts/ directory and are named data-YYYYMMDDHH.json, 
+# where YYYYMMDDHH is the timestamp when the file was generated. The data structure is a dictionary 
 # with category names as keys and dictionaries of account names and metrics as values. 
 # For example, the following is a snippet of the data structure for the Media category:
 # data[category][account_name][metric]
@@ -511,15 +514,6 @@ def footerScripts():
                 const categoriesData = """ + generateChart() + """;
 
                 const allTimeFollowerChart = """ + generateAlltimeFollowerChart() + """;
-
-                // Import footer scripts from static folder
-                const footerScripts = document.createElement('script');
-                footerScripts.src = 'static/footerScripts.js';
-                // Set the async flag
-                footerScripts.async = true;
-                // Append the script to the body
-                document.body.appendChild(footerScripts);
-
             </script>"""
     return scripts
 
@@ -568,8 +562,17 @@ def StreamMastodonList(mastodon, list_id):
         # Create a listener
         listener = ListStreamer()
         mastodon.stream_list(list_id, listener) 
+    except MastodonAPIError as e:
+        message = str(e)
+        if "Too Many Requests" in message:
+            print("Too many requests. Please try again later.")
+            time.sleep(420)
+        else:
+            print(f"An error occurred: {e}")
+    except MastodonServerError as e:
+        print(f"Server error: {e}")
     except Exception as e:
-        print(f"Error streaming list {list_id}")
+        print(f"Error streaming list {list_id}: {e}")
         time.sleep(42)
 
 # Worker function
