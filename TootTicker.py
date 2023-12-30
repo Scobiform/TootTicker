@@ -562,8 +562,17 @@ def StreamMastodonList(mastodon, list_id):
         # Create a listener
         listener = ListStreamer()
         mastodon.stream_list(list_id, listener) 
+    except MastodonAPIError as e:
+        message = str(e)
+        if "Too Many Requests" in message:
+            print("Too many requests. Please try again later.")
+            time.sleep(420)
+        else:
+            print(f"An error occurred: {e}")
+    except MastodonServerError as e:
+        print(f"Server error: {e}")
     except Exception as e:
-        print(f"Error streaming list {list_id}")
+        print(f"Error streaming list {list_id}: {e}")
         time.sleep(42)
 
 # Worker function
