@@ -107,7 +107,8 @@
     "@apfelfunknews@social.apfelfunk.com",
     "@republica@berlin.social",
     "@tazvorgelesen@mastodon.social",
-    "@mediacccde@botsin.space"
+    "@mediacccde@botsin.space",
+    "@fairplaymagazin"
     ],
   "Creator": [
     "@rikefranke@bagarrosphere.fr",
@@ -167,7 +168,11 @@
     "@johas@mastodon.social",
     "@leibi@social.bau-ha.us",
     "@anildash@me.dm",
-    "@georgetakei@universeodon.com"
+    "@georgetakei@universeodon.com",
+    "@timobuechner@sueden.social",
+    "@p_calleri@mastodon.social",
+    "@robsonfletcher@mas.to",
+    "@howelloneill@infosec.exchange"
   ],
   "Company": [
     "@hisolutions@infosec.exchange",
@@ -227,7 +232,10 @@
     "@riseup@mastodon.social",
     "@Mastodon@mastodon.social",
     "@privacyint@mastodon.xyz",
-    "@fff@chaos.social"
+    "@fff@chaos.social",
+    "@transactualuk@mastodon.social",
+    "@VCDeV@mstdn.social",
+    "@defcon@defcon.social"
   ],
   "PoliticalParty": [
     "@spdbt@mastodon.social",
