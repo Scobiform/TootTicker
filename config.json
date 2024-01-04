@@ -108,7 +108,8 @@
     "@republica@berlin.social",
     "@tazvorgelesen@mastodon.social",
     "@mediacccde@botsin.space",
-    "@fairplaymagazin"
+    "@fairplaymagazin",
+    "@derpostillon@mastodon.social"
     ],
   "Creator": [
     "@rikefranke@bagarrosphere.fr",
@@ -172,7 +173,10 @@
     "@timobuechner@sueden.social",
     "@p_calleri@mastodon.social",
     "@robsonfletcher@mas.to",
-    "@howelloneill@infosec.exchange"
+    "@howelloneill@infosec.exchange",
+    "@badlogic@mastodon.gamedev.place",
+    "@shroombab@chaos.social",
+    "@anneroth@systemli.social"
   ],
   "Company": [
     "@hisolutions@infosec.exchange",
@@ -200,7 +204,8 @@
     "@bmi@social.bund.de",
     "@bfdi@social.bund.de",
     "@aa_stabilisiert@social.bund.de",
-    "@bundestag@social.bund.de"
+    "@bundestag@social.bund.de",
+    "@mwk_bw@mastodon.social"
   ],
   "NGO": [
     "@DJV@federated.press",
@@ -235,7 +240,8 @@
     "@fff@chaos.social",
     "@transactualuk@mastodon.social",
     "@VCDeV@mstdn.social",
-    "@defcon@defcon.social"
+    "@defcon@defcon.social",
+    "@fosdem@fosstodon.org"
   ],
   "PoliticalParty": [
     "@spdbt@mastodon.social",
@@ -282,6 +288,9 @@
     "@zfk_mr@hessen.social",
     "@unikoeln_it@wisskomm.social",
     "@SLUBDresden@wisskomm.social",
-    "@privacylab@mastodon.social"
+    "@privacylab@mastodon.social",
+    "@WZB_Berlin@wisskomm.social",
+    "@ub_ffm@openbiblio.social",
+    "@JuedStudien@openbiblio.social"
   ]
 }
