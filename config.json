@@ -177,33 +177,15 @@
     "@badlogic@mastodon.gamedev.place",
     "@shroombab@chaos.social",
     "@anneroth@systemli.social",
-    "@mattkenworthy@mastodon.social",
-    "@jancborchardt@mastodon.social",
-    "@mairin@mastodon.social",
-    "@bjoern@mastodon.social",
-    "@nickvergessen@mastodon.social",
-    "@Karlitschek@mastodon.social",
-    "@dansup@mastodon.social",
-    "@kattascha@chaos.social",
-    "@mimrma@mastodon.wurzelmann.at",
-    "@niggi@mastodon.social",
-    "@sebwilken@mastodon.social",
-    "@spreeblick@mastodon.social",
-    "@kopptisch@mastodon.social",
-    "@mkreutzfeldt@mastodon.social",
-    "@Fischblog@chaos.social",
-    "@luckytran@med-mastodon.com",
-    "@boris@fission.social",
-    "@robertvh@mas.to",
-    "@rooniecomics@comics.town"
+    "@bildoperationen@tldr.nettime.org",
+    "@tante@tldr.nettime.org",
+    "@SilkJag@digitalcourage.social"
   ],
   "Company": [
     "@hisolutions@infosec.exchange",
     "@fission@fission.social",
     "@protonmail@mastodon.social",
-    "@nextcloud@mastodon.xyz",
-    "@european_alternatives@mastodon.social",
-    "@mastometrics@mas.to"
+    "@nextcloud@mastodon.xyz"
   ],
   "Government": [
     "@bsi@social.bund.de",
@@ -226,8 +208,7 @@
     "@bfdi@social.bund.de",
     "@aa_stabilisiert@social.bund.de",
     "@bundestag@social.bund.de",
-    "@mwk_bw@mastodon.social",
-    "@DIMR_Berlin@social.bund.de"
+    "@mwk_bw@mastodon.social"
   ],
   "NGO": [
     "@DJV@federated.press",
@@ -264,12 +245,7 @@
     "@VCDeV@mstdn.social",
     "@defcon@defcon.social",
     "@fosdem@fosstodon.org",
-    "@paritaet@mstdn.social",
-    "@wikimediafoundation@wikimedia.social",
-    "@chaos_fl@chaos.social",
-    "@akubiz@mastodon.social",
-    "@rosaluxstiftung@mastodon.social",
-    "@causalislands@fission.social"
+    "@missionlifeline@mastodon.online"
   ],
   "PoliticalParty": [
     "@spdbt@mastodon.social",
@@ -278,9 +254,7 @@
     "@grueneltbb@gruene.social",
     "@GruenePankow@gruene.social",
     "@gruene_tk@gruene.social",
-    "@gruene_michendorf@gruene.social",
-    "@Klimaliste_Deutschland@climatejustice.social",
-    "@dielinke_sachsen@don.linxx.net"
+    "@gruene_michendorf@gruene.social"
   ],
   "Politician": [
     "@drkarambadiaby@mastodon.social",
@@ -290,7 +264,40 @@
     "@annaluehrmann@mastodon.social",
     "@saathoff@mastodon.social",
     "@eskensaskia@mastodon.social",
-    "@volker_beck@mastodon.social"
+    "@andrehahn@social.linksfraktion.de",
+    "@anaudretsch@gruene.social",
+    "@ArminGrau@gruene.social",
+    "@ates_guerpinar@social.linksfraktion.de",
+    "@baerbelbas@nrw.social",
+    "@BriHasselmann@gruene.social",
+    "@christiangoerke@social.linksfraktion.de",
+    "@clarabuenger@social.linksfraktion.de",
+    "@Dagma@social.anoxinon.de",
+    "@deborahduering@gruene.social",
+    "@dietmarbartsch@social.linksfraktion.de",
+    "@ekindeligoez@gruene.social",
+    "@Erhard_Grundl@gruene.social",
+    "@franziskabrantner@gruene.social",
+    "@goekayakbulut@social.linksfraktion.de",
+    "@gregorgysi@social.linksfraktion.de",
+    "@HaraldEbner@gruene.social",
+    "@j_gesenhues@mstdn.social",
+    "@MdB@nrw.social",
+    "@KaiGehring@gruene.social",
+    "@katdro@gruene.social",
+    "@KathrinHenneberger@gruene.social",
+    "@GoeringEckardt@gruene.social",
+    "@badumlisa@gruene.social",
+    "@AussenMa@gruene.social",
+    "@matthias_w_birkwald@social.linksfraktion.de",
+    "@nicolegohlke@social.linksfraktion.de",
+    "@sabinegruetzmacher@gruene.social",
+    "@Detzer_Sandra@gruene.social",
+    "@fiedelseb@ruhr.social",
+    "@S_Aeffner@gruene.social",
+    "@susanneferschl@social.linksfraktion.de",
+    "@tessaganserer@gruene.social",
+    "@TBBacherle@gruene.social"
   ],
   "Science": [
     "@KIT_Karlsruhe@mastodon.social",
