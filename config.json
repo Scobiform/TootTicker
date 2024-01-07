@@ -161,7 +161,6 @@
     "@ricmac@mastodon.social",
     "@Daojoan@mastodon.social",
     "@Monique_Hofmann@dju.social",
-    "@ankedb@social.linksfraktion.de",
     "@AndreasSebayang@chaos.social",
     "@GuidoKuehn@mastodon.social",
     "@evacide@hachyderm.io",
@@ -257,6 +256,7 @@
     "@gruene_michendorf@gruene.social"
   ],
   "Politician": [
+    "@ankedb@social.linksfraktion.de",
     "@drkarambadiaby@mastodon.social",
     "@KuehniKev@mastodon.social",
     "@JensZSPD@mastodon.social!",
