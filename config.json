@@ -181,7 +181,8 @@
     "@bildoperationen@tldr.nettime.org",
     "@tante@tldr.nettime.org",
     "@SilkJag@digitalcourage.social",
-    "@Cartoostrophal@troet.cafe"
+    "@Cartoostrophal@troet.cafe",
+    "@daniellaufer@mastodon.social"
   ],
   "Company": [
     "@hisolutions@infosec.exchange",
@@ -228,7 +229,26 @@
     "@GermanyUN@social.bund.de",
     "@AlmanyaBE@social.bund.de",
     "@BNetzA@social.bund.de",
-    "@Bundeswehr@social.bund.de"
+    "@Bundeswehr@social.bund.de",
+    "@unoflucht@bonn.social",
+    "@EU_UNGeneva@respublicae.eu",
+    "@die_rente@social.bund.de",
+    "@dlr_next@social.bund.de",
+    "@antidiskriminierung@social.bund.de",
+    "@BKG@social.bund.de",
+    "@Cyberagentur@social.bund.de",
+    "@deutschesHeer@social.bund.de",
+    "@RKI@social.bund.de",
+    "@Ostbeauftragter@social.bund.de",
+    "@bundesfinanzhof@social.bund.de",
+    "@Bundessozialgericht@social.bund.de",
+    "@bundesarbeitsgericht@social.bund.de",
+    "@BVerwG_de@social.bund.de",
+    "@ZIF@social.bund.de",
+    "@TABundestag@social.bund.de",
+    "@LernendeSysteme@social.bund.de",
+    "@bwi@social.bund.de",
+    "@enisa_eu@respublicae.eu"
   ],
   "NGO": [
     "@DJV@federated.press",
@@ -270,7 +290,11 @@
     "@offenegesetze@chaos.social",
     "@reutersinstitute@mas.to",
     "@auschwitzmuseum@mastodon.world",
-    "@sans_isc@infosec.exchange"
+    "@sans_isc@infosec.exchange",
+    "@DFN@mastodon.social",
+    "@Weizenbaum_Institut@social.bund.de",
+    "@informatik@mas.to",
+    "@AG_KRITIS@chaos.social"
   ],
   "PoliticalParty": [
     "@spdbt@mastodon.social",
@@ -371,6 +395,9 @@
     "@privacylab@mastodon.social",
     "@WZB_Berlin@wisskomm.social",
     "@ub_ffm@openbiblio.social",
-    "@JuedStudien@openbiblio.social"
+    "@JuedStudien@openbiblio.social",
+    "@unijena@mastodon.social",
+    "@FraunhoferFOKUS@social.bund.de",
+    "@fraunhofersit@wisskomm.social"
   ]
 }
