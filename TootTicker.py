@@ -217,63 +217,6 @@ def followAndAddAccountsToMastodonLists(mastodon, data, category, me, processed_
     except Exception as e:
         print(f"Error adding accounts to lists: {e}")
 
-# Save toot to folder toots/
-def saveJson(toot):
-    ''' 
-        Save toot to folder toots/
-        toot {dict} -- Toot object
-    '''
-    try:
-        # Create the 'toots/' directory if it doesn't exist
-        toots_directory = 'toots/'
-        # Check if the 'toots/' directory exists
-        if not os.path.exists(toots_directory):
-            # If the directory doesn't exist, create it
-            os.makedirs(toots_directory)
-            print(f"Directory '{toots_directory}' was created.")
-        else:
-            # If the directory exists, print that it already exists
-            print(f"Directory '{toots_directory}' already exists.")
-        with open(f"toots/{toot['id']}.json", encoding='utf-8', mode='w') as file:
-            json.dump(toot, file, indent=4, default=str)
-    except Exception as errorCode:
-        print(errorCode)
-
-# Function to get live toots
-def getLiveTootsJSON(numberOfToots=420):
-    ''' Get live toots from folder toots/
-    :param numberOfToots: The number of toots to return.
-    :return: A JSON string with the toots.
-    '''
-    global seen_toot_ids # A set to keep track of seen toot IDs for fast lookup
-    toots = []
-
-    for filename in os.listdir('toots/'):
-        if filename.endswith('.json'):
-            file_path = os.path.join('toots/', filename)
-
-            # Check if the file was modified within the last 12 hours
-            if os.path.getmtime(file_path) > time.time() - 43200:
-                with open(file_path, 'r') as file:
-                    try:
-                        toot = json.load(file)
-                        # Check if the toot's ID is new
-                        if toot['id'] not in seen_toot_ids:
-                            seen_toot_ids.add(toot['id'])
-                            toots.append(toot)
-                            print(f"Added toot {toot['id']} to live toots")
-                    except json.JSONDecodeError as e:
-                        print(f"Error decoding JSON from {filename}: {e}")
-
-    # Sort the toots by creation time or other criteria if needed
-    toots.sort(key=lambda x: x['created_at'], reverse=False)
-
-    # Limit the number of toots to the specified amount
-    limited_toots = toots[:numberOfToots]
-
-    # Return the toots as a JSON string
-    return json.dumps(limited_toots)
-
 # Function to get account information from Mastodon and save to JSON file
 def saveAccountInfoToJSON(mastodon, category, urls):
     ''' Get account information from Mastodon and save to JSON file
@@ -517,66 +460,8 @@ def footerScripts():
             </script>"""
     return scripts
 
-# Function to get or create liveToots
-def generateLiveTootsHTML():
-    try:
-        # Generate LiveToots HTML
-        liveTootsHTML = f"""
-            <div id="liveToots">              
-        """
-        liveTootsHTML += "</div>"
-        return liveTootsHTML
-    except Exception as errorCode:
-        print(errorCode)
-
-# List Streamer class
-class ListStreamer(StreamListener):
-    '''
-        This class is used to listen to a Mastodon list.
-        It inherits from StreamListener and overrides the on_update method.
-    
-    '''
-    # Override the __init__ method
-    def __init__(self):
-        super().__init__()
-
-    # Override the on_update method
-    def on_update(self, status):
-        if status['reblog']:
-            print(f"New boost from list: {status['reblog']['content']}")
-        else:
-            print(f"New status from list: {status['content']}")
-            saveJson(status)
-
-    def on_notification(self, notification):
-        print(f"New notification: {notification['type']}")
-
-    def on_delete(self, status_id):
-        print(f"Status deleted: {status_id}")
-
-    def handle_heartbeat(self):
-        print("🐘")
-    
-def StreamMastodonList(mastodon, list_id):
-    try:
-        # Create a listener
-        listener = ListStreamer()
-        mastodon.stream_list(list_id, listener) 
-    except MastodonAPIError as e:
-        message = str(e)
-        if "Too Many Requests" in message:
-            print("Too many requests. Please try again later.")
-            time.sleep(420)
-        else:
-            print(f"An error occurred: {e}")
-    except MastodonServerError as e:
-        print(f"Server error: {e}")
-    except Exception as e:
-        print(f"Error streaming list {list_id}: {e}")
-        time.sleep(42)
-
 # Worker function
-def worker(add, save, stream, mastodon, me):
+def worker(add, save, mastodon, me):
     """     Your worker function, which does something in the background.
     Arguments:
         addAccounts {int} -- Add accounts to Mastodon lists (0 = no, 1 = yes)
@@ -590,19 +475,14 @@ def worker(add, save, stream, mastodon, me):
         # Create a list of threads
         threads = []     
 
-        # Create a thread for each category
-        if stream:
-            # Iterate through each category and start a thread for each
-            for category in data:
-                listIdFromCategoryName = getOrCreateList(mastodon, category)
-                print(listIdFromCategoryName)
-                #Create add accounts to Mastodon lists thread for each category
-                if add:
-                    addThread = Thread(target=followAndAddAccountsToMastodonLists, args=(mastodon, data, category, me))
-                    threads.append(addThread)
-                # Create list stream thread for each category
-                listStreams = Thread(target=StreamMastodonList, args=(mastodon, listIdFromCategoryName))
-                threads.append(listStreams)
+        # Iterate through each category and start a thread for each
+        for category in data:
+            listIdFromCategoryName = getOrCreateList(mastodon, category)
+            print(listIdFromCategoryName)
+            #Create add accounts to Mastodon lists thread for each category
+            if add:
+                addThread = Thread(target=followAndAddAccountsToMastodonLists, args=(mastodon, data, category, me))
+                threads.append(addThread)
 
         # Create thread to save account information to JSON
         if save:
@@ -623,13 +503,11 @@ def worker(add, save, stream, mastodon, me):
 app = Flask(__name__)
 
 # Initialize the app
-def initializeApp(add, save, stream):
+def initializeApp(add, save):
     """ Initialize the Mastodon API and any global variables.
     Arguments:  
         addAccounts {int} -- Follow and add accounts to Mastodon lists (0 = no, 1 = yes)
-        saveAccountInfo {int} -- Save account information to JSON (0 = no, 1 = yes)
-        mastodonListStreams {int} -- Stream Mastodon lists (0 = no, 1 = yes)
-        mastodon {object} -- Mastodon object     
+        saveAccountInfo {int} -- Save account information to JSON (0 = no, 1 = yes)  
     """
     # Check for secrets
     checkForSecrets()  # Ensure this function sets necessary secrets
@@ -645,8 +523,8 @@ def initializeApp(add, save, stream):
     print(me.url+'\n')
 
     # Start the worker
-    ''' Parameters: addAccounts, saveAccountInfo, mastodonListStreams, mastodon  '''
-    worker(add, save, stream, mastodon, me) 
+    ''' Parameters: addAccounts, saveAccountInfo, mastodon, authenticated user  '''
+    worker(add, save, mastodon, me) 
 
 # Route for the index page
 @app.route('/')
@@ -655,8 +533,6 @@ def index():
     html_header = generateHTMLHeader()
     # Get the header scripts
     header_scripts = headerScripts()
-    # Get the live toots JSON
-    live_toots_html = generateLiveTootsHTML()  # Assume this function returns HTML for live toots
     # Get the account overview HTML
     account_overview_html = generateAccountOverview()  # And this returns HTML for account overview
     # Get the all-time follower chart HTML
@@ -670,18 +546,11 @@ def index():
     return render_template('index.html', 
         html_header=html_header, 
         header_scripts=header_scripts,
-        live_toots_html=live_toots_html, 
         account_overview_html=account_overview_html, 
         follower_chart_html=follower_chart_html,
         footer_scripts=footer_scripts,
         html_footer=html_footer
     )
-
-# Route for the latest toots
-@app.route('/get_latest_toots')
-def latest_toots():
-    toots = getLiveTootsJSON()
-    return toots
 
 # Route for the error page
 @app.errorhandler(404)
@@ -699,7 +568,7 @@ def create_app():
     '''
     # add, save, stream
     ''' Parameters: addAccounts, saveAccountInfo, mastodonListStreams... '''
-    initializeApp(1,1,1)
+    initializeApp(1,1)
     return app
 
 # Run the app (development)
