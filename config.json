@@ -212,7 +212,21 @@
     "@Curia@social.network.europa.eu",
     "@BlnBDI@social.bund.de",
     "@ltrlp@social.bund.de",
-    "@HessischerLandtag@social.bund.de"
+    "@HessischerLandtag@social.bund.de",
+    "@germanyinuk@social.bund.de",
+    "@bamf@social.bund.de",
+    "@bmuv@social.bund.de",
+    "@bmdv@social.bund.de",
+    "@bpb@social.bund.de",
+    "@base@social.bund.de",
+    "@BGH_Bund@social.bund.de",
+    "@bmz@social.bund.de",
+    "@bmf@social.bund.de",
+    "@GERonCyber@social.bund.de",
+    "@GermanyUN@social.bund.de",
+    "@AlmanyaBE@social.bund.de",
+    "@BNetzA@social.bund.de",
+    "@Bundeswehr@social.bund.de"
   ],
   "NGO": [
     "@DJV@federated.press",
@@ -251,7 +265,8 @@
     "@fosdem@fosstodon.org",
     "@missionlifeline@mastodon.online",
     "@digiges@chaos.social",
-    "@offenegesetze@chaos.social"
+    "@offenegesetze@chaos.social",
+    "@reutersinstitute@mas.to"
   ],
   "PoliticalParty": [
     "@spdbt@mastodon.social",
