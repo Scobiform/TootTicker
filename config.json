@@ -109,7 +109,8 @@
     "@tazvorgelesen@mastodon.social",
     "@mediacccde@botsin.space",
     "@fairplaymagazin",
-    "@derpostillon@mastodon.social"
+    "@derpostillon@mastodon.social",
+    "@analysekritik@chaos.social"
     ],
   "Creator": [
     "@rikefranke@bagarrosphere.fr",
@@ -207,7 +208,11 @@
     "@bfdi@social.bund.de",
     "@aa_stabilisiert@social.bund.de",
     "@bundestag@social.bund.de",
-    "@mwk_bw@mastodon.social"
+    "@mwk_bw@mastodon.social",
+    "@Curia@social.network.europa.eu",
+    "@BlnBDI@social.bund.de",
+    "@ltrlp@social.bund.de",
+    "@HessischerLandtag@social.bund.de"
   ],
   "NGO": [
     "@DJV@federated.press",
@@ -244,7 +249,9 @@
     "@VCDeV@mstdn.social",
     "@defcon@defcon.social",
     "@fosdem@fosstodon.org",
-    "@missionlifeline@mastodon.online"
+    "@missionlifeline@mastodon.online",
+    "@digiges@chaos.social",
+    "@offenegesetze@chaos.social"
   ],
   "PoliticalParty": [
     "@spdbt@mastodon.social",
@@ -253,7 +260,12 @@
     "@grueneltbb@gruene.social",
     "@GruenePankow@gruene.social",
     "@gruene_tk@gruene.social",
-    "@gruene_michendorf@gruene.social"
+    "@gruene_michendorf@gruene.social",
+    "@linkebvvp@linke.social",
+    "@DieLinke_KA@sueden.social",
+    "@Linksfraktion_Hessen@hessen.social",
+    "@Linksfraktion_Berlin@berlin.social",
+    "@dielinke_shk@mastodon.social"
   ],
   "Politician": [
     "@ankedb@social.linksfraktion.de",
