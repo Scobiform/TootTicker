@@ -87,7 +87,6 @@ function getRandomColor() {
 }
 // Initialize charts and toots on window load
 window.onload = function () {
-    loadInitialToots();
     // @ts-ignore
     Object.entries(categoriesData).forEach(([category, categoryData]) => {
         createChart(`chart-container-${category}`, category, categoryData);
@@ -95,80 +94,3 @@ window.onload = function () {
     // @ts-ignore
     createAllTimeChart('allTimeFollowerChart', allTimeFollowerChart);
 };
-// Functions related to toots loading and updating
-function loadInitialToots() {
-    fetch('/get_latest_toots')
-        .then(response => response.json())
-        .then(toots => populateToots(toots))
-        .catch(error => console.error('Error loading initial toots:', error));
-}
-function populateToots(toots) {
-    const container = document.getElementById('liveToots');
-    if (!container)
-        return;
-    const meUrl = 'https://mastodon.social/';
-    toots.forEach(toot => {
-        const mastodonHandle = `${toot.account.username}@${toot.url.split("https://")[1].split("/")[0]}`;
-        const tootElement = document.createElement('div');
-        tootElement.classList.add('toot');
-        tootElement.innerHTML = `
-            <div class="tootAvatar">
-                <a href="${meUrl}@${mastodonHandle}" alt="${toot.account.display_name}" 
-                nofollow="true" 
-                target="_blank" 
-                rel="noopener noreferrer">
-                    <img src="${toot.account.avatar}">
-                </a>
-            </div>
-            <div class="tootName">
-                <a href="${meUrl}@${mastodonHandle}" alt="${toot.account.display_name}"
-                nofollow="true"
-                target="_blank"
-                rel="noopener noreferrer">
-                    ${toot.account.display_name}
-                </a>
-            </div>
-            <div class="tootDate">
-                ${new Date(toot.created_at).toLocaleString('en-US', { hour12: false })}
-            </div>
-            <div class="toots-content">
-                ${toot.content}
-                <div class="mediaAttachments">
-                    ${toot.reblog ? toot.reblog.media_attachments.map(media => {
-            if (media.type === 'image') {
-                return `<img src="${media.preview_url}" alt="${toot.account.display_name}">`;
-            }
-            else if (media.type === 'video') {
-                return `<video controls src="${media.preview_url}" alt="${toot.account.display_name}"></video>`;
-            }
-            else {
-                return `<a href="${media.url}" alt="${toot.account.display_name}">Attachment</a>`;
-            }
-        }).join('') : ''}
-                </div>
-                <div class="tootUrl">
-                    <a href="${toot.url}"
-                    alt="View on Mastodon"
-                    aria-label="View on Mastodon"
-                    nofollow="true"
-                    target="_blank"
-                    rel="noopener noreferrer">
-                            View on Mastodon
-                    </a>
-                </div>
-            </div>
-        `;
-        container.appendChild(tootElement);
-    });
-}
-// Function to fetch and update toots
-function fetchAndUpdateToots() {
-    fetch('/get_latest_toots')
-        .then(response => response.json())
-        .then(newToots => {
-        populateToots(newToots);
-    })
-        .catch(error => console.error('Error fetching new toots:', error));
-}
-// Poll for new toots every n seconds
-setInterval(fetchAndUpdateToots, POLL_INTERVAL_MS);

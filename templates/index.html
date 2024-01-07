@@ -6,9 +6,7 @@
     {{ header_scripts|safe }}
 </head>
 <body>
-    <!-- Here's where the live toots will be rendered -->
-    {{ live_toots_html|safe }}
-    
+
     <!-- And the account overview -->
     {{ account_overview_html|safe }}
 
@@ -19,4 +17,5 @@
     <script type="module" src="{{ url_for('static', filename='app.js') }}"></script>
     {{ footer_scripts|safe }}
     {{ html_footer|safe }}
+    
 </body>
