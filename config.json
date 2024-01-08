@@ -182,7 +182,15 @@
     "@tante@tldr.nettime.org",
     "@SilkJag@digitalcourage.social",
     "@Cartoostrophal@troet.cafe",
-    "@daniellaufer@mastodon.social"
+    "@daniellaufer@mastodon.social",
+    "@acbeers@hachyderm.io",
+    "@eliyahhavemann@det.social",
+    "@fluepke@chaos.social",
+    "@leafruehwirth@mastodon.social",
+    "@MatthiasQuent@sciences.social",
+    "@ardenthistorian@newsie.social",
+    "@Pia@chaos.social",
+    "@raeuberhose@mastodon.social"
   ],
   "Company": [
     "@hisolutions@infosec.exchange",
@@ -294,7 +302,16 @@
     "@DFN@mastodon.social",
     "@Weizenbaum_Institut@social.bund.de",
     "@informatik@mas.to",
-    "@AG_KRITIS@chaos.social"
+    "@AG_KRITIS@chaos.social",
+    "@Bundesverband@verbraucherzentrale.social",
+    "@cemas_io@mastodon.social",
+    "@opferperspektive@links.potsda.mn",
+    "@BSAnneFrank@hessen.social",
+    "@raasachsen@systemli.social",
+    "@rechte_gewalt@systemli.social",
+    "@nsuwatch@mastodon.online",
+    "@ezra@systemli.social",
+    "@wikimediaDE@social.wikimedia.de"
   ],
   "PoliticalParty": [
     "@spdbt@mastodon.social",
@@ -363,7 +380,8 @@
     "@susanneferschl@social.linksfraktion.de",
     "@tessaganserer@gruene.social",
     "@TBBacherle@gruene.social",
-    "@soeren_pellmann@social.linksfraktion.de"
+    "@soeren_pellmann@social.linksfraktion.de",
+    "@justpankow@berlin.social"
   ],
   "Science": [
     "@KIT_Karlsruhe@mastodon.social",
