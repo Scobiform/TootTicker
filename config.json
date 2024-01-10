@@ -190,7 +190,13 @@
     "@MatthiasQuent@sciences.social",
     "@ardenthistorian@newsie.social",
     "@Pia@chaos.social",
-    "@raeuberhose@mastodon.social"
+    "@raeuberhose@mastodon.social",
+    "@zackwhittaker@mastodon.social",
+    "@jela@social.tchncs.de",
+    "@cstross@wandering.shop",
+    "@JensB@openbiblio.social",
+    "@chrisstoecker@mastodon.social",
+    "@funkvolk@mastodon.social"
   ],
   "Company": [
     "@hisolutions@infosec.exchange",
@@ -311,7 +317,12 @@
     "@rechte_gewalt@systemli.social",
     "@nsuwatch@mastodon.online",
     "@ezra@systemli.social",
-    "@wikimediaDE@social.wikimedia.de"
+    "@wikimediaDE@social.wikimedia.de",
+    "@dfg_public@wisskomm.social",
+    "@neuSoM@bewegung.social",
+    "@internetarchive@mastodon.archive.org",
+    "@Teckids@bildung.social",
+    "@eff@mastodon.social"
   ],
   "PoliticalParty": [
     "@spdbt@mastodon.social",
@@ -381,7 +392,8 @@
     "@tessaganserer@gruene.social",
     "@TBBacherle@gruene.social",
     "@soeren_pellmann@social.linksfraktion.de",
-    "@justpankow@berlin.social"
+    "@justpankow@berlin.social",
+    "@jankorte@linke.social"
   ],
   "Science": [
     "@KIT_Karlsruhe@mastodon.social",
@@ -416,6 +428,9 @@
     "@JuedStudien@openbiblio.social",
     "@unijena@mastodon.social",
     "@FraunhoferFOKUS@social.bund.de",
-    "@fraunhofersit@wisskomm.social"
+    "@fraunhofersit@wisskomm.social",
+    "@ohd@openbiblio.social",
+    "@digitale_kultur@mastodon.social",
+    "@ALLEA@eupolicy.social"
   ]
 }
