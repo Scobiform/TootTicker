@@ -290,8 +290,6 @@ def generateHTMLHeader():
         <script src="https://mastodon.social/embed.js" async="async"></script>
         <link rel="stylesheet" type="text/css" href="static/style.css">  
         <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
-    </head>
-    <body>
     """
     return html_header
 
@@ -367,48 +365,6 @@ def generateChart():
     # Return the JavaScript object notation
     return js_data_object
 
-# Function to generate a alltime follower chart for each account 
-# The files are located in the accounts/ directory and are named data-YYYYMMDDHH.json, 
-# where YYYYMMDDHH is the timestamp when the file was generated. The data structure is a dictionary 
-# with category names as keys and dictionaries of account names and metrics as values. 
-# For example, the following is a snippet of the data structure for the Media category:
-# data[category][account_name][metric]
-# Return Charts.js data object
-def generateAlltimeFollowerChart():
-    '''Returns Charts.js data object'''
-    path = 'accounts/'
-    files = sorted(glob.glob(path + 'data-*.json'), key=lambda x: x.split('-')[1])
-    alltime_data = defaultdict(list)
-
-    for file in files:
-        with open(file, 'r') as f:
-            data = json.load(f)
-            for accounts in data.values():
-                for account, metrics in accounts.items():
-                    alltime_data[account].append(metrics['Followers'])
-
-    chart_data = {
-        'labels': [file.split('-')[1].split('.')[0] for file in files],
-        'datasets': [{'label': account, 'data': followers} for account, followers in alltime_data.items()]
-    }
-
-    # Convert the Python dictionary to a JavaScript object notation
-    js_data_object = json.dumps(chart_data, indent=4)
-
-    return js_data_object
-
-# Function to generate HTML for all-time follower chart
-def generateAlltimeFollowerCHartHTML():
-    try:
-        # Generate LiveToots HTML
-        follower_chart_html = f"""
-            <div id="allTimeFollowerChart">              
-        """
-        follower_chart_html += "</div>"
-        return follower_chart_html
-    except Exception as errorCode:
-        print(errorCode)
-
 # Function to generate HTML overview
 def generateAccountOverview():
 
@@ -437,14 +393,6 @@ def generateAccountOverview():
     # Return the HTML content
     return html_content
 
-# Function to generate the footer
-def generateHTMLFooter():
-    html_footer = ("""
-        </body>
-    </html>
-    """)
-    return html_footer
-
 # Returns footer scripts
 def footerScripts():
     '''Returns footer scripts
@@ -455,8 +403,6 @@ def footerScripts():
     '''
     scripts = """<script>
                 const categoriesData = """ + generateChart() + """;
-
-                const allTimeFollowerChart = """ + generateAlltimeFollowerChart() + """;
             </script>"""
     return scripts
 
@@ -535,21 +481,15 @@ def index():
     header_scripts = headerScripts()
     # Get the account overview HTML
     account_overview_html = generateAccountOverview()  # And this returns HTML for account overview
-    # Get the all-time follower chart HTML
-    follower_chart_html = generateAlltimeFollowerCHartHTML()
     # Get the footer scripts
     footer_scripts = footerScripts()
-    # Get the HTML footer
-    html_footer = generateHTMLFooter()
 
     # Render the template with the JSON string
     return render_template('index.html', 
         html_header=html_header, 
         header_scripts=header_scripts,
         account_overview_html=account_overview_html, 
-        follower_chart_html=follower_chart_html,
         footer_scripts=footer_scripts,
-        html_footer=html_footer
     )
 
 # Route for the error page

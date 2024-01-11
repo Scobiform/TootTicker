@@ -196,7 +196,10 @@
     "@cstross@wandering.shop",
     "@JensB@openbiblio.social",
     "@chrisstoecker@mastodon.social",
-    "@funkvolk@mastodon.social"
+    "@funkvolk@mastodon.social",
+    "@cwebber@octodon.social",
+    "@erincandescent@queer.af",
+    "@evan@cosocial.ca"
   ],
   "Company": [
     "@hisolutions@infosec.exchange",
@@ -322,7 +325,10 @@
     "@neuSoM@bewegung.social",
     "@internetarchive@mastodon.archive.org",
     "@Teckids@bildung.social",
-    "@eff@mastodon.social"
+    "@eff@mastodon.social",
+    "@parents4future@climatejustice.global",
+    "@buko_pharmakampagne@nrw.social",
+    "@ndmedienmacher@federated.press"
   ],
   "PoliticalParty": [
     "@spdbt@mastodon.social",
@@ -393,7 +399,8 @@
     "@TBBacherle@gruene.social",
     "@soeren_pellmann@social.linksfraktion.de",
     "@justpankow@berlin.social",
-    "@jankorte@linke.social"
+    "@jankorte@linke.social",
+    "@ulrichkelber@bonn.social"
   ],
   "Science": [
     "@KIT_Karlsruhe@mastodon.social",

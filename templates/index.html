@@ -1,21 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <!-- Your header content -->
-    {{ html_header|safe }}
-    {{ header_scripts|safe }}
+<!-- Your header content -->
+{{ html_header|safe }}
+{{ header_scripts|safe }}
 </head>
-<body>
-
-    <!-- And the account overview -->
-    {{ account_overview_html|safe }}
-
-    <!-- The All-Time Follower Chart-->
-    {{ follower_chart_html|safe }}
-    
-    <!-- Footer content -->
-    <script type="module" src="{{ url_for('static', filename='app.js') }}"></script>
-    {{ footer_scripts|safe }}
-    {{ html_footer|safe }}
-    
-</body>
+    <body>
+        <!-- Your MAIN content -->
+        <div class="gridContainer">
+            <!-- The navigation bar -->
+            <div class="navigation">
+                
+            </div>
+            <div class="categoryCharts">
+                <!-- Category Charts-->
+                {{ account_overview_html|safe }}
+            </div>
+            <!-- Listmanager -->
+            <div class="listManager">
+                
+            </div>
+        </div>
+        <!-- Footer content -->
+        <script type="module" src="{{ url_for('static', filename='app.js') }}"></script>
+        {{ footer_scripts|safe }}
+    </body>
+</html>

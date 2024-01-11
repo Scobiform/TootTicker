@@ -84,16 +84,6 @@ function buildChartConfig(
     };
 }
 
-// All time follower chart
-// @ts-ignore
-function createAllTimeChart(containerId: string, allTimeFollowerChart: ChartData) {
-    const ctx = appendCanvasToContainer(containerId);
-    if (!ctx) return;
-
-    const chartConfig = buildChartConfig('line', allTimeFollowerChart.labels as string[], allTimeFollowerChart.datasets, 'All Time Followers', false);
-    new Chart(ctx, chartConfig);
-}
-
 // Utility function to generate random colors
 function getRandomColor(): string {
     const randomVariation = () => Math.floor(Math.random() * (COLOR_VARIATION_RANGE * 2 + 1)) - COLOR_VARIATION_RANGE;
@@ -106,6 +96,4 @@ window.onload = function() {
     Object.entries(categoriesData as Record<string, CategoryData>).forEach(([category, categoryData]) => {
         createChart(`chart-container-${category}`, category, categoryData);
     });
-    // @ts-ignore
-    createAllTimeChart('allTimeFollowerChart', allTimeFollowerChart as ChartData<'radar'>);
 };
