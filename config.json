@@ -199,7 +199,20 @@
     "@funkvolk@mastodon.social",
     "@cwebber@octodon.social",
     "@erincandescent@queer.af",
-    "@evan@cosocial.ca"
+    "@evan@cosocial.ca",
+    "@ralphruthe@troet.cafe",
+    "@malteengeler@legal.social",
+    "@aramba@tldr.nettime.org",
+    "@rahmstorf@fediscience.org",
+    "@marthadear@zirk.us",
+    "@UlrikeGebhardt@mastodon.social",
+    "@maithink@mstdn.science",
+    "@caseynewton@mastodon.social",
+    "@alexeheath@mastodon.social",
+    "@harrymccracken@mastodon.social",
+    "@Sarahp@mastodon.social",
+    "@benjaminwittes@thecooltable.wtf",
+    "@benjedwards@mastodon.social"
   ],
   "Company": [
     "@hisolutions@infosec.exchange",
@@ -328,7 +341,11 @@
     "@eff@mastodon.social",
     "@parents4future@climatejustice.global",
     "@buko_pharmakampagne@nrw.social",
-    "@ndmedienmacher@federated.press"
+    "@ndmedienmacher@federated.press",
+    "@ende_gelaende@climatejustice.global",
+    "@GovTrack@mastodon.social",
+    "@OmasgR@digitalcourage.social",
+    "@hgbruenker@mastodon.social"
   ],
   "PoliticalParty": [
     "@spdbt@mastodon.social",
@@ -400,7 +417,9 @@
     "@soeren_pellmann@social.linksfraktion.de",
     "@justpankow@berlin.social",
     "@jankorte@linke.social",
-    "@ulrichkelber@bonn.social"
+    "@ulrichkelber@bonn.social",
+    "@nicolas@gruene.social",
+    "@hgbruenker@mastodon.social"
   ],
   "Science": [
     "@KIT_Karlsruhe@mastodon.social",
@@ -438,6 +457,8 @@
     "@fraunhofersit@wisskomm.social",
     "@ohd@openbiblio.social",
     "@digitale_kultur@mastodon.social",
-    "@ALLEA@eupolicy.social"
+    "@ALLEA@eupolicy.social",
+    "@chs_hhu@nrw.social",
+    "@Humandifferenzierung@wisskomm.social"
   ]
 }
