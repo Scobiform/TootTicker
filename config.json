@@ -212,13 +212,17 @@
     "@harrymccracken@mastodon.social",
     "@Sarahp@mastodon.social",
     "@benjaminwittes@thecooltable.wtf",
-    "@benjedwards@mastodon.social"
+    "@benjedwards@mastodon.social",
+    "@freddy@security.plumbing",
+    "@wdormann@infosec.exchange",
+    "@Anwalt_Jun@sueden.social"
   ],
   "Company": [
     "@hisolutions@infosec.exchange",
     "@fission@fission.social",
     "@protonmail@mastodon.social",
-    "@nextcloud@mastodon.xyz"
+    "@nextcloud@mastodon.xyz",
+    "@pixelfed@mastodon.social"
   ],
   "Government": [
     "@bsi@social.bund.de",
@@ -419,7 +423,8 @@
     "@jankorte@linke.social",
     "@ulrichkelber@bonn.social",
     "@nicolas@gruene.social",
-    "@hgbruenker@mastodon.social"
+    "@hgbruenker@mastodon.social",
+    "@echo_pbreyer@digitalcourage.social"
   ],
   "Science": [
     "@KIT_Karlsruhe@mastodon.social",
